@@ -1,5 +1,5 @@
 // /api/gemini.js
-// Netlify/Vercel Serverless Function (Proxy) - สำหรับเรียก Gemini API อย่างปลอดภัย
+// Netlify Serverless Function (Proxy) - สำหรับเรียก Gemini API อย่างปลอดภัย
 
 import { GoogleGenAI } from '@google/genai';
 
@@ -7,16 +7,20 @@ import { GoogleGenAI } from '@google/genai';
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
     // ต้องมี Key นี้ใน Environment Variable เท่านั้น
-    throw new Error('GEMINI_API_KEY environment variable not set.');
+    // ใน Netlify เราต้อง return เป็น object ไม่ใช่ throw error
+    return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Internal Server Error', details: 'GEMINI_API_KEY environment variable not set.' })
+    };
 }
 const ai = new GoogleGenAI({ apiKey });
 const model = 'gemini-2.5-flash';
 
-// This is the Netlify function entry point (using the Vercel/Node.js style)
-export default async function handler(req, res) {
+// This is the Netlify function entry point
+export default async function handler(req) { // ใช้ req ตัวเดียวตามรูปแบบ Netlify
+    
     // ตรวจสอบว่าเป็น Method POST เท่านั้น
-    if (req.method !== 'POST') {
-        // ใน Netlify Function, req/res จะมีรูปแบบคล้าย Express แต่เราต้อง return ในรูปแบบของ Netlify Function
+    if (req.httpMethod !== 'POST') {
         return {
             statusCode: 405,
             body: JSON.stringify({ error: 'Method Not Allowed' })
@@ -24,11 +28,10 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Netlify Function Event/Context handling
-        // ต้องปรับให้เข้ากับรูปแบบของ Netlify/Node.js Functions โดยใช้ event.body
+        // *** จุดแก้ไขสำคัญ: ดึง Body ของ request ***
         const body = JSON.parse(req.body); 
         const { query, isSearch } = body;
-
+        
         if (!query) {
             return {
                 statusCode: 400,
