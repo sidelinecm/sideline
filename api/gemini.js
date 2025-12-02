@@ -12,17 +12,28 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey });
 const model = 'gemini-2.5-flash';
 
-// This is the Vercel/Netlify function entry point
+// This is the Netlify function entry point (using the Vercel/Node.js style)
 export default async function handler(req, res) {
+    // ตรวจสอบว่าเป็น Method POST เท่านั้น
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+        // ใน Netlify Function, req/res จะมีรูปแบบคล้าย Express แต่เราต้อง return ในรูปแบบของ Netlify Function
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method Not Allowed' })
+        };
     }
 
     try {
-        const { query, isSearch } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; 
+        // Netlify Function Event/Context handling
+        // ต้องปรับให้เข้ากับรูปแบบของ Netlify/Node.js Functions โดยใช้ event.body
+        const body = JSON.parse(req.body); 
+        const { query, isSearch } = body;
 
         if (!query) {
-            return res.status(400).json({ error: 'Missing query parameter in request body.' });
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Missing query parameter in request body.' })
+            };
         }
 
         let responseText = '';
@@ -51,23 +62,32 @@ export default async function handler(req, res) {
             });
 
             // ตรวจสอบความปลอดภัย
-            if (result.candidates[0].finishReason === 'SAFETY') {
-                return res.status(403).json({ 
-                    error: 'Safety Blocked', 
-                    details: 'The query was blocked by content safety filters.' 
-                });
+            if (result.candidates && result.candidates[0] && result.candidates[0].finishReason === 'SAFETY') {
+                return {
+                    statusCode: 403,
+                    body: JSON.stringify({ 
+                        error: 'Safety Blocked', 
+                        details: 'The query was blocked by content safety filters.' 
+                    })
+                };
             }
 
             responseText = result.text;
         }
 
-        res.status(200).json({ text: responseText });
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ text: responseText })
+        };
 
     } catch (error) {
         console.error('Gemini API Error:', error.message);
-        res.status(500).json({ 
-            error: 'Internal Server Error',
-            details: error.message
-        });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ 
+                error: 'Internal Server Error',
+                details: error.message
+            })
+        };
     }
 }
