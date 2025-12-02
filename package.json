@@ -4,6 +4,6 @@
   "description": "A proxy for Google Gemini API to hide the API key.",
   "main": "api/gemini.js",
   "dependencies": {
-    "@google/genai": "0.1.0" // เปลี่ยนจาก ^0.1.0 เป็น 0.1.0
+    "@google/genai": "0.1.0" // สำคัญ: ไม่มีเครื่องหมาย ^ (Caret) แล้ว
   }
 }
