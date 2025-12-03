@@ -1,7 +1,7 @@
-// ใช้ require แทน import (V1/Legacy Mode)
+// **สำคัญ: ใช้ require แทน import**
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// ใช้ exports.handler แทน export default async (req, context) (V1/Legacy Mode)
+// ใช้รูปแบบ Legacy (V1): exports.handler = async (event, context) => {...}
 exports.handler = async (event, context) => {
     // ตรวจสอบ Method
     if (event.httpMethod !== "POST") {
@@ -10,16 +10,15 @@ exports.handler = async (event, context) => {
 
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        // ตรวจสอบ Key ก่อนเรียก API
+        // การตรวจสอบ Key ที่ต้นทาง
         if (!apiKey) {
-            console.error("Setup Error: GEMINI_API_KEY is missing");
             return {
                 statusCode: 500,
                 body: JSON.stringify({ error: "Server Configuration Error: API Key missing" })
             };
         }
 
-        // Parse Body
+        // Parse Body (Legacy Mode)
         let body;
         try {
             body = JSON.parse(event.body); 
@@ -61,7 +60,7 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        // ดักจับ Error 500 ที่เกิดจาก API Call ล้มเหลว
+        // ดักจับ Error 500 ที่เกิดจากการเชื่อมต่อ API
         console.error("Critical API Error (Check Key/Quota):", error);
         return {
             statusCode: 500,
