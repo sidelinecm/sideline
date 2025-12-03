@@ -1,37 +1,25 @@
-// **สำคัญ: ใช้ require แทน import**
+// ใช้ require แทน import (V1/Legacy Mode)
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// ใช้รูปแบบ Legacy (V1): exports.handler = async (event, context) => {...}
+// ใช้ exports.handler แทน export default async (req, context) (V1/Legacy Mode)
 exports.handler = async (event, context) => {
-    // ตรวจสอบ Method
     if (event.httpMethod !== "POST") {
         return { statusCode: 405, body: "Method Not Allowed" };
     }
 
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        // การตรวจสอบ Key ที่ต้นทาง
         if (!apiKey) {
             return {
                 statusCode: 500,
-                body: JSON.stringify({ error: "Server Configuration Error: API Key missing" })
+                body: JSON.stringify({ error: "API Key is missing" })
             };
         }
 
-        // Parse Body (Legacy Mode)
-        let body;
-        try {
-            body = JSON.parse(event.body); 
-        } catch (e) {
-            return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body" }) };
-        }
-
+        // Parse Body (Legacy Mode: event.body เป็น String)
+        let body = JSON.parse(event.body); 
         const { query, isSearch } = body;
-        if (!query) {
-             return { statusCode: 400, body: JSON.stringify({ error: "Missing query" }) };
-        }
         
-        // เรียก Gemini API
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -60,11 +48,11 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        // ดักจับ Error 500 ที่เกิดจากการเชื่อมต่อ API
+        // หากมี 500 เกิดขึ้น ระบบจะส่งข้อความนี้กลับไป
         console.error("Critical API Error (Check Key/Quota):", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Internal API Call Failed", message: error.message, hint: "Please re-check your GEMINI_API_KEY status and quota." })
+            body: JSON.stringify({ error: "Internal API Call Failed", message: error.message, hint: "Check GEMINI_API_KEY or usage quota." })
         };
     }
 };
