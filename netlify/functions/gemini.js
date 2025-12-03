@@ -1,15 +1,16 @@
-// **สำคัญ: ใช้ require แทน import**
+// ใช้ require แทน import (V1/Legacy Mode)
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// ใช้รูปแบบ Legacy (V1): exports.handler = async (event, context) => {...}
+// ใช้ exports.handler แทน export default async (req, context) (V1/Legacy Mode)
 exports.handler = async (event, context) => {
-    // 1. ตรวจสอบ Method
+    // ตรวจสอบ Method
     if (event.httpMethod !== "POST") {
         return { statusCode: 405, body: "Method Not Allowed" };
     }
 
     try {
         const apiKey = process.env.GEMINI_API_KEY;
+        // ตรวจสอบ Key ก่อนเรียก API
         if (!apiKey) {
             console.error("Setup Error: GEMINI_API_KEY is missing");
             return {
@@ -18,7 +19,7 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // 2. Parse Body (Legacy Mode)
+        // Parse Body
         let body;
         try {
             body = JSON.parse(event.body); 
@@ -31,7 +32,7 @@ exports.handler = async (event, context) => {
              return { statusCode: 400, body: JSON.stringify({ error: "Missing query" }) };
         }
         
-        // 3. เรียก Gemini
+        // เรียก Gemini API
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -49,7 +50,7 @@ exports.handler = async (event, context) => {
         
         let responseText = result.response.text;
 
-        // 4. ส่งกลับแบบ Legacy Object (V1 Format)
+        // ส่งกลับแบบ Legacy Object (V1 Format)
         return {
             statusCode: 200,
             headers: {
@@ -60,11 +61,11 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        // ถ้าเกิด Error ระหว่างเรียก API มันจะถูกจับที่นี่
-        console.error("Critical Error in API Call:", error);
+        // ดักจับ Error 500 ที่เกิดจาก API Call ล้มเหลว
+        console.error("Critical API Error (Check Key/Quota):", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Internal Error", message: error.message, debug: "Check Netlify Logs for Critical Error in API Call" })
+            body: JSON.stringify({ error: "Internal API Call Failed", message: error.message, hint: "Please re-check your GEMINI_API_KEY status and quota." })
         };
     }
 };
