@@ -1,8 +1,10 @@
-
 {
   "name": "sideline-ai-chat",
-  "version": "1.0.0"  <-- ถ้าบรรทัดนี้ไม่มีคอมม่า
-  "type": "module",    <-- Error จะเกิดตรงนี้ เพราะคาดหวังคอมม่าก่อน "type"
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step required, running dependencies only'"
+  },
   "dependencies": {
     "@google/genai": "^0.1.0"
   }
