@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// โค้ดนี้ใช้รูปแบบ Netlify Functions V2 (Standard Web API) ที่ return เป็น new Response()
 export default async (req, context) => {
     // 1. ตรวจสอบ Method
     if (req.method !== 'POST') {
@@ -9,14 +10,14 @@ export default async (req, context) => {
     // 2. ตรวจสอบ API Key
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-        return new Response(JSON.stringify({ error: 'GEMINI_API_KEY is missing' }), {
+        return new Response(JSON.stringify({ error: 'GEMINI_API_KEY environment variable is missing' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });
     }
 
     try {
-        // 3. อ่าน Body (รองรับทั้งแบบ Stream และ JSON ปกติ)
+        // 3. อ่าน Body: V2 ใช้ req.json()
         const body = await req.json().catch(() => null);
 
         if (!body || !body.query) {
@@ -25,55 +26,43 @@ export default async (req, context) => {
                 headers: { 'Content-Type': 'application/json' }
             });
         }
-
+        
         const { query, isSearch } = body;
 
-        // 4. ตั้งค่า Gemini (ใช้ Library มาตรฐาน @google/generative-ai)
+        // 4. ตั้งค่า Gemini
         const genAI = new GoogleGenerativeAI(apiKey);
+        const modelId = "gemini-1.5-flash";
         
-        // เลือก Model
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash",
-            // ถ้าเป็นโหมด Search ต้องใช้ tools (ถ้าไม่ใช้ search ลบ tools ออกได้)
-            tools: isSearch ? [{ googleSearch: {} }] : [] 
+        let config = {};
+
+        if (!isSearch) {
+            config.systemInstruction = "You are a helpful and concise AI assistant. Respond in Thai and use markdown for formatting.";
+        } else {
+            // โหมดค้นหา (Grounding)
+            config.tools = [{ googleSearch: {} }];
+            config.systemInstruction = "You are an expert search assistant. Use Google Search to find up-to-date information. Cite sources. Summarize in Thai.";
+        }
+
+        // 5. เรียกใช้ Gemini API
+        const result = await genAI.models.generateContent({
+            model: modelId,
+            contents: [{ role: 'user', parts: [{ text: query }] }],
+            config: config
         });
-
-        // ตั้งค่า Prompt System
-        const systemInstruction = isSearch 
-            ? "You are an expert search assistant. Use Google Search to find up-to-date information. Summarize in Thai."
-            : "You are a helpful AI assistant. Respond in Thai.";
-
-        // 5. เริ่ม Chat
-        const chat = model.startChat({
-            history: [
-                {
-                    role: "user",
-                    parts: [{ text: systemInstruction }],
-                },
-                {
-                    role: "model",
-                    parts: [{ text: "เข้าใจแล้ว ฉันพร้อมช่วยเหลือคุณเป็นภาษาไทยครับ" }],
-                }
-            ],
-            generationConfig: {
-                maxOutputTokens: 1000,
-            },
-        });
-
-        // ส่งข้อความ
-        const result = await chat.sendMessage(query);
-        const responseText = result.response.text();
-
-        // 6. ส่งผลลัพธ์กลับ (Format ถูกต้อง 100%)
+            
+        let responseText = result.response.text;
+        
+        // 6. ส่ง Response กลับแบบ V2 (new Response)
         return new Response(JSON.stringify({ text: responseText }), {
             status: 200,
             headers: { 
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*' // เผื่อเรียกจากหน้าเว็บอื่น
+                'Access-Control-Allow-Origin': '*'
             }
         });
 
     } catch (error) {
+        // 7. Handle Error ทั่วไป
         console.error('API Error:', error);
         return new Response(JSON.stringify({ 
             error: 'Internal Server Error', 
