@@ -1351,24 +1351,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 
-<!-- สคริปต์ JavaScript สำหรับจับคลิก -->
 <script>
 (function () {
     'use strict';
-
     document.addEventListener("DOMContentLoaded", function() {
         const aiChatButton = document.querySelector('.nav-button[data-view="ai-chat-container"]');
 
         if (aiChatButton) {
             aiChatButton.addEventListener('click', function(e) {
-                e.preventDefault(); // ป้องกันการทำงานปุ่มเดิม
-                const aiChatUrl = 'https://adsindline.netlify.app/ai-chat.html'; // URL หน้าแยก
-                window.open(aiChatUrl, '_blank'); // เปิดในแท็บใหม่
+                e.preventDefault(); 
+                // แก้ตรงนี้: ลิงก์ไปยังไฟล์ในเครื่องเดียวกัน
+                window.open('/ai-chat.html', '_blank'); 
             });
         }
     });
 })();
 </script>
+
 </body>
 </html>
 
