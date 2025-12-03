@@ -6,6 +6,6 @@
     "build": "echo 'No build step required, running dependencies only'"
   },
   "dependencies": {
-    "@google/genai": "^1.30.0"
+    "@google/genai": "^1.21.0"
   }
 }

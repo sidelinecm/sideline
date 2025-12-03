@@ -1,60 +1,79 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="h-full bg-[#f8f9fe] dark:bg-black"> 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sideline AI Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sideline AI Chat Assistant (Powered by Gemini)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* 1. Global Setup */
+        /* 1. Global Setup and Fonts (iOS System Font) */
         html, body {
-            height: 100%;
-            overflow: hidden; /* ป้องกันการ scroll ของ body หลัก */
+            height: 100%; 
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 1.1 Loader */
+        /* 1.1 Page Loader Styles (ตามที่คุณต้องการ) */
         #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 1000;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
-            color: #4f46e5; transition: opacity 0.3s;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #4f46e5;
+            transition: opacity 0.3s;
         }
-        .dark #loader { background: #000000; color: #a78bfa; }
+        .dark #loader {
+            background: #000000;
+            color: #a78bfa;
+        }
         .loader-spinner {
-            border: 5px solid #e5e5ea; border-top: 5px solid #4f46e5;
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite; margin-bottom: 15px;
+            border: 5px solid #e5e5ea;
+            border-top: 5px solid #4f46e5;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
         }
-        .dark .loader-spinner { border-top: 5px solid #a78bfa; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .dark .loader-spinner {
+            border-top: 5px solid #a78bfa;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         
-        /* 1.2 Content */
-        #content { height: 100%; opacity: 0; transition: opacity 0.5s ease-in; }
-
-        /* --- Chat Bubbles --- */
-        .user-bubble { 
-            background-color: #fef08a; color: #1f2937; 
-            border-radius: 18px 18px 5px 18px; position: relative; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .dark .user-bubble { 
-            background: linear-gradient(135deg, #d946ef, #ec4899, #f97316); color: white; 
+        /* 1.2 Content Visibility */
+        #content {
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
         }
 
-        .ai-message { 
-            background-color: #E5E5EA; color: #1f2937; 
-            border-radius: 18px 18px 18px 5px; position: relative; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .dark .ai-message { 
-            background-color: #2D2D2D; border: 1px solid #374151; color: #d1d5db; 
-        }
+        /* --- Custom Styles: Bubbles and Colors (โค้ดเดิม) --- */
+        
+        .user-bubble { background-color: #fef08a; color: #1f2937; border-radius: 18px 18px 5px 18px; position: relative; }
+        .user-bubble::after { content: ''; position: absolute; bottom: 0; right: -7px; width: 0; height: 0; border: 10px solid transparent; border-bottom-color: #fef08a; border-right-width: 0; border-bottom-left-radius: 3px; }
+        .dark .user-bubble { background: linear-gradient(135deg, #d946ef, #ec4899, #f97316); color: white; }
+        .dark .user-bubble::after { border-bottom-color: #d946ef; }
+
+        .ai-message { background-color: #E5E5EA; color: #1f2937; border-radius: 18px 18px 18px 5px; position: relative; }
+        .ai-message::after { content: ''; position: absolute; bottom: 0; left: -7px; width: 0; height: 0; border: 10px solid transparent; border-bottom-color: #E5E5EA; border-left-width: 0; border-bottom-right-radius: 3px; }
+
+        .dark .ai-message { background-color: #2D2D2D; border: 1px solid #374151; color: #d1d5db; }
+        .dark .ai-message::after { border-bottom-color: #2D2D2D; }
         
         .ai-accent { background-color: #2d1b69; }
         .dark .ai-accent { background-color: #4c1d95; }
@@ -62,37 +81,22 @@
         .gemini-send-btn { background: linear-gradient(to right, #6D28D9, #9333EA); }
         .dark .gemini-send-btn { background: linear-gradient(to right, #A855F7, #C084FC); }
 
-        /* Enhanced Results Styling */
-        .search-result-enhanced, .error-message-enhanced, .no-results-enhanced {
-            padding: 1rem; border-radius: 12px; margin: 5px 0; font-size: 0.95rem; line-height: 1.5;
-            background-color: #ffffff; border: 1px solid #e5e5ea; color: #1f2937; width: 100%;
+        .search-result-enhanced, .error-message-enhanced, .no-results-enhanced, .welcome-response, .help-response, .general-response {
+            padding: 1rem; border-radius: 12px; margin-top: 5px; margin-bottom: 5px; font-size: 0.9rem; line-height: 1.4; max-width: 90%;
+            background-color: #ffffff; border: 1px solid #e5e5ea; color: #1f2937;
         }
-        .dark .search-result-enhanced, .dark .error-message-enhanced, .dark .no-results-enhanced {
+        .dark .search-result-enhanced, .dark .error-message-enhanced, .dark .no-results-enhanced, .dark .welcome-response, .dark .help-response, .dark .general-response {
             background-color: #1a1a1a; border: 1px solid #374151; color: #d1d5db;
         }
         
-        .search-header-main, .error-icon, .no-results-icon { 
-            display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; 
-            font-weight: bold; color: #4f46e5; 
-        }
-        .dark .search-header-main, .dark .error-icon, .dark .no-results-icon { color: #a78bfa; }
-        
-        .action-btn-copy { 
-            background-color: #4f46e5; color: white; border-radius: 6px; padding: 4px 10px; font-size: 0.8rem;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px;
-        }
+        .search-header-main, .error-icon, .no-results-icon, .welcome-icon, .help-header, .response-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; font-weight: bold; color: #4f46e5; }
+        .dark .search-header-main, .dark .error-icon, .dark .no-results-icon, .dark .welcome-icon, .dark .help-header, .dark .response-header { color: #a78bfa; }
+        .action-btn-copy { background-color: #4f46e5; color: white; }
         .action-btn-copy:hover { background-color: #4338ca; }
 
-        .animate { animation: animate 0.3s ease-in-out; }
-        @keyframes animate { 0% { transform: scale(0.9); } 100% { transform: scale(1); } }
-        
-        /* Markdown/Text Formatting inside bubbles */
-        .ai-content ul { list-style-type: disc; padding-left: 20px; margin: 8px 0; }
-        .ai-content ol { list-style-type: decimal; padding-left: 20px; margin: 8px 0; }
-        .ai-content p { margin-bottom: 8px; }
-        .ai-content p:last-child { margin-bottom: 0; }
-        .ai-content strong { font-weight: 700; color: #4f46e5; }
-        .dark .ai-content strong { color: #c084fc; }
+        /* Remove LoadingOverlay CSS since we now use the in-chat message */
+        #loadingOverlay { display: none !important; }
+
     </style>
 </head>
 <body class="h-full transition-colors duration-300"> 
@@ -102,19 +106,19 @@
         <p class="text-lg font-medium">กำลังโหลดหน้าแชท...</p>
     </div>
 
-    <div id="content" class="h-full flex flex-col"> 
+    <div id="content" class="h-full"> 
 
-        <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
             <div class="absolute top-[-50px] left-[-50px] w-64 h-64 bg-pink-600 rounded-full blur-[100px] opacity-0 dark:opacity-30 mix-blend-screen transition-opacity duration-500"></div>
         </div>
 
         <div id="chat-app" class="w-full h-full flex flex-col shadow-none bg-white dark:bg-black relative z-10">
             
-            <header class="p-4 border-b border-gray-200 dark:border-zinc-800 flex-shrink-0 bg-white dark:bg-black transition-colors duration-300">
+            <header class="p-4 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-20 bg-white dark:bg-black transition-colors duration-300">
                 <div class="flex justify-between items-center">
-                    <button onclick="window.close()" class="text-blue-500 dark:text-blue-400 font-medium text-base flex items-center gap-1">
+                    <button class="text-blue-500 dark:text-blue-400 font-medium text-base flex items-center gap-1">
                         <i class="fas fa-chevron-left text-sm"></i>
-                        ปิด
+                        Chats
                     </button>
                     <h1 class="font-semibold text-gray-900 dark:text-white text-base">Sideline AI Chat</h1>
                     <button id="theme-toggle" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-600 dark:text-yellow-400 bg-gray-100 dark:bg-zinc-800 hover:scale-105 transition-transform duration-200">
@@ -124,360 +128,449 @@
                 </div>
             </header>
 
-            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar scroll-smooth">
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar">
                 
                 <div id="initialWelcome" class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs mt-1 ai-accent"><i class="fas fa-robot"></i></div>
                     <div class="ai-message p-3 shadow-sm max-w-[85%] transition-colors duration-300">
-                        <div class="ai-content text-sm">
-                            <p><span class="font-bold">อันยอง!</span> AI เนโก๊ะ พร้อมช่วยงานค่ะ</p>
-                            <p>ฉันสามารถ <strong>ค้นหาข้อมูลล่าสุดจาก Google</strong> ได้ เพียงพิมพ์คำว่า <strong>"ค้นหา"</strong> นำหน้าคำถาม</p>
-                            <p>เช่น: "ค้นหา ร้านอาหารเชียงใหม่"</p>
-                        </div>
+                        <p class="text-sm">
+                            <span class="font-bold">สวัสดีครับ!</span> ฉันคือ AI Assistant ที่ใช้ Google Gemini
+                            <br><br>
+                            ฉันสามารถ **ค้นหาข้อมูลล่าสุดจาก Google** ให้คุณได้ทันที เพียงพิมพ์คำว่า **"ค้นหา"** นำหน้าคำถามครับ
+                            <br>
+                            เช่น: "ค้นหา เรทราคางานแต่งช่างภาพเชียงใหม่"
+                        </p>
                         <span class="text-[10px] text-gray-500 dark:text-gray-400 block text-right mt-1">Ready</span>
                     </div>
                 </div>
                 
             </div>
 
-            <footer class="p-3 border-t border-gray-200 dark:border-zinc-800 flex-shrink-0 bg-white dark:bg-black transition-colors duration-300 pb-safe">
+            <footer class="p-3 border-t border-gray-200 dark:border-zinc-800 sticky bottom-0 z-20 bg-white dark:bg-black transition-colors duration-300">
                 <form id="inputForm" class="flex items-center gap-2 max-w-4xl mx-auto"> 
                     <button type="button" id="historyBtn" class="w-10 h-10 bg-gray-200 dark:bg-zinc-800 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors">
                         <i class="fas fa-history"></i>
                     </button>
                     
                     <div class="flex-1 relative">
-                        <input type="text" id="userInput" placeholder="พิมพ์ข้อความ..." autocomplete="off"
+                        <input type="text" id="userInput" placeholder="Ask me anything..." required
                             class="w-full h-10 px-4 bg-gray-200 dark:bg-zinc-800 rounded-full text-sm outline-none placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-[#311b92]">
                     </div>
                     
-                    <button type="submit" class="w-10 h-10 rounded-full flex items-center justify-center text-white gemini-send-btn hover:scale-105 transition-transform shadow-lg">
+                    <button type="submit" class="w-10 h-10 rounded-full flex items-center justify-center text-white gemini-send-btn hover:scale-105 transition-transform">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
-                <div class="w-32 h-1 bg-gray-300 rounded-full mx-auto mt-4 dark:bg-zinc-700 opacity-50"></div>
+                <div class="w-32 h-1 bg-gray-300 rounded-full mx-auto mt-4 dark:bg-zinc-700"></div>
             </footer>
         </div>
     
-    </div> 
-
-    <div id="historyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden justify-center items-center z-50 p-4">
-        <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-2xl w-full max-w-sm transform transition-all duration-300">
+    </div> <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+        <div class="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-2xl w-full max-w-sm transform transition-all duration-300">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white"><i class="fas fa-history mr-2"></i> ประวัติการค้นหา</h3>
-                <button onclick="document.getElementById('historyModal').style.display='none'" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500"><i class="fas fa-times"></i></button>
+                <button onclick="document.getElementById('historyModal').style.display='none'" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><i class="fas fa-times"></i></button>
             </div>
-            <div id="historyList" class="max-h-60 overflow-y-auto space-y-2">
+            <div id="historyList" class="max-h-60 overflow-y-auto">
                 </div>
-            <button onclick="googleSearch.clearHistory(); document.getElementById('historyModal').style.display='none'" class="mt-4 w-full py-2 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 transition-colors">ล้างประวัติทั้งหมด</button>
+            <button onclick="googleSearch.clearHistory(); document.getElementById('historyModal').style.display='none'" class="mt-4 w-full text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200">ล้างประวัติทั้งหมด</button>
         </div>
     </div>
 
     <script>
-        // Start Loader
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                document.getElementById('loader').style.pointerEvents = 'none';
-                document.getElementById('content').style.opacity = '1';
-            }, 1000);
-        });
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('content');
 
+            // จำลองโหลด 2 วินาที (สามารถลบ setTimeout นี้ออกได้หากไม่ต้องการดีเลย์)
+            setTimeout(() => {
+                loader.style.opacity = '0'; // ทำให้จางหาย
+                loader.style.pointerEvents = 'none'; // ทำให้คลิกทะลุได้
+
+                content.style.opacity = '1'; // แสดงเนื้อหา
+                
+            }, 2000);
+        });
+    </script>
+    <script>
         // ----------------------------------------------------
-        // LOGIC CLASS
+        // 1. CLASS: GOOGLE SEARCH INTEGRATION (CORE LOGIC)
         // ----------------------------------------------------
         class GoogleSearchIntegration {
             constructor() {
-                // FIXED: Use standard Netlify Functions path
-                this.API_PROXY_URL = '/.netlify/functions/gemini'; 
+                // 🔑 เชื่อมต่อกับ Proxy ที่คุณตั้งค่าบน Vercel/Netlify
+                this.API_PROXY_URL = '/api/gemini'; 
                 this.searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
             }
 
+            // ฟังก์ชันหลักสำหรับเรียก Vercel Proxy (ปลอดภัย ไม่เปิดเผย Key)
             async callProxy(query, isSearch) {
                 try {
-                    if (isSearch) this.addToHistory(query);
+                    // ไม่ใช้ showLoading/hideLoading ที่เป็น Full Overlay แล้ว
                     
-                    const response = await fetch(this.API_PROXY_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ query: query, isSearch: isSearch })
-                    });
-                    
-                    let data;
-                    try {
-                        data = await response.json();
-                    } catch (e) {
-                        throw new Error("Invalid JSON response from server");
+                    if (isSearch) {
+                        this.addToHistory(query);
                     }
+                    
+                    const response = await fetch(
+                        this.API_PROXY_URL,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                query: query,
+                                isSearch: isSearch
+                            })
+                        }
+                    );
                     
                     if (!response.ok) {
-                        throw new Error(data.error || `Server Error: ${response.status}`);
+                        const errorData = await response.json();
+                        throw new Error(`Proxy Error: ${response.status} - ${errorData.error ? errorData.error.message : 'Unknown error'}`);
                     }
                     
-                    // Fallback if data structure is unexpected
-                    const text = data.text || (data.candidates && data.candidates[0]?.content?.parts[0]?.text) || "ไม่ได้รับคำตอบจากระบบ";
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                         throw new Error(data.details || data.error);
+                    }
 
                     if (isSearch) {
-                        return this.formatSearchResponse(text, query);
+                        return this.formatGeminiResponse({ candidates: [{ content: { parts: [{ text: data.text }] } }] }, query);
                     }
                     
-                    return { type: 'ai_response', content: text };
+                    return {
+                        type: 'ai_response',
+                        content: data.text
+                    };
                     
                 } catch (error) {
-                    console.error('API Error:', error);
+                    console.error('API call failed:', error);
                     return this.getErrorMessage(error);
                 }
             }
             
-            formatSearchResponse(text, query) {
-                // Check safety or empty
-                if (!text || text.includes("Safety Blocked")) {
-                    return { type: 'error', content: this.getSafetyMessage(query).content };
+            formatGeminiResponse(data, query) {
+                // ... (ฟังก์ชันจัดการการตอบกลับจาก AI) ...
+                if (!data.candidates || !data.candidates[0]) {
+                    return { type: 'no_results', content: this.getNoResultsMessage(query) };
                 }
-
+                if (data.candidates[0].finishReason === 'SAFETY') {
+                    return { type: 'no_results', content: this.getSafetyMessage(query) };
+                }
+                const geminiText = data.candidates[0].content.parts[0].text;
+                
                 return {
                     type: 'ai_response',
-                    content: this.enhanceResponseFormat(text, query)
+                    content: this.enhanceResponseFormat(geminiText, query)
                 };
             }
 
             enhanceResponseFormat(text, query) {
-                // Better Markdown Formatting
                 let htmlContent = text
-                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // sanitize basic
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
-                    .replace(/^\* (.*?)$/gm, '<li>$1</li>') // Bullet points
-                    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>') // Wrap lists (basic)
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
                     .replace(/\n\n/g, '<p>')
                     .replace(/\n/g, '<br>');
-                
+
                 return `
                     <div class="search-result-enhanced ai-message">
                         <div class="search-header-main">
-                            <i class="fas fa-search"></i>
-                            <h3>ผลการค้นหา: "${query}"</h3>
+                            <div class="search-icon-title">
+                                <i class="fas fa-search"></i>
+                                <h3>ผลการค้นหา: "${query}"</h3>
+                            </div>
                         </div>
-                        <div class="result-text ai-content">
-                            ${htmlContent}
-                        </div>
-                        <div class="result-meta-info mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[10px] text-gray-400">Powered by Google Gemini</span>
-                                <button class="action-btn-copy" onclick="googleSearch.copyToClipboard(this)">
-                                    <i class="fas fa-copy"></i> คัดลอก
-                                </button>
-                                <div class="raw-text hidden">${text}</div>
+                        <div class="result-content-main">
+                            <div class="result-text">
+                                ${htmlContent}
+                            </div>
+                            <div class="result-meta-info">
+                                <div class="meta-item">
+                                    <i class="fas fa-robot"></i>
+                                    <span>สร้างข้อมูลโดย Google Gemini AI (ใช้ Google Search)</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="action-btn-copy" onclick="googleSearch.copyToClipboard('${this.escapeHtml(text)}')">
+                                        <i class="fas fa-copy"></i>
+                                        คัดลอกข้อมูล
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }
 
-            copyToClipboard(btn) {
-                // Find raw text sibling
-                const rawText = btn.nextElementSibling.textContent;
-                
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(rawText).then(() => {
-                        const originalHtml = btn.innerHTML;
-                        btn.innerHTML = '<i class="fas fa-check"></i> คัดลอกแล้ว';
-                        setTimeout(() => btn.innerHTML = originalHtml, 2000);
-                    });
-                } else {
-                    // Fallback
-                    const ta = document.createElement('textarea');
-                    ta.value = rawText;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    alert('คัดลอกเรียบร้อย');
-                }
+            copyToClipboard(text) {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = text.replace(/<br>/g, '\n').replace(/<p>/g, '\n\n');
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('คัดลอกข้อมูลเรียบร้อยแล้ว!');
             }
 
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            addToHistory(query) {
+                const historyItem = {
+                    query: query,
+                    timestamp: new Date().toISOString(),
+                    id: Date.now() + Math.random()
+                };
+                this.searchHistory.unshift(historyItem);
+                this.searchHistory = this.searchHistory.slice(0, 50);
+                localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                historyList.innerHTML = '';
+                if (this.searchHistory.length === 0) {
+                    historyList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-4">ไม่มีประวัติการค้นหา</p>';
+                    return;
+                }
+                this.searchHistory.slice(0, 10).forEach(item => {
+                    const historyElement = document.createElement('div');
+                    historyElement.className = 'history-item';
+                    historyElement.innerHTML = `<i class="fas fa-search"></i><span class="history-query">${item.query}</span>`;
+                    historyElement.addEventListener('click', () => {
+                        document.getElementById('userInput').value = item.query;
+                        document.getElementById('historyModal').style.display='none';
+                        this.handleUserInput(item.query);
+                    });
+                    historyList.appendChild(historyElement);
+                });
+            }
+
+            clearHistory() {
+                this.searchHistory = [];
+                localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
+                this.updateHistoryDisplay();
+            }
+            
             getErrorMessage(error) {
+                // ... (ฟังก์ชันแสดง Error Message) ...
                 return {
                     type: 'error',
                     content: `
-                        <div class="error-message-enhanced ai-message border-l-4 border-red-500">
-                            <div class="error-icon"><i class="fas fa-exclamation-circle text-red-500"></i> ข้อผิดพลาด</div>
-                            <div class="error-content text-sm text-red-600 dark:text-red-400">
-                                <p>${error.message}</p>
-                                <p class="mt-2 text-xs text-gray-500">โปรดลองใหม่อีกครั้ง หรือตรวจสอบการเชื่อมต่อ</p>
+                        <div class="error-message-enhanced ai-message">
+                            <div class="error-icon"><i class="fas fa-exclamation-triangle text-red-500"></i></div>
+                            <div class="error-content">
+                                <h3>เกิดข้อผิดพลาดในการเชื่อมต่อ!</h3>
+                                <p class="text-xs text-red-400">ข้อผิดพลาด: ${error.message}</p>
+                                <div class="error-suggestions mt-3">
+                                    <p class="font-bold">แนวทางการแก้ไข:</p>
+                                    <ul class="list-disc pl-5 text-sm">
+                                        <li>ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</li>
+                                        <li>API Key บน Vercel อาจมีปัญหา หรือถึงขีดจำกัด</li>
+                                        <li>Vercel Proxy Server อาจมีปัญหา (ตรวจสอบ <code class="bg-gray-200 dark:bg-zinc-700 p-1 rounded">/api/gemini</code>)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     `
                 };
             }
 
-            addToHistory(query) {
-                const item = { query, timestamp: new Date().toISOString() };
-                this.searchHistory.unshift(item);
-                this.searchHistory = this.searchHistory.slice(0, 20); // Keep last 20
-                localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
-                this.updateHistoryDisplay();
+            getSafetyMessage(query) {
+                // ... (ฟังก์ชันแสดง Safety Message) ...
+                return {
+                    type: 'error',
+                    content: `
+                        <div class="error-message-enhanced ai-message">
+                            <div class="error-icon"><i class="fas fa-shield-alt text-yellow-500"></i></div>
+                            <div class="error-content">
+                                <h3>ถูกบล็อกโดยนโยบายความปลอดภัย</h3>
+                                <p>คำค้นหา <span class="font-bold">"${query}"</span> ถูกจำกัดการตอบสนองตามนโยบายของ Gemini AI</p>
+                                <p class="text-xs mt-2">กรุณาลองเปลี่ยนคำค้นหาให้เหมาะสมมากขึ้น</p>
+                            </div>
+                        </div>
+                    `
+                };
             }
 
-            updateHistoryDisplay() {
-                const list = document.getElementById('historyList');
-                if (!list) return;
-                list.innerHTML = '';
-                if (this.searchHistory.length === 0) {
-                    list.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm">ไม่มีประวัติ</p>';
-                    return;
-                }
-                this.searchHistory.forEach(item => {
-                    const el = document.createElement('div');
-                    el.className = 'p-3 bg-gray-50 dark:bg-zinc-800 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center gap-3 transition-colors';
-                    el.innerHTML = `<i class="fas fa-search text-gray-400"></i><span class="text-sm truncate flex-1 text-gray-700 dark:text-gray-300">${item.query}</span>`;
-                    el.onclick = () => {
-                        document.getElementById('userInput').value = item.query;
-                        document.getElementById('historyModal').style.display='none';
-                        this.handleUserInput(item.query);
-                    };
-                    list.appendChild(el);
-                });
+            getNoResultsMessage(query) {
+                // ... (ฟังก์ชันแสดง No Results Message) ...
+                return `
+                    <div class="no-results-enhanced ai-message">
+                        <div class="no-results-icon"><i class="fas fa-search-minus text-purple-500"></i></div>
+                        <div class="no-results-content">
+                            <h3>ไม่พบข้อมูลสำหรับ "${query}"</h3>
+                            <div class="search-tips mt-3">
+                            <p class="font-bold">เคล็ดลับการค้นหา:</p>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>ใช้คำค้นหาที่เฉพาะเจาะจงมากขึ้น</li>
+                                <li>ลองเปลี่ยนคำพ้องความหมาย</li>
+                                <li>ตรวจสอบการสะกดคำ</li>
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
 
-            clearHistory() {
-                this.searchHistory = [];
-                localStorage.setItem('searchHistory', JSON.stringify([]));
-                this.updateHistoryDisplay();
+            createAIMessageContent(text) {
+                let htmlContent = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '<p>')
+                    .replace(/\n/g, '<br>');
+                
+                return htmlContent; // ส่งแค่เนื้อหาเพื่อไปใส่ใน div
             }
 
-            // --- MAIN HANDLER ---
+            // ----------------------------------------------------
+            // 2. MAIN HANDLER (เหมือนกับ sendMessage() ของคุณ)
+            // ----------------------------------------------------
+            
             async handleUserInput(query) {
-                const container = document.getElementById('chatContainer');
+                const chatContainer = document.getElementById('chatContainer');
                 
-                // 1. User Message
-                container.appendChild(this.createMessage(query, 'user'));
-                this.scrollToBottom();
+                // 1. เพิ่มข้อความผู้ใช้ (เหมือน addMessage(userText, 'user'))
+                const userMessage = this.createMessageElement(query, 'user');
+                chatContainer.appendChild(userMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight; 
 
-                // 2. Loading Placeholder
-                const loaderId = 'loader-' + Date.now();
-                container.appendChild(this.createMessage('loading', 'ai', loaderId));
-                this.scrollToBottom();
+                // 2. เพิ่มข้อความ AI Placeholder (เหมือน addMessage('กำลังตอบ...', 'bot'))
+                const aiMessagePlaceholder = this.createMessageElement('loading', 'ai');
+                chatContainer.appendChild(aiMessagePlaceholder);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
 
-                // 3. Logic
-                const searchKeywords = ['ค้นหา', 'หา', 'search', 'ข้อมูลของ', 'ราคา'];
-                const isSearch = searchKeywords.some(k => query.toLowerCase().startsWith(k));
-                let cleanQuery = isSearch ? query.replace(new RegExp(`^(${searchKeywords.join('|')})\\s*`, 'i'), '').trim() : query;
-                if(!cleanQuery) cleanQuery = query; // Fallback
-
-                // 4. API Call
-                const response = await this.callProxy(cleanQuery, isSearch);
-
-                // 5. Replace Loader
-                const loaderEl = document.getElementById(loaderId);
-                if(loaderEl) loaderEl.remove();
-
-                const responseDiv = document.createElement('div');
-                responseDiv.className = 'flex items-start gap-3 fade-in';
+                // 3. กำหนดว่าจะใช้ 'search' หรือ 'getAIResponse'
+                const searchKeywords = ['ค้นหา', 'หา', 'search', 'ข้อมูลของ'];
+                const isSearchQuery = searchKeywords.some(keyword => query.toLowerCase().startsWith(keyword));
                 
-                const time = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+                let actualQuery = query;
+                if (isSearchQuery) {
+                    actualQuery = query.replace(new RegExp(`^(${searchKeywords.join('|')})\\s*`, 'i'), '').trim();
+                }
+
+                let response = await this.callProxy(actualQuery, isSearchQuery); 
+
+                // 4. ลบ/แทนที่ข้อความ AI Placeholder (แทน removeLatestBotMessage + addMessage(reply))
+                aiMessagePlaceholder.remove();
+
+                // 5. สร้างข้อความสุดท้าย
+                const finalMessage = document.createElement('div');
+                const timeStamp = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 
-                if (response.type === 'error' || (typeof response.content === 'string' && response.content.includes('search-result-enhanced'))) {
-                    // Complex/HTML content
-                    responseDiv.innerHTML = `
+                const isEnhanced = response.type === 'error' || response.type === 'no_results' || typeof response.content === 'string' && response.content.includes('search-result-enhanced');
+
+                if (isEnhanced) {
+                    // สำหรับผลลัพธ์การค้นหา, Error, No Results (ใช้ format พิเศษ)
+                     finalMessage.className = 'flex items-start gap-3';
+                     finalMessage.innerHTML = `
                         <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs mt-1 ai-accent"><i class="fas fa-robot"></i></div>
-                        <div class="max-w-[90%] w-full">
+                        <div class="max-w-[85%]">
                             ${response.content}
-                            <span class="text-[10px] text-gray-500 block text-right mt-1">${time}</span>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 block text-right mt-1">${timeStamp}</span>
                         </div>
                     `;
                 } else {
-                    // Standard Text Response
-                    let formattedText = response.content
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\n/g, '<br>');
-                        
-                    responseDiv.innerHTML = `
+                    // สำหรับข้อความแชททั่วไป (ใช้ bubble ปกติ)
+                    finalMessage.className = 'flex items-start gap-3';
+                    finalMessage.innerHTML = `
                         <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs mt-1 ai-accent"><i class="fas fa-robot"></i></div>
                         <div class="ai-message p-3 shadow-sm max-w-[85%] transition-colors duration-300">
-                            <div class="ai-content text-sm leading-relaxed">${formattedText}</div>
-                            <span class="text-[10px] text-gray-500 dark:text-gray-400 block text-right mt-1">${time}</span>
+                            <p class="text-sm">${this.createAIMessageContent(response.content)}</p>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 block text-right mt-1">${timeStamp}</span>
                         </div>
                     `;
                 }
-
-                container.appendChild(responseDiv);
-                this.scrollToBottom();
-                document.getElementById('userInput').value = '';
+                
+                chatContainer.appendChild(finalMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                document.getElementById('userInput').value = ''; // ล้าง Input
             }
 
-            createMessage(content, type, id = null) {
-                const div = document.createElement('div');
-                if (id) div.id = id;
-                const time = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+            createMessageElement(content, type) {
+                const timestamp = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
                 if (type === 'user') {
-                    div.className = 'flex justify-end items-end gap-2 animate';
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-end items-end gap-2';
                     div.innerHTML = `
-                        <div class="user-bubble text-sm leading-relaxed p-3 px-4 max-w-[85%] font-medium shadow-sm">
+                        <div class="user-bubble text-sm leading-relaxed p-4 max-w-[85%] font-medium transition-colors duration-300 shadow-md">
                             ${content}
-                            <span class="text-[10px] block text-right mt-1 opacity-70">${time}</span>
+                            <span class="text-[10px] block text-right mt-1 opacity-80">${timestamp}</span>
                         </div>
                     `;
-                } else {
-                    div.className = 'flex items-start gap-3';
+                    return div;
+                } else { // type === 'ai' (AI Placeholder/Loading - เหมือน "กำลังตอบ..." ของคุณ)
+                    const div = document.createElement('div');
+                    // ให้มี ID/Class ที่สามารถเลือกเพื่อลบออกได้ง่าย
+                    div.className = 'flex items-start gap-3 ai-loading-placeholder'; 
                     div.innerHTML = `
                         <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs mt-1 ai-accent"><i class="fas fa-robot"></i></div>
-                        <div class="ai-message p-3 shadow-sm max-w-[85%]">
-                            <p class="text-sm flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                                <i class="fas fa-circle-notch fa-spin text-indigo-500"></i> กำลังพิมพ์...
-                            </p>
+                        <div class="ai-message p-3 shadow-sm max-w-[85%] transition-colors duration-300">
+                            <p class="text-sm flex items-center"><i class="fas fa-spinner fa-spin mr-2 text-indigo-600 dark:text-purple-400"></i> AI กำลังประมวลผล...</p>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 block text-right mt-1">${timestamp}</span>
                         </div>
                     `;
+                    return div;
                 }
-                return div;
-            }
-
-            scrollToBottom() {
-                const c = document.getElementById('chatContainer');
-                setTimeout(() => { c.scrollTop = c.scrollHeight; }, 50);
             }
         }
-
+        
         // ----------------------------------------------------
-        // INITIALIZATION
+        // 3. INITIALIZATION
         // ----------------------------------------------------
+        
         window.googleSearch = new GoogleSearchIntegration();
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Theme
-            const toggleBtn = document.getElementById('theme-toggle');
-            const html = document.documentElement;
-            const savedTheme = localStorage.getItem('theme');
-            if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
-                html.classList.add('dark');
+            const toggleButton = document.getElementById('theme-toggle');
+            const htmlElement = document.documentElement;
+            const inputForm = document.getElementById('inputForm');
+            const userInput = document.getElementById('userInput');
+            const historyBtn = document.getElementById('historyBtn');
+            const historyModal = document.getElementById('historyModal');
+
+            // --- Theme Toggle Logic ---
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlElement.classList.add('dark');
             }
-            toggleBtn.onclick = () => {
-                html.classList.toggle('dark');
-                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-            };
 
-            // Input Handling
-            const form = document.getElementById('inputForm');
-            const input = document.getElementById('userInput');
+            toggleButton.addEventListener('click', () => {
+                const isDark = htmlElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
             
-            form.onsubmit = (e) => {
+            // --- Input and Submit Logic (เชื่อมต่อปุ่มส่ง) ---
+            inputForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const txt = input.value.trim();
-                if(txt) googleSearch.handleUserInput(txt);
-            };
-
-            input.onkeydown = (e) => {
-                if(e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    form.dispatchEvent(new Event('submit'));
+                const query = userInput.value.trim();
+                if (query) {
+                    googleSearch.handleUserInput(query);
                 }
-            };
+            });
 
-            // History Modal
-            document.getElementById('historyBtn').onclick = () => {
+            // --- History Logic ---
+            googleSearch.updateHistoryDisplay();
+            
+            historyBtn.addEventListener('click', () => {
                 googleSearch.updateHistoryDisplay();
-                document.getElementById('historyModal').style.display = 'flex';
-            };
+                historyModal.style.display = 'flex';
+            });
+            
+            // --- Enter Key (เหมือนกับที่คุณร้องขอ) ---
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); 
+                    inputForm.dispatchEvent(new Event('submit', { cancelable: true }));
+                }
+            });
         });
     </script>
 </body>
