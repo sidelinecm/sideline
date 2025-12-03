@@ -7,8 +7,6 @@
     "build": "echo 'No build step required, running dependencies only'"
   },
   "dependencies": {
-    // ต้องมีบรรทัดนี้!!!
     "@google/generative-ai": "^0.21.0" 
-    // อาจจะมี dependencies ตัวอื่นของคุณอยู่ก่อนแล้ว
   }
 }
