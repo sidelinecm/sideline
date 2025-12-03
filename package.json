@@ -1,10 +1,8 @@
+
 {
   "name": "sideline-ai-chat",
-  "version": "1.0.0",
-  "type": "module", 
-  "scripts": {
-    "build": "echo 'No build step required, dependencies are installed.'" // ใส่คำสั่งที่ไม่ทำอะไร แต่ทำให้ Netlify ไม่ติด Error
-  },
+  "version": "1.0.0"  <-- ถ้าบรรทัดนี้ไม่มีคอมม่า
+  "type": "module",    <-- Error จะเกิดตรงนี้ เพราะคาดหวังคอมม่าก่อน "type"
   "dependencies": {
     "@google/genai": "^0.1.0"
   }
