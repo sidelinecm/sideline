@@ -30,8 +30,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <meta property="og:image" content="https://sidelinechiangmai.netlify.app/images/adminkissmodelsocial.webp">
   <link rel="shortcut icon" href="/images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.webp">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.webp">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
@@ -258,7 +258,7 @@ html, body { background: var(--bg); color: var(--text); }
 </div>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/+esm'
 
 const supabaseUrl = 'https://hgzbgpbmymoiwjpaypvl.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnemJncGJteW1vaXdqcGF5cHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxMDUyMDYsImV4cCI6MjA2MjY4MTIwNn0.dIzyENU-kpVD97WyhJVZF9owDVotbl1wcYgPTt9JL_8';
@@ -446,73 +446,76 @@ const Controller = {
     },
 
     async loadInitialData() {
-        await this.fetchData(); 
-        const currentView = AppState.currentView;
-        const currentParams = AppState.currentParams;
-        this.renderView(currentView, currentParams);
-    },
+    await this.fetchData();
+    const currentView = AppState.currentView;
+    const currentParams = AppState.currentParams;
+    this.renderView(currentView, currentParams);
+}, // <--- จุดที่ 1: มีเครื่องหมายจุลภาค (,) เพื่อให้ต่อด้วยเมธอดถัดไป
 
-    // ใน Controller
+// ใน Controller
 async fetchData(force = false) {
-  const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
+    const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
 
-  // โหลดข้อมูลโปรไฟล์ที่อัปเดตหลัง lastFetchTime
-  const profilesResponse = await supabase
-    .from('profiles')
-    .select('*')
-    .gte('lastUpdated', lastFetchTime);
-  if (profilesResponse.error) throw profilesResponse.error;
+    // โหลดข้อมูลโปรไฟล์ที่อัปเดตหลัง lastFetchTime
+    const profilesResponse = await supabase
+        .from('profiles')
+        .select('*')
+        // โค้ดส่วนที่เคยถูกตัดออกได้รับการแก้ไขให้สมบูรณ์แล้ว
+        .gte('lastUpdated', lastFetchTime);
+    if (profilesResponse.error) throw profilesResponse.error;
 
-  const newProfiles = profilesResponse.data || [];
+    const newProfiles = profilesResponse.data || [];
 
-  // อัปเดตข้อมูลใน AppState.allProfiles
-  newProfiles.forEach(p => {
-    const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
-    if (index !== -1) {
-      AppState.allProfiles[index] = p;
-    } else {
-      AppState.allProfiles.push(p);
-    }
-  });
-
-  // อัปเดต lastFetchTime เป็นเวลาปัจจุบัน
-  AppState.lastFetchTime = new Date().toISOString();
-
-  // โหลด provinces ถ้าจำเป็น
-  if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
-    const provincesResponse = await supabase.from('provinces').select('*').order('nameThai');
-    if (provincesResponse.error) throw provincesResponse.error;
-    AppState.provinces = provincesResponse.data || [];
-  }
-
-  // เรียก updateStats จาก Controller
-  Controller.updateStats();
-},
-    updateStats() { 
-        AppState.stats.profiles = AppState.allProfiles.length; 
-        AppState.stats.featured = AppState.allProfiles.filter(p => p.isfeatured).length; 
-        AppState.stats.provinces = AppState.provinces.length;
-    },
-
-    renderView(viewId, params = {}) {
-        AppState.currentView = viewId;
-        AppState.currentParams = params;
-        DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
-        UI.setActiveNav(viewId);
-        const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
-        if (activeNav) {
-            const titleText = activeNav.textContent.trim();
-            DOM.headerTitle.textContent = titleText;
-            DOM.viewTitle.textContent = titleText;
-        }
-        if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
-        const renderFunction = this[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
-        if (typeof renderFunction === 'function') {
-            renderFunction.call(this, params);
+    // อัปเดตข้อมูลใน AppState.allProfiles
+    newProfiles.forEach(p => {
+        const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
+        if (index !== -1) {
+            AppState.allProfiles[index] = p;
         } else {
-            DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+            AppState.allProfiles.push(p);
         }
-    },
+    });
+
+    // อัปเดต lastFetchTime เป็นเวลาปัจจุบัน
+    AppState.lastFetchTime = new Date().toISOString();
+
+    // โหลด provinces ถ้าจำเป็น
+    if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
+        const provincesResponse = await supabase.from('provinces').select('*').order('nameThai');
+        if (provincesResponse.error) throw provincesResponse.error;
+        AppState.provinces = provincesResponse.data || [];
+    }
+
+    // เรียก updateStats จาก Controller
+    Controller.updateStats();
+}, // <--- จุดที่ 2: เพิ่มเครื่องหมายจุลภาค (,)
+
+updateStats() {
+    AppState.stats.profiles = AppState.allProfiles.length;
+    AppState.stats.featured = AppState.allProfiles.filter(p => p.isfeatured).length;
+    AppState.stats.provinces = AppState.provinces.length;
+}, // <--- จุดที่ 3: เพิ่มเครื่องหมายจุลภาค (,)
+
+renderView(viewId, params = {}) {
+    AppState.currentView = viewId;
+    AppState.currentParams = params;
+    DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
+    UI.setActiveNav(viewId);
+    const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
+    if (activeNav) {
+        const titleText = activeNav.textContent.trim();
+        DOM.headerTitle.textContent = titleText;
+        DOM.viewTitle.textContent = titleText;
+    }
+    if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
+    const renderFunction = this[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
+    if (typeof renderFunction === 'function') {
+        renderFunction.call(this, params);
+    } else {
+        DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+    }
+},
+ 
 
     renderDashboardContainer() { 
         const { profiles, featured, provinces } = AppState.stats;
@@ -523,7 +526,6 @@ async fetchData(force = false) {
         ];
         DOM.viewContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${statsCards.map(s => `<div class="bg-white p-6 rounded-xl shadow-md flex items-center gap-5"><i class="fas fa-${s.i} text-3xl text-${s.c}-500 bg-${s.c}-100 p-4 rounded-full"></i><div><p class="text-sm text-slate-500">${s.t}</p><p class="text-3xl font-bold text-slate-800">${s.v}</p></div></div>`).join('')}</div>`;
     },
-
     renderProfilesListContainer() { 
         DOM.viewContent.innerHTML = `<div class="space-y-6"><div class="bg-white p-4 rounded-xl shadow-md"><input type="text" id="search-input" placeholder="ค้นหาด้วยชื่อ..." class="form-input"></div><div id="profiles-grouped-list" class="space-y-8"></div></div>`; 
         this.renderGroupedProfileCards(); 
