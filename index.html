@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- โค้ดอื่นๆ ของคุณ -->
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script    <title>Admin sideline chiangmai    <!-- โค้ดอื่นๆ ของคุณ -->
+
   <!-- Performance + SEO meta injected by assistant -->
-  <meta name="description" content="Admin panel for Sideline ChiangMai cnc168">
+  <meta name="description" content="Admin panel for Sideline Chiang Mai cnc168">
   <meta name="theme-color" content="#4f46e5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,26 +199,8 @@ html, body { background: var(--bg); color: var(--text); }
         @apply px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150;
     }
 </style>
-
 <div id="app-wrapper">
-<div class="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-[9999]" id="global-loader">
-<div class="loader-lg">
-</div>
-
-<div id="app-wrapper">
-    <div class="fixed inset-0 ..." id="global-loader">...</div>
-    <div id="toast-container"></div>
-    
-    <!-- === [ย้ายมาวางตรงนี้] Secret Audit Log Panel === -->
-    <div id="secret-log-panel" style="display: none; ...">
-        ...
-    </div>
-    
-    <div id="modal-root"></div>
-    <div class="hidden min-h-screen ..." id="login-container">...</div>
-    ...
-</div>
-<p class="mt-4 text-lg font-medium text-gray-600" id="loader-text">กำลังเริ่มต้นแอปพลิเคชัน...</p></div>
+<div class="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-[9999]" id="global-loader"><div class="loader-lg"></div><p class="mt-4 text-lg font-medium text-gray-600" id="loader-text">กำลังเริ่มต้นแอปพลิเคชัน...</p></div>
 <div id="toast-container"></div>
 <div id="modal-root"></div>
 
@@ -270,19 +251,7 @@ html, body { background: var(--bg); color: var(--text); }
 </header>
 <main class="p-4 sm:p-6 lg:p-8">
 <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold text-slate-800" id="view-title"></h1><button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 transition" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
-<div id="view-content"><div class="container-pro section-gap">
-<!-- === Secret Audit Log Panel (Initially Hidden) === -->
-<div id="secret-log-panel" style="display: none; position: fixed; inset: 0; z-index: 10000; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(8px);">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(95vw, 1200px); height: 90vh; background-color: #0b0b12; color: #f3f4f6; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); display: flex; flex-direction: column;">
-        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="font-size: 1.25rem; font-weight: 600;"><i class="fas fa-user-secret" style="margin-right: 0.75rem;"></i>Secret Activity Log</h2>
-            <button id="close-secret-panel-btn" style="background: #333; color: white; border: none; border-radius: 99px; width: 2rem; height: 2rem; cursor: pointer;">&times;</button>
-        </div>
-        <div id="secret-log-content" style="padding: 1.5rem; overflow-y: auto; flex-grow: 1;">
-            <!-- Log data will be rendered here by JavaScript -->
-        </div>
-    </div>
-</div></div>
+<div id="view-content"><div class="container-pro section-gap"></div>
 </main>
 </div>
 </div>
@@ -371,48 +340,12 @@ const UI = {
 };
 
 const Controller = {
-async logActivity(action, { target_type, target_id, details }) {
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session || !session.user) return;
-
-            // ดึงข้อมูลความปลอดภัย (IP, พิกัด, ค่ายเน็ต)
-            let meta = { ip: '?', device: '?', city: '?', isp: '?' };
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                const data = await res.json();
-                meta.ip = data.ip || '?';
-                meta.city = `${data.city || ''}, ${data.region || ''}` || '?';
-                meta.isp = data.org || '?';
-            } catch (e) { console.warn("Metadata error"); }
-
-            // เช็ครุ่นอุปกรณ์
-            const ua = navigator.userAgent;
-            if (/android/i.test(ua)) meta.device = "Android";
-            else if (/iPad|iPhone|iPod/.test(ua)) meta.device = "iPhone/iOS";
-            else if (/Windows/i.test(ua)) meta.device = "PC (Windows)";
-            else meta.device = "Other Device";
-
-            // ส่งข้อมูลบันทึกลง Supabase
-            await supabase.from('activity_logs').insert({
-                user_email: session.user.email,
-                action: action,
-                target_type: target_type || null,
-                target_id: target_id || null,
-                details: details || null,
-                ip_address: meta.ip,
-                device_info: meta.device,
-                location_city: meta.city,
-                location_provider: meta.isp
-            });
-        } catch (err) { console.error('Log Error:', err); }
-    },
-    
     async initApp() {
         DOM.globalLoader.classList.remove('hidden');
         DOM.loaderText.textContent = "กำลังตรวจสอบเซสชัน...";
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
+            console.error("Error fetching session:", error);
             this.showLoginScreen("เกิดข้อผิดพลาดในการเชื่อมต่อ");
             return;
         }
@@ -439,7 +372,9 @@ async logActivity(action, { target_type, target_id, details }) {
         DOM.adminContent.classList.add('hidden');
         DOM.loginContainer.classList.remove('hidden');
         DOM.globalLoader.classList.add('hidden');
-        if (toastMessage) UI.showToast(toastMessage, 'info');
+        if (toastMessage) {
+            UI.showToast(toastMessage, 'info');
+        }
     },
 
     async startAdminPanel() {
@@ -451,7 +386,7 @@ async logActivity(action, { target_type, target_id, details }) {
         DOM.globalLoader.classList.remove('hidden');
         DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-800">${AppState.currentUser.email.split('@')[0]}</p>`;
         try {
-            await this.fetchData(true);
+            await this.fetchData();
             this.renderView('dashboard-container');
             UI.showToast('ยินดีต้อนรับ!', 'success');
         } catch (err) {
@@ -472,18 +407,14 @@ async logActivity(action, { target_type, target_id, details }) {
             email: form.email.value,
             password: form.password.value,
         });
-
         if (error) {
             DOM.loginError.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
             UI.showToast('ล็อกอินล้มเหลว', 'error');
-        } else {
-            this.logActivity('user_login', {});
+            UI.toggleButtonLoading(loginButton, false, 'เข้าสู่ระบบ');
         }
-        UI.toggleButtonLoading(loginButton, false, 'เข้าสู่ระบบ');
     },
-    
+
     async handleLogout() {
-        this.logActivity('user_logout', {});
         UI.showToast('กำลังออกจากระบบ...', 'info');
         await supabase.auth.signOut();
     },
@@ -493,8 +424,7 @@ async logActivity(action, { target_type, target_id, details }) {
         DOM.loginForm.addEventListener('submit', e => this.handleLogin(e));
         DOM.logoutButton.addEventListener('click', () => this.handleLogout());
         DOM.menuToggle.addEventListener('click', () => DOM.sidebar.classList.toggle('-translate-x-full'));
-        DOM.refreshButton.addEventListener('click', async () => { UI.showToast('กำลังรีเฟรช...', 'info'); await this.fetchData(true); this.renderView(AppState.currentView, AppState.currentParams); });
-        
+        DOM.refreshButton.addEventListener('click', async () => { UI.showToast('กำลังรีเฟรช...', 'info'); await this.loadInitialData(); });
         document.body.addEventListener('click', e => {
             const navButton = e.target.closest('.nav-button');
             if (navButton) this.renderView(navButton.dataset.view, { action: navButton.dataset.action });
@@ -512,103 +442,80 @@ async logActivity(action, { target_type, target_id, details }) {
             const deleteProvinceBtn = e.target.closest('.delete-province-btn');
             if (deleteProvinceBtn) this.handleDeleteProvince(deleteProvinceBtn.dataset);
         });
-
-        const secretTrigger = document.querySelector('#sidebar .p-5.border-b');
-        if (secretTrigger) {
-            let clickCount = 0;
-            let clickTimer = null;
-            secretTrigger.addEventListener('click', () => {
-                clickCount++;
-                clearTimeout(clickTimer);
-                clickTimer = setTimeout(() => { clickCount = 0; }, 1500);
-                if (clickCount >= 7) {
-                    clickCount = 0;
-                    clearTimeout(clickTimer);
-                    this.showSecretLogPanel();
-                }
-            });
-        }
         this.listenersInitialized = true;
     },
 
-    async fetchData(force = false) {
-        if (force || AppState.allProfiles.length === 0) {
-            const { data, error } = await supabase.from('profiles').select('*').order('name', { ascending: true });
-            if (error) throw error;
-            AppState.allProfiles = data || [];
-        }
-        if (force || AppState.provinces.length === 0) {
-            const { data, error } = await supabase.from('provinces').select('*').order('nameThai');
-            if (error) throw error;
-            AppState.provinces = data || [];
-        }
-        this.updateStats();
-    },
+    async loadInitialData() {
+    await this.fetchData();
+    const currentView = AppState.currentView;
+    const currentParams = AppState.currentParams;
+    this.renderView(currentView, currentParams);
+}, // <--- จุดที่ 1: มีเครื่องหมายจุลภาค (,) เพื่อให้ต่อด้วยเมธอดถัดไป
 
-    updateStats() {
-        AppState.stats.profiles = AppState.allProfiles.length;
-        AppState.stats.featured = AppState.allProfiles.filter(p => p.isfeatured).length;
-        AppState.stats.provinces = AppState.provinces.length;
-    },
+// ใน Controller
+async fetchData(force = false) {
+    const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
 
-// --- 2. แก้ไขส่วนแสดงผลหน้าต่างลับ (วางทับ showSecretLogPanel เดิม) ---
-    async showSecretLogPanel() {
-        const panel = document.getElementById('secret-log-panel');
-        const contentArea = document.getElementById('secret-log-content');
-        const closeBtn = document.getElementById('close-secret-panel-btn');
-        if (!panel || !contentArea || !closeBtn) return;
+    // โหลดข้อมูลโปรไฟล์ที่อัปเดตหลัง lastFetchTime
+    const profilesResponse = await supabase
+        .from('profiles')
+        .select('*')
+        // โค้ดส่วนที่เคยถูกตัดออกได้รับการแก้ไขให้สมบูรณ์แล้ว
+        .gte('lastUpdated', lastFetchTime);
+    if (profilesResponse.error) throw profilesResponse.error;
 
-        panel.style.display = 'block';
-        contentArea.innerHTML = `<div style="display:flex; justify-content:center; padding: 4rem;"><div class="loader-lg"></div></div>`;
-        
-        closeBtn.onclick = () => { panel.style.display = 'none'; contentArea.innerHTML = ''; };
+    const newProfiles = profilesResponse.data || [];
 
-        try {
-            const { data: logs, error } = await supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(50);
-            if (error) throw error;
-            if (logs.length === 0) {
-                contentArea.innerHTML = `<p style="text-align: center; padding: 4rem;">ยังไม่มีข้อมูลกิจกรรม</p>`;
-                return;
-            }
-
-            const logsHTML = logs.map(log => `
-                <div style="border-bottom: 1px solid #333; padding: 1.25rem; font-family: sans-serif; background: #0f0f17; margin-bottom: 8px; border-radius: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <span style="color: #f472b6; font-weight: bold; font-size: 14px;">● ${log.action}</span>
-                        <span style="color: #666; font-size: 11px;">${new Date(log.created_at).toLocaleString('th-TH')}</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 13px; color: #ddd;">
-                        <p style="margin:0;">📧 <b>แอดมิน:</b> ${log.user_email}</p>
-                        <p style="margin:0;">🌐 <b>IP:</b> <span style="color:#4ade80">${log.ip_address || 'Unknown'}</span> | <b>เน็ต:</b> ${log.location_provider || '?'}</p>
-                        <p style="margin:0;">📱 <b>เครื่อง:</b> ${log.device_info || '?'} | <b>พิกัด:</b> ${log.location_city || '?'}</p>
-                    </div>
-                </div>
-            `).join('');
-            contentArea.innerHTML = `<div style="padding: 0 0.5rem;">${logsHTML}</div>`;
-        } catch (err) {
-            contentArea.innerHTML = `<p style="text-align: center; color: #ff8992;">เกิดข้อผิดพลาด: ${err.message}</p>`;
-        }
-    },
-
-    renderView(viewId, params = {}) {
-        AppState.currentView = viewId;
-        AppState.currentParams = params;
-        DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
-        UI.setActiveNav(viewId);
-        const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
-        if (activeNav) {
-            const titleText = activeNav.textContent.trim();
-            DOM.headerTitle.textContent = titleText;
-            DOM.viewTitle.textContent = titleText;
-        }
-        if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
-        const renderFunction = this[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
-        if (typeof renderFunction === 'function') {
-            renderFunction.call(this, params);
+    // อัปเดตข้อมูลใน AppState.allProfiles
+    newProfiles.forEach(p => {
+        const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
+        if (index !== -1) {
+            AppState.allProfiles[index] = p;
         } else {
-            DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+            AppState.allProfiles.push(p);
         }
-    },
+    });
+
+    // อัปเดต lastFetchTime เป็นเวลาปัจจุบัน
+    AppState.lastFetchTime = new Date().toISOString();
+
+    // โหลด provinces ถ้าจำเป็น
+    if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
+        const provincesResponse = await supabase.from('provinces').select('*').order('nameThai');
+        if (provincesResponse.error) throw provincesResponse.error;
+        AppState.provinces = provincesResponse.data || [];
+    }
+
+    // เรียก updateStats จาก Controller
+    Controller.updateStats();
+}, // <--- จุดที่ 2: เพิ่มเครื่องหมายจุลภาค (,)
+
+updateStats() {
+    AppState.stats.profiles = AppState.allProfiles.length;
+    AppState.stats.featured = AppState.allProfiles.filter(p => p.isfeatured).length;
+    AppState.stats.provinces = AppState.provinces.length;
+}, // <--- จุดที่ 3: เพิ่มเครื่องหมายจุลภาค (,)
+
+renderView(viewId, params = {}) {
+    AppState.currentView = viewId;
+    AppState.currentParams = params;
+    DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
+    UI.setActiveNav(viewId);
+    const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
+    if (activeNav) {
+        const titleText = activeNav.textContent.trim();
+        DOM.headerTitle.textContent = titleText;
+        DOM.viewTitle.textContent = titleText;
+    }
+    if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
+    const renderFunction = this[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
+    if (typeof renderFunction === 'function') {
+        renderFunction.call(this, params);
+    } else {
+        DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+    }
+},
+ 
 
     renderDashboardContainer() { 
         const { profiles, featured, provinces } = AppState.stats;
@@ -619,25 +526,19 @@ async logActivity(action, { target_type, target_id, details }) {
         ];
         DOM.viewContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${statsCards.map(s => `<div class="bg-white p-6 rounded-xl shadow-md flex items-center gap-5"><i class="fas fa-${s.i} text-3xl text-${s.c}-500 bg-${s.c}-100 p-4 rounded-full"></i><div><p class="text-sm text-slate-500">${s.t}</p><p class="text-3xl font-bold text-slate-800">${s.v}</p></div></div>`).join('')}</div>`;
     },
-
-    renderProfilesListContainer() {
-        DOM.viewContent.innerHTML = `<div class="space-y-6"><div class="bg-white p-4 rounded-xl shadow-md"><input type="text" id="search-input" placeholder="ค้นหาอัจฉริยะ (ชื่อ, จังหวัด, สไตล์...)" class="form-input"></div><div id="profiles-grouped-list" class="space-y-8"></div></div>`;
-        const fuseOptions = { keys: ['name', 'provinceKey', 'styleTags', 'location', 'quote'], includeScore: true, threshold: 0.4, ignoreLocation: true };
-        const fuse = new Fuse(AppState.allProfiles, fuseOptions);
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', UI.debounce(() => {
-            const searchTerm = searchInput.value.trim();
-            const filtered = searchTerm ? fuse.search(searchTerm).map(result => result.item) : AppState.allProfiles;
-            this.renderGroupedProfileCards(filtered);
-        }, 300));
-        this.renderGroupedProfileCards(AppState.allProfiles);
+    renderProfilesListContainer() { 
+        DOM.viewContent.innerHTML = `<div class="space-y-6"><div class="bg-white p-4 rounded-xl shadow-md"><input type="text" id="search-input" placeholder="ค้นหาด้วยชื่อ..." class="form-input"></div><div id="profiles-grouped-list" class="space-y-8"></div></div>`; 
+        this.renderGroupedProfileCards(); 
+        document.getElementById('search-input').addEventListener('input', UI.debounce(() => this.renderGroupedProfileCards(), 300)); 
     },
 
-    renderGroupedProfileCards(profilesToRender) {
-        const listEl = document.getElementById('profiles-grouped-list');
-        if (!listEl) return;
+    renderGroupedProfileCards() { 
+        const listEl = document.getElementById('profiles-grouped-list'); 
+        if (!listEl) return; 
+        const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || ''; 
+        const filteredProfiles = AppState.allProfiles.filter(p => !searchTerm || (p.name && p.name.toLowerCase().includes(searchTerm))); 
         let html = AppState.provinces.map(province => {
-            const profilesInProvince = profilesToRender.filter(p => p.provinceKey === province.key);
+            const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
             if (profilesInProvince.length === 0) return '';
             return `<div class="province-group"><h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4">${province.nameThai}</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}</div></div>`;
         }).join('');
@@ -651,7 +552,7 @@ async logActivity(action, { target_type, target_id, details }) {
         return `<div class="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col group profile-card-clickable cursor-pointer" data-id="${p.id}"><div class="relative aspect-[3/4]"><img src="${imageUrl}" alt="${p.altText || p.name}" class="w-full h-full object-cover transition-transform group-hover:scale-105" onerror="this.onerror=null;this.src='${placeholder}';" loading="lazy"> ${p.isfeatured ? '<div class="absolute top-3 left-3 bg-amber-400 text-black text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5"><i class="fas fa-star"></i>แนะนำ</div>' : ''}</div><div class="p-3 md:p-4 flex-grow flex flex-col"><h4 class="text-base md:text-lg font-bold text-slate-800 truncate">${p.name || 'N/A'}</h4><p class="text-xs md:text-sm text-slate-500">${provinceName}</p><div class="mt-auto pt-3 md:pt-4 border-t border-slate-200/80 flex space-x-2 md:space-x-3"><button data-id="${p.id}" class="edit-profile-btn flex-1 py-1.5 md:py-2 px-2 md:px-3 text-xs md:text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">แก้ไข</button><button data-id="${p.id}" data-name="${p.name}" data-imagepath="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}" class="delete-profile-btn flex-1 py-1.5 md:py-2 px-2 md:px-3 text-xs md:text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">ลบ</button></div></div></div>`; 
     },
 
-    async renderProfileFormContainer(params = {}) { 
+async renderProfileFormContainer(params = {}) { 
         const profileId = params.profileId;
         const isEditing = !!profileId;
         let p = {};
@@ -663,14 +564,23 @@ async logActivity(action, { target_type, target_id, details }) {
         const imageUrl = (p.imagePaths && p.imagePaths[0]) || p.imagePath ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl((p.imagePaths && p.imagePaths[0]) || p.imagePath).data.publicUrl : null;
         const formHTML = `<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-4xl mx-auto"><form id="profile-form" class="space-y-8"><input type="hidden" id="profile-id" value="${p.id || ''}"><input type="hidden" id="current-image-path" value="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}"><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รูปภาพและสถานะ</h3><div class="flex flex-col md:flex-row gap-6 items-start"><div id="image-uploader" class="flex-shrink-0"></div><div class="flex-grow space-y-4"><label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded" ${p.isfeatured ? 'checked' : ''}><span class="font-medium text-gray-700">ปักหมุดเป็นโปรไฟล์แนะนำ</span></label><div><label for="availability" class="block text-sm font-medium text-slate-700 mb-1">สถานะรับงาน</label><select id="availability" class="form-input">${['สอบถามคิว', 'รับงาน', 'ว่าง', 'รับงานบางวัน', 'ไม่ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลส่วนตัว</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><div><label for="name" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ*</label><input type="text" id="name" required class="form-input" value="${p.name || ''}"></div><div>
 <div class="mb-4">
-  <label for="image-file-input" class="block text-sm font-medium text-gray-700 mb-1">เพิ่มรูปโปรไฟล์หลายรูป</label>
-  <div id="dropzone" class="border-2 border-dashed border-pink-400/60 rounded-xl p-6 text-center cursor-pointer hover:bg-pink-50 transition">
+  <label for="image-file-input" class="block text-sm font-medium text-gray-700 mb-1">
+    เพิ่มรูปโปรไฟล์หลายรูป
+  </label>
+  
+  <div id="dropzone"
+       class="border-2 border-dashed border-pink-400/60 rounded-xl p-6 text-center cursor-pointer hover:bg-pink-50 transition">
     <p class="mb-2 text-gray-500">ลากและวางรูปภาพที่นี่ หรือกดปุ่มเลือกหลายรูป</p>
     <button type="button" id="choose-images" class="btn-primary">เลือกหลายรูป</button>
     <input type="file" id="image-file-input" multiple accept="image/*" class="hidden">
   </div>
+
+  <!-- Preview -->
   <div id="deluxe-preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3"></div>
-  <p class="mt-2 text-xs text-gray-400">ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 80% โดยอัตโนมัติ</p>
+  
+  <p class="mt-2 text-xs text-gray-400">
+    ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 80% โดยอัตโนมัติ
+  </p>
 </div>
 <label for="age" class="block text-sm font-medium text-slate-700 mb-1">อายุ</label><input type="number" id="age" class="form-input" value="${p.age || ''}"></div><div><label for="stats" class="block text-sm font-medium text-slate-700 mb-1">สัดส่วน</label><input type="text" id="stats" class="form-input" value="${p.stats || ''}" placeholder="36-24-35"></div><div><label for="height" class="block text-sm font-medium text-slate-700 mb-1">สูง (cm)</label><input type="text" id="height" class="form-input" value="${p.height || ''}"></div><div><label for="weight" class="block text-sm font-medium text-slate-700 mb-1">หนัก (kg)</label><input type="text" id="weight" class="form-input" value="${p.weight || ''}"></div><div><label for="skinTone" class="block text-sm font-medium text-slate-700 mb-1">สีผิว</label><input type="text" id="skinTone" class="form-input" value="${p.skinTone || ''}" placeholder="ขาวเหลือง"></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลบริการและการติดต่อ</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="provinceKey" class="block text-sm font-medium text-slate-700 mb-1">จังหวัด/หัวข้อ*</label><select id="provinceKey" required class="form-input">${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}</select></div><div><label for="location" class="block text-sm font-medium text-slate-700 mb-1">พิกัด (ย่อย)</label><input type="text" id="location" class="form-input" value="${p.location || ''}" placeholder="นิมมาน, สันติธรรม"></div><div><label for="rate" class="block text-sm font-medium text-slate-700 mb-1">เรทราคา</label><input type="text" id="rate" class="form-input" value="${p.rate || ''}" placeholder="1500/1"></div><div><label for="lineId" class="block text-sm font-medium text-slate-700 mb-1">LINE ID</label><input type="text" id="lineId" class="form-input" value="${p.lineId || ''}"></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รายละเอียดเพิ่มเติม</h3><div class="space-y-4"><div><label for="quote" class="block text-sm font-medium text-slate-700 mb-1">คำโปรยสั้นๆ</label><input type="text" id="quote" class="form-input" value="${p.quote || ''}"></div><div><label for="description" class="block text-sm font-medium text-slate-700 mb-1">รายละเอียด</label><textarea id="description" rows="4" class="form-input">${p.description || ''}</textarea></div><div><label class="block text-sm font-medium text-slate-700 mb-1">สไตล์ (Tags)</label><div id="tag-input-component"></div></div><div><label for="altText" class="block text-sm font-medium text-slate-700 mb-1">คำอธิบายรูปภาพ (Alt Text)</label><input type="text" id="altText" class="form-input" value="${p.altText || ''}" placeholder="น้องใยไหม ไซด์ไลน์เชียงใหม่"></div></div></div><div class="pt-5 flex justify-between items-center border-t"><button type="button" class="nav-button px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200" data-view="profiles-list-container">ยกเลิก</button><div class="flex items-center space-x-3"><button type="button" id="preview-profile-button" class="px-4 py-2.5 text-sm font-medium text-indigo-600 bg-indigo-100 rounded-lg hover:bg-indigo-200"><i class="fas fa-eye mr-2"></i>ดูตัวอย่าง</button><button type="submit" id="save-profile-button" class="flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 btn-pro">${isEditing ? 'บันทึก' : 'สร้าง'}</button></div></div></form></div>`;
         DOM.viewContent.innerHTML = formHTML;
@@ -681,20 +591,37 @@ async logActivity(action, { target_type, target_id, details }) {
 
     initImageUploader(imageUrl) {
       const uploaderEl = document.getElementById('image-uploader');
-      uploaderEl.innerHTML = `<div class="space-y-3"><div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50 hover:border-indigo-400 transition cursor-pointer"><input type="file" id="image-file-input" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"><div class="pointer-events-none text-center"><p class="text-sm text-slate-600 font-medium">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p><p class="text-xs text-slate-500 mt-1">ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 85%</p></div></div><div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></div>`;
+      uploaderEl.innerHTML = `
+        <div class="space-y-3">
+          <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50
+                             hover:border-indigo-400 transition cursor-pointer">
+            <input type="file" id="image-file-input" accept="image/*" multiple
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div class="pointer-events-none text-center">
+              <p class="text-sm text-slate-600 font-medium">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
+              <p class="text-xs text-slate-500 mt-1">ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 85%</p>
+            </div>
+          </div>
+          <div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </div>
+      `;
+
       const fileInput = document.getElementById('image-file-input');
       const dz = document.getElementById('dz');
       const previewGrid = document.getElementById('multi-preview');
+
       const renderPreview = (files) => {
         previewGrid.innerHTML = '';
         files.forEach(f => {
           const url = URL.createObjectURL(f);
           const card = document.createElement('div');
           card.className = 'relative rounded-xl overflow-hidden shadow bg-white';
-          card.innerHTML = `<img src="${url}" class="w-full h-40 object-cover" alt=""><div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">${f.name}</div>`;
+          card.innerHTML = `<img src="${url}" class="w-full h-40 object-cover" alt="">
+                            <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">${f.name}</div>`;
           previewGrid.appendChild(card);
         });
       };
+
       dz.addEventListener('click', () => fileInput.click());
       dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('border-indigo-400'); });
       dz.addEventListener('dragleave', () => dz.classList.remove('border-indigo-400'));
@@ -708,9 +635,17 @@ async logActivity(action, { target_type, target_id, details }) {
         fileInput.files = dataTransfer.files;
         renderPreview(dtFiles);
       });
-      fileInput.addEventListener('change', e => { renderPreview(Array.from(e.target.files || [])); });
+
+      fileInput.addEventListener('change', e => {
+        renderPreview(Array.from(e.target.files || []));
+      });
+
       if (imageUrl) {
-        previewGrid.innerHTML = `<div class="relative rounded-xl overflow-hidden shadow bg-white"><img src="${imageUrl}" class="w-full h-40 object-cover" alt=""><div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">ภาพปัจจุบัน</div></div>`;
+        previewGrid.innerHTML = `
+          <div class="relative rounded-xl overflow-hidden shadow bg-white">
+            <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
+            <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">ภาพปัจจุบัน</div>
+          </div>`;
       }
     },
 
@@ -749,10 +684,42 @@ async logActivity(action, { target_type, target_id, details }) {
             const fileInput = form.querySelector('#image-file-input');
             let imagePath = form.querySelector('#current-image-path').value || '';
             let uploadedPaths = [];
+
             const files = Array.from(fileInput?.files || []);
 
+            if (!isEditing && !files.length && !imagePath) {
+                throw new Error('ต้องใส่รูปภาพอย่างน้อย 1 รูป');
+            }
+
             if (files.length) {
-                // ... image upload logic ...
+                UI.showToast(`กำลังอัปโหลดรูปภาพ ${files.length} ไฟล์...`, 'info');
+
+                const toWebp1200 = async (file) => {
+                    const bitmap = await createImageBitmap(file);
+                    const scale = bitmap.width > 1200 ? 1200 / bitmap.width : 1;
+                    const w = Math.round(bitmap.width * scale);
+                    const h = Math.round(bitmap.height * scale);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.filter = 'contrast(1.06) saturate(1.06) brightness(1.02)';
+                    ctx.drawImage(bitmap, 0, 0, w, h);
+                    const blob = await new Promise(res => canvas.toBlob(res, 'image/webp', 0.85));
+                    return new File([blob], (file.name.replace(/\.[^.]+$/, '') || 'img') + '.webp', { type: 'image/webp' });
+                };
+
+                for (const f of files) {
+                    const webpFile = await toWebp1200(f);
+                    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.webp`;
+                    const { data, error } = await supabase.storage.from(STORAGE_BUCKET).upload(fileName, webpFile, { upsert: true });
+                    if (error) throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${error.message}`);
+                    uploadedPaths.push(data.path);
+                }
+
+                imagePath = uploadedPaths[0];
             }
 
             const profileData = this.collectFormData(form);
@@ -767,18 +734,8 @@ async logActivity(action, { target_type, target_id, details }) {
             }
             if (dbRes.error) throw new Error(dbRes.error.message);
 
-            // [แก้ไข] เพิ่มการบันทึก Log ตอนสร้าง/แก้ไขโปรไฟล์
-            const logAction = isEditing ? 'update_profile' : 'create_profile';
-            this.logActivity(logAction, {
-                target_type: 'profile',
-                target_id: dbRes.data.id,
-                details: { name: dbRes.data.name }
-            });
-
             UI.showToast(isEditing ? 'อัปเดตโปรไฟล์สำเร็จ' : 'สร้างโปรไฟล์สำเร็จ', 'success');
-            await this.fetchData(true);
             this.renderView('profiles-list-container');
-
         } catch (err) {
             console.error(err);
             UI.showToast(err.message || 'เกิดข้อผิดพลาด', 'error');
@@ -821,23 +778,17 @@ async logActivity(action, { target_type, target_id, details }) {
             title: 'ยืนยันการลบ',
             message: `แน่ใจนะว่าจะลบโปรไฟล์ของ <strong>${name}</strong>? การกระทำนี้ไม่สามารถย้อนกลับได้`,
             onConfirm: async () => {
+                UI.showToast(`กำลังลบ ${name}...`, 'info');
                 try {
                     const { error } = await supabase.from('profiles').delete().eq('id', id);
                     if (error) throw error;
-                    
-                    // [แก้ไข] เพิ่มการบันทึก Log ตอนลบโปรไฟล์
-                    this.logActivity('delete_profile', {
-                        target_type: 'profile',
-                        target_id: id,
-                        details: { name: name }
-                    });
-
                     if (imagepath && imagepath !== 'null' && imagepath.trim() !== '') {
-                        await supabase.storage.from(STORAGE_BUCKET).remove([imagepath]);
+                        const { error: storageError } = await supabase.storage.from(STORAGE_BUCKET).remove([imagepath]);
+                        if (storageError) console.warn("Failed to delete image from storage:", storageError.message);
                     }
                     UI.showToast('ลบโปรไฟล์สำเร็จ', 'success');
-                    await this.fetchData(true);
-                    this.renderView('profiles-list-container');
+                    await this.fetchData();
+                    this.renderView(AppState.currentView, AppState.currentParams);
                 } catch (error) {
                     UI.showToast(`เกิดข้อผิดพลาดในการลบ: ${error.message}`, "error");
                 }
@@ -862,7 +813,8 @@ async logActivity(action, { target_type, target_id, details }) {
             const { error } = await supabase.from('provinces').insert([{ nameThai, key }]);
             if (error) throw error;
             UI.showToast('เพิ่มสำเร็จ', 'success');
-            await this.fetchData(true);
+            form.reset();
+            await this.fetchData();
             this.renderView('provinces-management-container');
         } catch (error) {
             UI.showToast(`เกิดพลาด: ${error.message}`, 'error');
@@ -880,7 +832,7 @@ async logActivity(action, { target_type, target_id, details }) {
                     const { error } = await supabase.from('provinces').delete().eq('id', id);
                     if (error) throw error;
                     UI.showToast('ลบสำเร็จ', 'success');
-                    await this.fetchData(true);
+                    await this.fetchData();
                     this.renderView('provinces-management-container');
                 } catch (error) {
                     UI.showToast(`ลบไม่สำเร็จ: ${error.message}`, 'error');
@@ -895,8 +847,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Controller.initApp();
 });
 </script>
-
-
 <script>
 // === Multi-image Preview Enhancer ===
 (function(){
@@ -1427,3 +1377,4 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 </body>
 </html>
+
