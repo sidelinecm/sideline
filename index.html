@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="th" class="scroll-smooth light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>404 - ไม่พบหน้า | ไซด์ไลน์เชียงใหม่</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- ไม่ต้องใส่ canonical หรือใส่เป็นหน้าตัวเองก็ได้ -->
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="/images/favicon.ico" sizes="any" />
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="canonical" href="https://sidelinechiangmai.netlify.app/404" />
+
+  <!-- Preload assets -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="/styles.css" />
+  </noscript>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </noscript>
+  <link rel="preload" href="/fonts/prompt-v11-latin_thai-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/prompt-v11-latin_thai-700.woff2" as="font" type="font/woff2" crossorigin />
+  <script rel="modulepreload" href="/main.js"></script>
+</head>
+<body class="antialiased" data-page="404">
+
+<!-- Header -->
+<header id="page-header" class="fixed top-0 left-0 w-full z-40 transition-colors duration-300 border-b border-transparent">
+  <div class="container mx-auto px-4 h-18 flex items-center justify-between">
+    <a href="/" aria-label="SidelineChiangmai หน้าแรก">
+      <img src="/images/logo-sideline-chiangmai-128.webp" srcset="/images/logo-sideline-chiangmai-64.webp 64w, /images/logo-sideline-chiangmai-128.webp 128w, /images/logo-sideline-chiangmai-256.webp 256w, /images/logo-sideline-chiangmai-512.webp 512w" sizes="(max-width: 320px) 200px, 256px" alt="โลโก้ Sideline Chiangmai" width="256" height="30" class="h-[30px] w-auto" loading="eager" fetchpriority="high" />
+    </a>
+    <nav class="hidden md:flex items-center gap-1 text-sm font-medium" aria-label="เมนูหลัก">
+      <a href="/profiles.html" class="px-4 py-2 rounded-full hover:bg-accent transition-colors">น้องๆ ทั้งหมด</a>
+      <a href="/locations.html" class="px-4 py-2 rounded-full hover:bg-accent transition-colors">พิกัดบริการ</a>
+      <a href="/about.html" class="px-4 py-2 rounded-full hover:bg-accent transition-colors">เกี่ยวกับเรา</a>
+      <a href="/faq.html" class="px-4 py-2 rounded-full hover:bg-accent transition-colors">FAQ</a>
+      <a href="/blog.html" class="px-4 py-2 rounded-full hover:bg-accent transition-colors">บทความ</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button class="theme-toggle-btn w-10 h-10 flex items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="เปลี่ยนโหมดสี">
+        <i class="fas fa-sun theme-toggle-icon text-lg" aria-hidden="true"></i>
+      </button>
+      <button id="menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="เปิดเมนู" aria-haspopup="true" aria-controls="sidebar">
+        <i class="fas fa-bars text-xl" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<div id="menu-backdrop" class="fixed inset-0 z-40 hidden opacity-0 transition-opacity duration-300 ease-in-out overlay-backdrop" aria-hidden="true"></div>
+<div id="sidebar" class="fixed top-0 right-0 w-64 sm:w-72 h-dvh bg-card text-foreground border-l border-border shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col md:hidden" role="dialog" aria-labelledby="sidebar-nav-heading" aria-hidden="true" tabindex="-1">
+  <div class="flex justify-between items-center p-4 border-b border-border shrink-0">
+    <h3 id="sidebar-nav-heading" class="text-lg font-bold text-secondary">เมนู</h3>
+    <button id="close-sidebar-btn" class="btn-close-premium" aria-label="ปิดเมนู">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+  <nav aria-label="เมนูนำทางหลักในแถบด้านข้าง" class="flex-grow overflow-y-auto p-4 space-y-4">
+    <a href="/" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-home w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>หน้าแรก</span></a>
+    <a href="profiles.html" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-users w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>น้องๆ ทั้งหมด</span></a>
+    <a href="locations.html" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-map-marker-alt w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>พิกัดบริการ</span></a>
+    <a href="about.html" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-info-circle w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>เกี่ยวกับเรา</span></a>
+    <a href="faq.html" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-question-circle w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>คำถามพบบ่อย</span></a>
+    <a href="blog.html" class="flex items-center gap-4 py-3 px-4 font-medium text-base"><i class="fas fa-newspaper w-5 text-center text-muted-foreground" aria-hidden="true"></i><span>บทความ</span></a>
+  </nav>
+  <div class="p-4 border-t border-border shrink-0">
+    <a href="https://line.me/ti/p/_faNcjQ3xx" target="_blank" rel="noopener nofollow" class="btn-line-shared"><i class="fab fa-line text-lg" aria-hidden="true"></i><span>ติดต่อผ่าน LINE</span></a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="min-h-screen flex items-center justify-center text-center px-4 pt-20">
+  <div>
+    <h1 class="text-8xl md:text-9xl font-extrabold text-primary tracking-tighter">404</h1>
+    <p class="text-2xl md:text-3xl font-semibold text-foreground mt-4">ไม่พบหน้าที่คุณค้นหา</p>
+    <p class="text-muted-foreground mt-2 mb-8">ขออภัย, หน้าที่คุณพยายามเข้าถึงไม่มีอยู่จริง หรืออาจถูกย้ายไปที่อื่นแล้ว</p>
+    <a href="/" class="inline-block bg-secondary text-white font-bold py-3 px-8 rounded-full hover:opacity-90 transition-opacity">กลับสู่หน้าแรก</a>
+  </div>
+</main>
+
+<!-- Schema สำหรับ SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "404 - ไม่พบหน้า",
+  "description": "หน้าไม่พบข้อมูลหรือไม่อยู่ในเว็บไซต์",
+  "url": "https://sidelinechiangmai.netlify.app/404"
+}
+</script>
+
+<!-- Scripts -->
+<script type="module" src="/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('loaded');
+  });
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => navigator.serviceWorker.register('/sw.js'));
+      } else {
+        setTimeout(() => navigator.serviceWorker.register('/sw.js'), 1500);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
