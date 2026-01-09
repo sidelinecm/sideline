@@ -1,1058 +1,1697 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-
-  <!-- Performance + SEO meta injected by assistant -->
-  <meta name="description" content="Admin panel for Sideline Chiang Mai cnc168">
-  <meta name="theme-color" content="#4f46e5">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kissmodel Admin ✨</title>
+  
+  <meta name="description" content="Admin panel for Kissmodel.">
+  <meta name="theme-color" content="#FF6F61">
+  <meta property="og:image" content="https://sidelinechiangmai.netlify.app/images/adminkissmodelsocial.webp">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
-  <style id="critical-css">
-    /* Critical CSS for faster FCP (assistant injected) */
-    html,body{height:100%;margin:0;padding:0;font-family:'Sarabun',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-    .focus-ring:focus{outline:3px solid rgba(79,70,229,0.16);outline-offset:2px}
-    img{max-width:100%;height:auto;display:block}
-  </style>
-
-
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Admin SidelineCM (Titanium Edition)</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <meta property="og:image" content="https://sidelinechiangmai.netlify.app/images/adminkissmodelsocial.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <link rel="shortcut icon" href="/images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.webp">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.webp">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.webmanifest">
+  
 <style>
+  /* Critical CSS */
+  html, body {
+    height: 100%; margin: 0; padding: 0;
+    font-family: 'Sarabun', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  }
+  
+  /* THEME "Lavender Dusk & Electric Coral" */
   :root {
-    --color-primary: 79 70 229; --color-primary-hover: 67 56 202; --color-secondary: 192 38 211;
-    --color-highlight: 251 191 36; --color-background: #f8fafc; --color-card: #ffffff;
-    --color-text-main: #1e2937; --color-text-muted: #64748b; --color-border: #e2e8f0;
-    --color-success: #10b981; --color-error: #dc2626; --color-info: #0ea5e9; --color-warn: #f59e0b;
+    --color-primary: 255 111 97;   /* Electric Coral */
+    --color-text-main: #2E2E2E;
+    --color-text-muted: #5a5a6a;
+    --color-card: rgba(255, 255, 255, 0.75);
+    --color-border: #E6E0FF;
+    --grad-1: #FF6F61;
+    --grad-2: #D667C3;
+    --color-highlight: #FFEB3B;
   }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Sarabun', sans-serif; background-color: var(--color-background); color: var(--color-text-muted); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  :root[data-theme="dark"] {
+    --color-text-main: #F7F5FF;
+    --color-text-muted: #a8a0b5;
+    --color-card: rgba(46, 36, 58, 0.7);
+    --color-border: #3A3042;
+    --grad-1: #FF8578;
+    --grad-2: #E087D0;
+  }
+
+  /* ANIMATED "LIVING" BACKGROUND */
+  @keyframes animated-aurora {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  body {
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    background: linear-gradient(-45deg, #E6E0FF, #D667C3, #FF6F61, #3A3042);
+    background-size: 400% 400%;
+    animation: animated-aurora 20s ease infinite;
+  }
+  :root[data-theme="dark"] body {
+    background: linear-gradient(-45deg, #1A1423, #3A3042, #E087D0, #FF8578);
+    background-size: 400% 400%;
+    animation: animated-aurora 20s ease infinite;
+  }
+  
+  /* Kissmodel Logo & Title Animation */
+  .kissmodel-logo {
+    font-size: 1.8rem; font-weight: 700; display: inline-block; color: #fff;
+    text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1), 0 0 20px var(--grad-2);
+    animation: flicker 2s infinite alternate;
+  }
+  .kissmodel-logo .star {
+    font-size: 1.2em; display: inline-block; color: var(--color-highlight);
+    animation: star-glow 2s infinite ease-in-out;
+    text-shadow: 0 0 10px var(--color-highlight), 0 0 20px #fff;
+  }
+  .dashboard-title {
+    font-size: 2.5rem; font-weight: 800;
+    background: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--color-highlight), var(--grad-1));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: gradient-flow 5s ease infinite;
+    background-size: 300% 300%;
+  }
+  @keyframes flicker { 0%, 100% { text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1); } 50% { text-shadow: 0 0 8px var(--grad-1), 0 0 25px var(--grad-2); } }
+  @keyframes star-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3) rotate(15deg); } }
+  @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+  /* Buttons with Shine Effect */
+  .btn-pro, .btn-primary {
+    position: relative; overflow: hidden; border-radius: 9999px;
+    padding: .7rem 1.2rem; font-weight: 600; color: #fff !important;
+    background: linear-gradient(90deg, var(--grad-1), var(--grad-2));
+    box-shadow: 0 10px 24px rgba(var(--color-primary), 0.35);
+    transition: transform .15s ease, filter .2s ease;
+    border: none;
+  }
+  .btn-pro:hover, .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .btn-pro::before, .btn-primary::before {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease; transform: skewX(-25deg);
+  }
+  .btn-pro:hover::before, .btn-primary:hover::before { left: 150%; }
+
+  /* General UI Styles */
+  .card-surface {
+    background-color: var(--color-card);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  /* FIXED: Form input readability */
+  .form-input {
+    width: 100%; padding: 0.6rem 1rem; border: 1px solid var(--color-border);
+    border-radius: 0.5rem; transition: all 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.6); /* More opaque */
+    color: var(--color-text-main);
+  }
+
+  :root[data-theme="dark"] .form-input { background-color: rgba(0, 0, 0, 0.3); }
+  .form-input:focus {
+    outline: none; border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.2);
+  }
+  #sidebar, #header { background-color: transparent !important; }
+  .nav-button:hover { background-color: rgba(var(--color-primary), 0.1); }
+  .nav-button.active {
+    background-color: rgba(var(--color-primary), 0.15);
+    color: rgb(var(--color-primary)); font-weight: 600;
+  }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-  .view-container { animation: fadeInUp 0.5s ease-out forwards; }
-  .modal-box { animation: scaleIn 0.3s ease-out forwards; }
-  .loader-sm { border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  .loader-lg { width: 60px; height: 60px; border-width: 5px; border-color: var(--color-border); border-top-color: rgb(var(--color-primary)); border-radius: 50%; animation: spin 1s linear infinite; }
-  #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001; display: flex; flex-direction: column; gap: 0.75rem; }
-  .toast { display: flex; align-items: center; padding: 1rem; color: #fff; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); opacity: 0; transform: translateX(120%); transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1); }
-  .toast.show { opacity: 1; transform: translateX(0); }
-  .toast-success { background-color: var(--color-success); } .toast-error { background-color: var(--color-error); } .toast-info { background-color: var(--color-info); }
-  .form-input { width: 100%; padding: 0.6rem 1rem; border: 1px solid var(--color-border); border-radius: 0.5rem; transition: all 0.2s; background-color: #f9fafb; }
-  .form-input:focus { outline: none; border-color: rgb(var(--color-primary)); box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.2); }
-  .tag-input-container { display: flex; flex-wrap: wrap; align-items: center; padding: 0.25rem; border: 1px solid var(--color-border); border-radius: 0.5rem; transition: all 150ms ease-in-out; }
-  .tag-input-container:focus-within { border-color: rgb(var(--color-primary)); box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.2); }
-  .tag-item { display: inline-flex; align-items: center; background-color: rgba(var(--color-secondary), 0.1); color: rgb(var(--color-secondary)); padding: 0.25rem 0.75rem; margin: 0.25rem; border-radius: 9999px; font-weight: 500; font-size: 0.875rem; }
-  .tag-remove-btn { margin-left: 0.5rem; cursor: pointer; }
-  .tag-input { flex-grow: 1; border: none; outline: none; padding: 0.5rem; background: transparent; }
-  .fa-spin-custom { animation: spin 1s linear infinite; }
-</style>
-<style>
-@keyframes subtle-pop { 0%{transform:scale(.98);opacity:.0} 100%{transform:scale(1);opacity:1} }
-.subtle-pop { animation: subtle-pop .25s ease-out both; }
-</style>
-<style>
-.fade-in { animation: fade-in .25s ease-out both; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
-.card-hover:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(0,0,0,.06); }
-</style>
-<style>
-  /* Feminine gradient background for the app root */
-  .app-feminine-bg {
-    background-image: radial-gradient(1200px 800px at 0% 0%, rgba(255,182,193,.25), transparent),
-                      radial-gradient(1200px 800px at 100% 0%, rgba(255,192,203,.2), transparent),
-                      radial-gradient(1200px 800px at 100% 100%, rgba(221,160,221,.2), transparent);
+  .loader-lg {
+    width: 60px; height: 60px; border: 5px solid var(--color-border);
+    border-top-color: rgb(var(--color-primary));
+    border-radius: 50%; animation: spin 1s linear infinite;
   }
+  
 </style>
-<style>
-/* --- Ultra Pro Layout Utilities --- */
-.container-pro { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
-@media (min-width: 768px){ .container-pro { padding-left: 1.25rem; padding-right: 1.25rem; } }
-.card-pro { border-radius: 1.25rem; background: rgba(255,255,255,0.75); backdrop-filter: blur(12px);
-            box-shadow: 0 20px 60px rgba(255, 0, 128, .08), 0 8px 24px rgba(0,0,0,.06); }
-.btn-pro { border-radius: 9999px; padding: .65rem 1.2rem; font-weight: 600;
-           background: linear-gradient( to right, #ec4899, #a855f7 ); color: white;
-           transition: transform .15s ease, filter .2s ease, box-shadow .2s ease; }
-.btn-pro:hover { filter: brightness(1.08); box-shadow: 0 10px 24px rgba(168,85,247,.35); transform: translateY(-1px); }
-.input-pro { border-radius: .9rem; border: 1px solid rgba(236,72,153,.3); padding: .7rem .9rem; width: 100%;
-             background: rgba(255,255,255,.9); transition: box-shadow .2s ease, border-color .2s ease; }
-.input-pro:focus { outline: none; border-color: #ec4899; box-shadow: 0 0 0 4px rgba(236,72,153,.15); }
-.heading-pro { background: linear-gradient(90deg, #ec4899 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.section-gap { margin-top: 1rem; margin-bottom: 1rem; }
-@media (min-width: 768px){ .section-gap { margin-top: 1.25rem; margin-bottom: 1.25rem; } }
-</style>
-<style>
-#sidebar { z-index: 50; }
-#deluxe-uploader, #view-content { position: relative; z-index: 1; }
-header, .topbar { position: relative; z-index: 40; }
-</style>
-<style>
-.login-hero {
-  background: radial-gradient(800px 400px at 10% 0%, rgba(236,72,153,.25), transparent),
-              radial-gradient(700px 500px at 100% -10%, rgba(168,85,247,.3), transparent);
-}
-</style>
-<style>
-:root{
-  --grad-1: #ec4899;
-  --grad-2: #a855f7;
-  --soft: rgba(255,255,255,.7);
-}
-.motion-pop{ animation: motion-pop .22s ease-out both; }
-@keyframes motion-pop{ 0%{ transform: scale(.98); opacity: 0 } 100%{ transform: none; opacity: 1 } }
-.motion-fade{ animation: motion-fade .28s ease-out both; }
-@keyframes motion-fade{ from{ opacity: 0 } to{ opacity: 1 } }
-.gradient-text{ background: linear-gradient(90deg, var(--grad-1), var(--grad-2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
-.glass{ background: var(--soft); backdrop-filter: blur(12px); }
-.btn-primary{ border-radius:9999px; padding:.7rem 1.2rem; font-weight:600; color:#fff;
-  background: linear-gradient(90deg, var(--grad-1), var(--grad-2));
-  box-shadow: 0 10px 24px rgba(168,85,247,.35);
-  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
-}
-.btn-primary:hover{ transform: translateY(-1px); filter:brightness(1.06); }
-.link{ color:#a855f7; font-weight:600 }
-.link:hover{ text-decoration: underline }
-.container-pro{ max-width: 1100px; margin:0 auto; padding: 1rem; }
-/* ส่วนหัวให้เป็น sticky และมี padding ด้านบนสำหรับเนื้อหา */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* เพิ่ม padding-top ให้ main เพื่อเลี่ยง header ทับเนื้อหา */
-main {
-  padding-top: 100px; /* ปรับตามความสูง header จริง */
-}
-</style>
-<style>
-:root[data-theme="light"]{
-  --bg: #fff;
-  --card: rgba(255,255,255,.75);
-  --text: #111827;
-}
-:root[data-theme="dark"]{
-  --bg: #0b0b12;
-  --card: rgba(17,17,27,.72);
-  --text: #f3f4f6;
-  --grad-1: #f472b6;
-  --grad-2: #c084fc;
-}
-html, body { background: var(--bg); color: var(--text); }
-.card-surface{ background: var(--card); backdrop-filter: blur(10px); border-radius: 1.2rem;
-  box-shadow: 0 20px 50px rgba(0,0,0,.08), 0 10px 20px rgba(0,0,0,.06);
-}
-.blur-up{ filter: blur(12px); transform: scale(1.02); transition: filter .35s ease, transform .35s ease; }
-.blur-up.lazyloaded{ filter: blur(0); transform: none; }
-.toggle-wrap{ position: fixed; right: 14px; bottom: 14px; z-index: 80; }
-.theme-toggle{ border-radius: 9999px; padding: .6rem .9rem; font-weight: 600; color: #fff;
-  background: linear-gradient(90deg, var(--grad-1), var(--grad-2)); box-shadow: 0 10px 24px rgba(168,85,247,.35);
-}
-/* Drag reorder styles */
-.reorder-card{ cursor: grab; }
-.reorder-card:active{ cursor: grabbing; }
-/* Crop modal */
-#cropper-modal{ position: fixed; inset:0; background: rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index: 130; }
-#cropper-modal.active{ display:flex; }
-#crop-box{ width: min(92vw, 900px); background: var(--card); border-radius: 1rem; padding: 1rem; }
-#crop-canvas{ width: 100%; max-height: 60vh; background: #000; border-radius: .75rem; }
-</style>
-
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"SidelineCM Admin","url":"https://sidelinechiangmai.netlify.app","description":"Admin panel for managing profiles and images for Sideline Chiang Mai."}
-</script>
-
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="app-feminine-bg">
-<style>
-    /* แก้ไขปัญหา Header ทับซ้อน: กำหนด margin-top ให้กับเนื้อหาหลักให้สอดคล้องกับขนาด Header ที่แก้ไขแล้ว */
-    main, #app, .view-container {
-        margin-top: 80px !important;
-    }
-    
-    /* สไตล์เพิ่มเติมสำหรับ Admin Panel */
-    .form-input {
-        @apply w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 dark:bg-gray-800 dark:text-white;
-    }
-    .btn-primary {
-        @apply px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150;
-    }
-</style>
-<div id="app-wrapper">
-<div class="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-[9999]" id="global-loader"><div class="loader-lg"></div><p class="mt-4 text-lg font-medium text-gray-600" id="loader-text">กำลังเริ่มต้นแอปพลิเคชัน...</p></div>
-<div id="toast-container"></div>
-<div id="modal-root"></div>
 
-<div class="hidden min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-fuchsia-600 p-4" id="login-container">
-<div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-<div class="text-center mb-8"><h2 class="text-3xl font-bold text-gray-900">Admin Panel</h2><p class="mt-2 text-gray-500">Admin</p></div>
-<form class="space-y-6" id="loginForm">
-<div><label class="text-sm font-medium text-gray-700" for="email">อีเมล</label><input class="form-input mt-1" id="email" name="email" placeholder="admin@example.com" required="" type="email" value="adariscm2@gmail.com"/></div>
-<div><label class="text-sm font-medium text-gray-700" for="password">รหัสผ่าน</label><input class="form-input mt-1" id="password" name="password" placeholder="Password" required="" type="password" value=""/></div>
-<div><button class="w-full flex justify-center py-3 px-4 border border-transparent font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition" type="submit">เข้าสู่ระบบ</button></div>
-<p class="text-center text-sm text-red-600 font-medium" id="login-error"></p>
-</form>
-</div>
-</div>
-
-<div class="hidden" id="admin-content">
-<nav class="fixed top-0 left-0 h-full bg-white w-64 shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="sidebar">
-<div class="p-5 border-b flex items-center gap-3"><i class="fas fa-shield-halved text-2xl text-indigo-600"></i><span class="font-bold text-xl text-slate-800">แอดมิน</span></div>
-<div class="p-4">
-<h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">เมนู</h2>
-<ul class="space-y-1">
-<li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>แดชบอร์ด</button></li>
-<li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
-<li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
-<li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
-<!-- เมนู AI Chatbot -->
-<li>
-  <button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-pink-600 hover:bg-pink-50" data-view="ai-chat-container">
-    <i class="fas fa-robot w-5 mr-3 text-center"></i>ถาม AI Chatbot
-  </button>
-</li>
-</div>
-<div class="absolute bottom-0 w-full p-4 border-t">
-<div class="text-center mb-2" id="admin-user-info"></div>
-<button class="w-full flex items-center justify-center gap-2 text-sm font-medium text-red-600 hover:bg-red-50 p-2 rounded-lg transition" id="logout-button"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button>
-</div>
-</nav>
-<!-- เมนู AI Chatbot -->
-<li>
-  <button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-pink-600 hover:bg-pink-50" data-view="ai-chat-container">
-    <i class="fas fa-robot w-5 mr-3 text-center"></i>ถาม AI Chatbot
-  </button>
-</li>
-    <div class="p-4 flex justify-between items-center">
-        <button class="text-gray-600 text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button>
-        <span class="font-bold text-indigo-600" id="header-title">Admin Panel</span>
+<body>
+  <div id="app-wrapper">
+    <!-- Global Loader -->
+    <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #F7F5FF;">
+      <div class="loader-lg"></div>
+      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #2E2E2E;">กำลังเตรียมระบบ kissmodel...</p>
     </div>
-</header>
-<main class="p-4 sm:p-6 lg:p-8">
-<div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold text-slate-800" id="view-title"></h1><button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 transition" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
-<div id="view-content"><div class="container-pro section-gap"></div>
-</main>
-</div>
-</div>
-</div>
-
+    
+    <!-- FIXED: ADDED BACK MISSING CONTAINERS -->
+    <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001;"></div>
+    <div id="modal-root"></div>
+    
+    <!-- Login Container -->
+    <div class="hidden min-h-screen flex items-center justify-center p-4" id="login-container">
+      <div class="max-w-md w-full p-8 card-surface">
+        <div class="text-center mb-8">
+          <div class="kissmodel-logo inline-block mb-2">kissmodel<span class="star">🌟</span></div>
+          <p class="mt-2 font-medium" style="color: var(--color-text-muted)">Administrator Access</p>
+        </div>
+        <form class="space-y-6" id="loginForm">
+          <div><label class="text-sm font-medium" for="email">อีเมล</label><input class="form-input mt-1" id="email" name="email" placeholder="admin@example.com" required type="email" value="adariscm2@gmail.com"/></div>
+          <div><label class="text-sm font-medium" for="password">รหัสผ่าน</label><input class="form-input mt-1" id="password" name="password" placeholder="Password" required type="password" value=""/></div>
+          <div><button class="w-full flex justify-center py-3 px-4 btn-pro" type="submit">เข้าสู่ระบบ</button></div>
+          <p class="text-center text-sm font-medium" id="login-error" style="color: red;"></p>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Admin Content -->
+    <div class="hidden" id="admin-content">
+      <nav class="fixed top-0 left-0 h-full w-64 shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 card-surface" id="sidebar" style="border-radius: 0 1.25rem 1.25rem 0;">
+        <div class="p-5 border-b flex items-center justify-center" style="border-color: var(--color-border);"><div class="kissmodel-logo">kissmodel<span class="star">🌟</span></div></div>
+        <div class="p-4"><h2 class="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style="color: var(--color-text-muted);">เมนู</h2>
+          <ul class="space-y-1">
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="ai-chat-container" style="color: rgb(var(--color-primary));"><i class="fas fa-robot w-5 mr-3 text-center"></i>ถาม AI Chatbot</button></li>
+          </ul>
+        </div>
+        <div class="absolute bottom-0 w-full p-4 border-t" style="border-color: var(--color-border);"><div class="text-center mb-2" id="admin-user-info"></div><button class="w-full flex items-center justify-center gap-2 text-sm font-medium p-2 rounded-lg transition" id="logout-button" style="color: red; background-color: rgba(220, 53, 69, 0.1);"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button></div>
+      </nav>
+      
+      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: rgb(var(--color-primary));">kissmodel Admin</span></div></header>
+      
+      <main class="p-4 sm:p-6 lg:p-8 lg:ml-64">
+        <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold dashboard-title" id="view-title">kissmodel<span class="star">🌟</span></h1><button class="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm text-sm font-medium transition card-surface" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
+        <div id="view-content"><div class="container-pro section-gap"></div></div>
+      </main>
+    </div>
+  </div>
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/+esm'
 
+// Supabase Configuration
 const supabaseUrl = 'https://hgzbgpbmymoiwjpaypvl.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnemJncGJteW1vaXdqcGF5cHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxMDUyMDYsImV4cCI6MjA2MjY4MTIwNn0.dIzyENU-kpVD97WyhJVZF9owDVotbl1wcYgPTt9JL_8';
-
 const supabase = createClient(supabaseUrl, supabaseKey);
 const STORAGE_BUCKET = 'profile-images';
 
-const AppState = { currentUser: null, provinces: [], allProfiles: [], filteredProfiles: [], stats: {}, currentView: 'dashboard-container', isSidebarOpen: false, isInitialized: false, profileToEdit: null };
+// Application State
+const AppState = {
+  currentUser: null,
+  provinces: [],
+  allProfiles: [],
+  filteredProfiles: [],
+  stats: {},
+  currentView: 'dashboard-container',
+  isSidebarOpen: false,
+  isInitialized: false,
+  profileToEdit: null,
+  currentParams: {},
+  lastFetchTime: null
+};
 
+// DOM Elements
 const DOM = {
-    globalLoader: document.getElementById('global-loader'),
-    loaderText: document.getElementById('loader-text'),
-    loginContainer: document.getElementById('login-container'),
-    loginForm: document.getElementById('loginForm'),
-    loginError: document.getElementById('login-error'),
-    adminContent: document.getElementById('admin-content'),
-    sidebar: document.getElementById('sidebar'),
-    adminUserInfo: document.getElementById('admin-user-info'),
-    menuToggle: document.getElementById('menu-toggle'),
-    headerTitle: document.getElementById('header-title'),
-    viewTitle: document.getElementById('view-title'),
-    viewContent: document.getElementById('view-content'),
-    refreshButton: document.getElementById('refresh-button'),
-    logoutButton: document.getElementById('logout-button'),
+  globalLoader: document.getElementById('global-loader'),
+  loaderText: document.getElementById('loader-text'),
+  loginContainer: document.getElementById('login-container'),
+  loginForm: document.getElementById('loginForm'),
+  loginError: document.getElementById('login-error'),
+  adminContent: document.getElementById('admin-content'),
+  sidebar: document.getElementById('sidebar'),
+  adminUserInfo: document.getElementById('admin-user-info'),
+  menuToggle: document.getElementById('menu-toggle'),
+  headerTitle: document.getElementById('header-title'),
+  viewTitle: document.getElementById('view-title'),
+  viewContent: document.getElementById('view-content'),
+  refreshButton: document.getElementById('refresh-button'),
+  logoutButton: document.getElementById('logout-button'),
 };
 
+// UI Utilities
 const UI = {
-    debounce: (func, delay) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; },
-    showToast(message, type = 'success', duration = 3000) { 
-        const container = document.getElementById('toast-container'); 
-        const toast = document.createElement('div'); 
-        const icon = { success: 'fa-check-circle', error: 'fa-exclamation-triangle', info: 'fa-info-circle' }[type]; 
-        const bgColor = { success: 'bg-green-500', error: 'bg-red-600', info: 'bg-blue-500'}[type]; 
-        toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${bgColor}`; 
-        toast.innerHTML = `<i class="fas ${icon} text-xl"></i><span>${message}</span>`; 
-        container.appendChild(toast); 
-        requestAnimationFrame(() => toast.classList.remove('translate-x-full')); 
-        setTimeout(() => { toast.classList.add('translate-x-full'); toast.addEventListener('transitionend', () => toast.remove()); }, duration);
-    },
-    showModal(config) { 
-        const { title, message, confirmText = 'ยืนยัน', cancelText = 'ยกเลิก', onConfirm, isDestructive = true } = config; 
-        const modalRoot = document.getElementById('modal-root'); 
-        const modalId = `modal-${Date.now()}`; 
-        const confirmBtnClass = isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'; 
-        modalRoot.innerHTML = `<div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4"><div class="fixed inset-0 bg-black/50 backdrop-blur-sm modal-backdrop"></div><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative modal-box"><h3 class="text-xl font-bold text-gray-900">${title}</h3><div class="mt-2 text-sm text-gray-600">${message}</div><div class="mt-6 flex justify-end space-x-3"><button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">ยกเลิก</button><button class="modal-confirm-btn px-4 py-2 text-sm font-medium text-white ${confirmBtnClass} rounded-lg">${confirmText}</button></div></div></div>`; 
-        const modalEl = document.getElementById(modalId); 
-        const closeModal = () => modalEl.remove(); 
-        modalEl.querySelector('.modal-confirm-btn').onclick = () => { onConfirm(); closeModal(); }; 
-        modalEl.querySelector('.modal-cancel-btn').onclick = closeModal; 
-        modalEl.querySelector('.modal-backdrop').onclick = closeModal; 
-    },
-    showProfileLightbox(profile) { 
-        const modalRoot = document.getElementById('modal-root'); 
-        const placeholder = 'https://placehold.co/800x1000/f3f4f6/9ca3af?text=No+Image'; 
-        const imageUrl = profile.imagePath ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl(profile.imagePath).data.publicUrl : placeholder; 
-        const provinceName = AppState.provinces.find(p => p.key === profile.provinceKey)?.nameThai || 'N/A'; 
-        const modalId = `lightbox-${profile.id}`; 
-        const detailItem = (icon, label, value) => value ? `<div class="flex items-start"><i class="fas fa-${icon} w-5 text-center text-indigo-500 mt-1"></i><div class="ml-3"><p class="font-semibold text-slate-800">${label}</p><p class="text-slate-600">${value}</p></div></div>` : ''; 
-        const availabilityClass = { 'รับงาน': 'bg-green-100 text-green-800', 'ว่าง': 'bg-green-100 text-green-800', 'สอบถามคิว': 'bg-blue-100 text-blue-800', 'ไม่ว่าง': 'bg-red-100 text-red-800', 'พัก': 'bg-gray-100 text-gray-800' }[profile.availability] || 'bg-yellow-100 text-yellow-800'; 
-        modalRoot.innerHTML = ` <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4"> <div class="fixed inset-0 bg-black/60 backdrop-blur-sm lightbox-backdrop"></div> <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative modal-box flex flex-col lg:flex-row"> <button class="lightbox-close-btn absolute top-3 right-3 lg:top-4 lg:right-4 w-10 h-10 bg-black/30 hover:bg-black/50 text-white rounded-full z-10 flex items-center justify-center transition-colors"><i class="fas fa-times text-xl"></i></button> <div class="w-full lg:w-5/12 flex-shrink-0"> <img src="${imageUrl}" alt="${profile.altText || profile.name}" class="w-full h-full object-cover lg:rounded-l-2xl" onerror="this.onerror=null;this.src='${placeholder}';"> </div> <div class="p-6 lg:p-8 flex-grow overflow-y-auto"> ${profile.isfeatured ? '<span class="inline-block bg-amber-400 text-black text-xs font-bold px-3 py-1 rounded-full mb-3"><i class="fas fa-star"></i> แนะนำ</span>' : ''} <h3 class="text-3xl font-bold text-slate-900">${profile.name || 'N/A'}</h3> <p class="text-lg text-indigo-600 font-medium">${profile.quote || ''}</p> <div class="my-6 border-t border-slate-200"></div> <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm"> ${detailItem('map-marker-alt', 'จังหวัด / พิกัด', `${provinceName}${profile.location ? ` (${profile.location})` : ''}`)} ${detailItem('money-bill-wave', 'เรทราคา', profile.rate)} ${detailItem('phone-alt', 'LINE ID', profile.lineId)} <div class="flex items-start"><i class="fas fa-clock w-5 text-center text-indigo-500 mt-1"></i><div class="ml-3"><p class="font-semibold text-slate-800">สถานะ</p><span class="px-2 py-1 text-xs font-medium rounded-full ${availabilityClass}">${profile.availability || 'สอบถาม'}</span></div></div> ${detailItem('ruler-combined', 'สัดส่วน', profile.stats)} ${detailItem('arrows-alt-v', 'สูง / หนัก', [profile.height, profile.weight].filter(Boolean).join(' / '))} ${detailItem('palette', 'สีผิว', profile.skinTone)} ${detailItem('birthday-cake', 'อายุ', profile.age)} </div> ${profile.description ? `<div class="mt-6 pt-6 border-t border-slate-200"><h4 class="font-semibold text-slate-800 mb-2">รายละเอียดเพิ่มเติม</h4><p class="text-slate-600 whitespace-pre-wrap">${profile.description}</p></div>` : ''} ${profile.styleTags && profile.styleTags.length > 0 ? `<div class="mt-6 pt-6 border-t border-slate-200"><h4 class="font-semibold text-slate-800 mb-2">สไตล์</h4><div class="flex flex-wrap gap-2">${profile.styleTags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}</div></div>` : ''} </div> </div> </div>`;
-        const modalEl = document.getElementById(modalId);
-        const closeModal = () => modalEl.remove();
-        modalEl.querySelector('.lightbox-close-btn').onclick = closeModal;
-        modalEl.querySelector('.lightbox-backdrop').onclick = closeModal;
-    },
-    toggleButtonLoading(button, isLoading, defaultText = 'Submit') { 
-        if (!button) return;
-        button.disabled = isLoading;
-        button.innerHTML = isLoading ? `<span class="loader-sm w-5 h-5 inline-block"></span>` : defaultText;
-    },
-    setActiveNav(viewId) { 
-        document.querySelectorAll('.nav-button').forEach(b => {
-            const isActive = b.dataset.view === viewId;
-            b.classList.toggle('bg-indigo-100', isActive);
-            b.classList.toggle('text-indigo-700', isActive);
-            b.classList.toggle('text-slate-600', !isActive);
-        });
-    },
+  debounce: (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  },
+  
+  showToast(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const icon = {
+      success: 'fa-check-circle',
+      error: 'fa-exclamation-triangle',
+      info: 'fa-info-circle'
+    }[type];
+    
+    const bgColor = {
+      success: 'bg-green-500',
+      error: 'bg-red-600',
+      info: 'bg-blue-500'
+    }[type];
+    
+    toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${bgColor}`;
+    toast.innerHTML = `<i class="fas ${icon} text-xl"></i><span>${message}</span>`;
+    container.appendChild(toast);
+    
+    requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+    
+    setTimeout(() => {
+      toast.classList.add('translate-x-full');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, duration);
+  },
+  
+  showModal(config) {
+    const {
+      title,
+      message,
+      confirmText = 'ยืนยัน',
+      cancelText = 'ยกเลิก',
+      onConfirm,
+      isDestructive = true
+    } = config;
+    
+    const modalRoot = document.getElementById('modal-root');
+    const modalId = `modal-${Date.now()}`;
+    const confirmBtnClass = isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700';
+    
+    modalRoot.innerHTML = `
+      <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm modal-backdrop"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative modal-box">
+          <h3 class="text-xl font-bold text-gray-900">${title}</h3>
+          <div class="mt-2 text-sm text-gray-600">${message}</div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+              ${cancelText}
+            </button>
+            <button class="modal-confirm-btn px-4 py-2 text-sm font-medium text-white ${confirmBtnClass} rounded-lg">
+              ${confirmText}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const modalEl = document.getElementById(modalId);
+    const closeModal = () => modalEl.remove();
+    
+    modalEl.querySelector('.modal-confirm-btn').onclick = () => {
+      onConfirm();
+      closeModal();
+    };
+    
+    modalEl.querySelector('.modal-cancel-btn').onclick = closeModal;
+    modalEl.querySelector('.modal-backdrop').onclick = closeModal;
+  },
+  
+  showProfileLightbox(profile) {
+    const modalRoot = document.getElementById('modal-root');
+    const placeholder = 'https://placehold.co/800x1000/f3f4f6/9ca3af?text=No+Image';
+    const imageUrl = profile.imagePath
+      ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl(profile.imagePath).data.publicUrl
+      : placeholder;
+    
+    const provinceName = AppState.provinces.find(p => p.key === profile.provinceKey)?.nameThai || 'N/A';
+    const modalId = `lightbox-${profile.id}`;
+    
+    const detailItem = (icon, label, value) => {
+      return value ? `
+        <div class="flex items-start">
+          <i class="fas fa-${icon} w-5 text-center text-indigo-500 mt-1"></i>
+          <div class="ml-3">
+            <p class="font-semibold text-slate-800">${label}</p>
+            <p class="text-slate-600">${value}</p>
+          </div>
+        </div>
+      ` : '';
+    };
+    
+    const availabilityClass = {
+      'รับงาน': 'bg-green-100 text-green-800',
+      'ว่าง': 'bg-green-100 text-green-800',
+      'สอบถามคิว': 'bg-blue-100 text-blue-800',
+      'ไม่ว่าง': 'bg-red-100 text-red-800',
+      'พัก': 'bg-gray-100 text-gray-800'
+    }[profile.availability] || 'bg-yellow-100 text-yellow-800';
+    
+    modalRoot.innerHTML = `
+      <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm lightbox-backdrop"></div>
+        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative modal-box flex flex-col lg:flex-row">
+          <button class="lightbox-close-btn absolute top-3 right-3 lg:top-4 lg:right-4 w-10 h-10 bg-black/30 hover:bg-black/50 text-white rounded-full z-10 flex items-center justify-center transition-colors">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+          <div class="w-full lg:w-5/12 flex-shrink-0">
+            <img src="${imageUrl}" alt="${profile.altText || profile.name}" 
+                 class="w-full h-full object-cover lg:rounded-l-2xl"
+                 onerror="this.onerror=null;this.src='${placeholder}';">
+          </div>
+          <div class="p-6 lg:p-8 flex-grow overflow-y-auto">
+            ${profile.isfeatured ? '<span class="inline-block bg-amber-400 text-black text-xs font-bold px-3 py-1 rounded-full mb-3"><i class="fas fa-star"></i> แนะนำ</span>' : ''}
+            <h3 class="text-3xl font-bold text-slate-900">${profile.name || 'N/A'}</h3>
+            <p class="text-lg text-indigo-600 font-medium">${profile.quote || ''}</p>
+            <div class="my-6 border-t border-slate-200"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm">
+              ${detailItem('map-marker-alt', 'จังหวัด / พิกัด', `${provinceName}${profile.location ? ` (${profile.location})` : ''}`)}
+              ${detailItem('money-bill-wave', 'เรทราคา', profile.rate)}
+              ${detailItem('phone-alt', 'LINE ID', profile.lineId)}
+              <div class="flex items-start">
+                <i class="fas fa-clock w-5 text-center text-indigo-500 mt-1"></i>
+                <div class="ml-3">
+                  <p class="font-semibold text-slate-800">สถานะ</p>
+                  <span class="px-2 py-1 text-xs font-medium rounded-full ${availabilityClass}">
+                    ${profile.availability || 'สอบถาม'}
+                  </span>
+                </div>
+              </div>
+              ${detailItem('ruler-combined', 'สัดส่วน', profile.stats)}
+              ${detailItem('arrows-alt-v', 'สูง / หนัก', [profile.height, profile.weight].filter(Boolean).join(' / '))}
+              ${detailItem('palette', 'สีผิว', profile.skinTone)}
+              ${detailItem('birthday-cake', 'อายุ', profile.age)}
+            </div>
+            ${profile.description ? `
+              <div class="mt-6 pt-6 border-t border-slate-200">
+                <h4 class="font-semibold text-slate-800 mb-2">รายละเอียดเพิ่มเติม</h4>
+                <p class="text-slate-600 whitespace-pre-wrap">${profile.description}</p>
+              </div>
+            ` : ''}
+            ${profile.styleTags && profile.styleTags.length > 0 ? `
+              <div class="mt-6 pt-6 border-t border-slate-200">
+                <h4 class="font-semibold text-slate-800 mb-2">สไตล์</h4>
+                <div class="flex flex-wrap gap-2">
+                  ${profile.styleTags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const modalEl = document.getElementById(modalId);
+    const closeModal = () => modalEl.remove();
+    
+    modalEl.querySelector('.lightbox-close-btn').onclick = closeModal;
+    modalEl.querySelector('.lightbox-backdrop').onclick = closeModal;
+  },
+  
+  toggleButtonLoading(button, isLoading, defaultText = 'Submit') {
+    if (!button) return;
+    button.disabled = isLoading;
+    button.innerHTML = isLoading
+      ? `<span class="loader-sm w-5 h-5 inline-block"></span>`
+      : defaultText;
+  },
+  
+  setActiveNav(viewId) {
+    document.querySelectorAll('.nav-button').forEach(b => {
+      const isActive = b.dataset.view === viewId;
+      b.classList.toggle('bg-indigo-100', isActive);
+      b.classList.toggle('text-indigo-700', isActive);
+      b.classList.toggle('text-slate-600', !isActive);
+    });
+  },
 };
 
+// Main Application Controller
 const Controller = {
-    async initApp() {
-        DOM.globalLoader.classList.remove('hidden');
-        DOM.loaderText.textContent = "กำลังตรวจสอบเซสชัน...";
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-            console.error("Error fetching session:", error);
-            this.showLoginScreen("เกิดข้อผิดพลาดในการเชื่อมต่อ");
-            return;
-        }
-        if (session) {
-            AppState.currentUser = session.user;
-            await this.startAdminPanel();
-        } else {
-            this.showLoginScreen();
-        }
-        supabase.auth.onAuthStateChange((_event, session) => {
-            if (session && !AppState.currentUser) {
-                AppState.currentUser = session.user;
-                this.startAdminPanel();
-            } else if (!session && AppState.currentUser) {
-                AppState.currentUser = null;
-                this.showLoginScreen("ออกจากระบบสำเร็จ");
-            }
-        });
-    },
-
-    showLoginScreen(toastMessage = null) {
-        AppState.isInitialized = false;
+  async initApp() {
+    DOM.globalLoader.classList.remove('hidden');
+    DOM.loaderText.textContent = "กำลังตรวจสอบเซสชัน...";
+    
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.error("Error fetching session:", error);
+      this.showLoginScreen("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+      return;
+    }
+    
+    if (session) {
+      AppState.currentUser = session.user;
+      await this.startAdminPanel();
+    } else {
+      this.showLoginScreen();
+    }
+    
+    // Listen for auth state changes
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && !AppState.currentUser) {
+        AppState.currentUser = session.user;
+        this.startAdminPanel();
+      } else if (!session && AppState.currentUser) {
         AppState.currentUser = null;
-        DOM.adminContent.classList.add('hidden');
-        DOM.loginContainer.classList.remove('hidden');
-        DOM.globalLoader.classList.add('hidden');
-        if (toastMessage) {
-            UI.showToast(toastMessage, 'info');
+        this.showLoginScreen("ออกจากระบบสำเร็จ");
+      }
+    });
+  },
+  
+  showLoginScreen(toastMessage = null) {
+    AppState.isInitialized = false;
+    AppState.currentUser = null;
+    DOM.adminContent.classList.add('hidden');
+    DOM.loginContainer.classList.remove('hidden');
+    DOM.globalLoader.classList.add('hidden');
+    
+    if (toastMessage) {
+      UI.showToast(toastMessage, 'info');
+    }
+  },
+  
+  async startAdminPanel() {
+    if (AppState.isInitialized) return;
+    
+    AppState.isInitialized = true;
+    DOM.loaderText.textContent = "กำลังโหลดข้อมูล...";
+    DOM.loginContainer.classList.add('hidden');
+    DOM.adminContent.classList.remove('hidden');
+    DOM.globalLoader.classList.remove('hidden');
+    
+    DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-800">${AppState.currentUser.email.split('@')[0]}</p>`;
+    
+    try {
+      await this.fetchData();
+      this.renderView('dashboard-container');
+      UI.showToast('ยินดีต้อนรับ!', 'success');
+    } catch (err) {
+      DOM.viewContent.innerHTML = `
+        <div class="text-center p-8 bg-white rounded-lg shadow">
+          <h2 class="text-xl font-bold text-red-600">เกิดข้อผิดพลาด</h2>
+          <p class="mt-2 text-red-500">${err.message}</p>
+        </div>
+      `;
+      UI.showToast('โหลดข้อมูลไม่สำเร็จ!', 'error');
+    } finally {
+      DOM.globalLoader.classList.add('hidden');
+    }
+  },
+  
+  async handleLogin(e) {
+    e.preventDefault();
+    const form = e.target;
+    const loginButton = form.querySelector('button[type="submit"]');
+    
+    UI.toggleButtonLoading(loginButton, true, 'เข้าสู่ระบบ');
+    DOM.loginError.textContent = '';
+    
+    const { error } = await supabase.auth.signInWithPassword({
+      email: form.email.value,
+      password: form.password.value,
+    });
+    
+    if (error) {
+      DOM.loginError.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+      UI.showToast('ล็อกอินล้มเหลว', 'error');
+      UI.toggleButtonLoading(loginButton, false, 'เข้าสู่ระบบ');
+    }
+  },
+  
+  async handleLogout() {
+    UI.showToast('กำลังออกจากระบบ...', 'info');
+    await supabase.auth.signOut();
+  },
+  
+  setupEventListeners() {
+    if (this.listenersInitialized) return;
+    
+    DOM.loginForm.addEventListener('submit', e => this.handleLogin(e));
+    DOM.logoutButton.addEventListener('click', () => this.handleLogout());
+    DOM.menuToggle.addEventListener('click', () => {
+      DOM.sidebar.classList.toggle('-translate-x-full');
+    });
+    
+    DOM.refreshButton.addEventListener('click', async () => {
+      UI.showToast('กำลังรีเฟรช...', 'info');
+      await this.loadInitialData();
+    });
+    
+    document.body.addEventListener('click', e => {
+      const navButton = e.target.closest('.nav-button');
+      if (navButton) {
+        this.renderView(navButton.dataset.view, { action: navButton.dataset.action });
+      }
+      
+      const editBtn = e.target.closest('.edit-profile-btn');
+      if (editBtn) {
+        this.renderView('profile-form-container', { profileId: editBtn.dataset.id });
+      }
+      
+      const deleteBtn = e.target.closest('.delete-profile-btn');
+      if (deleteBtn) {
+        this.handleDeleteProfile(deleteBtn.dataset);
+      }
+      
+      const previewBtn = e.target.closest('#preview-profile-button');
+      if (previewBtn) {
+        this.handlePreviewProfile();
+      }
+      
+      const profileCard = e.target.closest('.profile-card-clickable');
+      if (profileCard && !e.target.closest('button')) {
+        const profile = AppState.allProfiles.find(p => p.id == profileCard.dataset.id);
+        if (profile) {
+          UI.showProfileLightbox(profile);
         }
-    },
-
-    async startAdminPanel() {
-        if (AppState.isInitialized) return;
-        AppState.isInitialized = true;
-        DOM.loaderText.textContent = "กำลังโหลดข้อมูล...";
-        DOM.loginContainer.classList.add('hidden');
-        DOM.adminContent.classList.remove('hidden');
-        DOM.globalLoader.classList.remove('hidden');
-        DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-800">${AppState.currentUser.email.split('@')[0]}</p>`;
-        try {
-            await this.fetchData();
-            this.renderView('dashboard-container');
-            UI.showToast('ยินดีต้อนรับ!', 'success');
-        } catch (err) {
-            DOM.viewContent.innerHTML = `<div class="text-center p-8 bg-white rounded-lg shadow"><h2 class="text-xl font-bold text-red-600">เกิดข้อผิดพลาด</h2><p class="mt-2 text-red-500">${err.message}</p></div>`;
-            UI.showToast('โหลดข้อมูลไม่สำเร็จ!', 'error');
-        } finally {
-            DOM.globalLoader.classList.add('hidden');
-        }
-    },
-
-    async handleLogin(e) {
-        e.preventDefault();
-        const form = e.target;
-        const loginButton = form.querySelector('button[type="submit"]');
-        UI.toggleButtonLoading(loginButton, true, 'เข้าสู่ระบบ');
-        DOM.loginError.textContent = '';
-        const { error } = await supabase.auth.signInWithPassword({
-            email: form.email.value,
-            password: form.password.value,
-        });
-        if (error) {
-            DOM.loginError.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
-            UI.showToast('ล็อกอินล้มเหลว', 'error');
-            UI.toggleButtonLoading(loginButton, false, 'เข้าสู่ระบบ');
-        }
-    },
-
-    async handleLogout() {
-        UI.showToast('กำลังออกจากระบบ...', 'info');
-        await supabase.auth.signOut();
-    },
-
-    setupEventListeners() {
-        if (this.listenersInitialized) return;
-        DOM.loginForm.addEventListener('submit', e => this.handleLogin(e));
-        DOM.logoutButton.addEventListener('click', () => this.handleLogout());
-        DOM.menuToggle.addEventListener('click', () => DOM.sidebar.classList.toggle('-translate-x-full'));
-        DOM.refreshButton.addEventListener('click', async () => { UI.showToast('กำลังรีเฟรช...', 'info'); await this.loadInitialData(); });
-        document.body.addEventListener('click', e => {
-            const navButton = e.target.closest('.nav-button');
-            if (navButton) this.renderView(navButton.dataset.view, { action: navButton.dataset.action });
-            const editBtn = e.target.closest('.edit-profile-btn');
-            if (editBtn) this.renderView('profile-form-container', { profileId: editBtn.dataset.id });
-            const deleteBtn = e.target.closest('.delete-profile-btn');
-            if (deleteBtn) this.handleDeleteProfile(deleteBtn.dataset);
-            const previewBtn = e.target.closest('#preview-profile-button');
-            if (previewBtn) this.handlePreviewProfile();
-            const profileCard = e.target.closest('.profile-card-clickable');
-            if (profileCard && !e.target.closest('button')) {
-                const profile = AppState.allProfiles.find(p => p.id == profileCard.dataset.id);
-                if (profile) UI.showProfileLightbox(profile);
-            }
-            const deleteProvinceBtn = e.target.closest('.delete-province-btn');
-            if (deleteProvinceBtn) this.handleDeleteProvince(deleteProvinceBtn.dataset);
-        });
-        this.listenersInitialized = true;
-    },
-
-    async loadInitialData() {
+      }
+      
+      const deleteProvinceBtn = e.target.closest('.delete-province-btn');
+      if (deleteProvinceBtn) {
+        this.handleDeleteProvince(deleteProvinceBtn.dataset);
+      }
+    });
+    
+    this.listenersInitialized = true;
+  },
+  
+  async loadInitialData() {
     await this.fetchData();
     const currentView = AppState.currentView;
     const currentParams = AppState.currentParams;
     this.renderView(currentView, currentParams);
-}, // <--- จุดที่ 1: มีเครื่องหมายจุลภาค (,) เพื่อให้ต่อด้วยเมธอดถัดไป
-
-// ใน Controller
-async fetchData(force = false) {
+  },
+  
+  async fetchData(force = false) {
     const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
-
-    // โหลดข้อมูลโปรไฟล์ที่อัปเดตหลัง lastFetchTime
+    
+    // Fetch profiles updated since last fetch
     const profilesResponse = await supabase
-        .from('profiles')
-        .select('*')
-        // โค้ดส่วนที่เคยถูกตัดออกได้รับการแก้ไขให้สมบูรณ์แล้ว
-        .gte('lastUpdated', lastFetchTime);
+      .from('profiles')
+      .select('*')
+      .gte('lastUpdated', lastFetchTime);
+    
     if (profilesResponse.error) throw profilesResponse.error;
-
+    
     const newProfiles = profilesResponse.data || [];
-
-    // อัปเดตข้อมูลใน AppState.allProfiles
+    
+    // Update AppState.allProfiles
     newProfiles.forEach(p => {
-        const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
-        if (index !== -1) {
-            AppState.allProfiles[index] = p;
-        } else {
-            AppState.allProfiles.push(p);
-        }
+      const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
+      if (index !== -1) {
+        AppState.allProfiles[index] = p;
+      } else {
+        AppState.allProfiles.push(p);
+      }
     });
-
-    // อัปเดต lastFetchTime เป็นเวลาปัจจุบัน
+    
+    // Update lastFetchTime
     AppState.lastFetchTime = new Date().toISOString();
-
-    // โหลด provinces ถ้าจำเป็น
+    
+    // Fetch provinces if needed
     if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
-        const provincesResponse = await supabase.from('provinces').select('*').order('nameThai');
-        if (provincesResponse.error) throw provincesResponse.error;
-        AppState.provinces = provincesResponse.data || [];
+      const provincesResponse = await supabase
+        .from('provinces')
+        .select('*')
+        .order('nameThai');
+      
+      if (provincesResponse.error) throw provincesResponse.error;
+      AppState.provinces = provincesResponse.data || [];
     }
-
-    // เรียก updateStats จาก Controller
-    Controller.updateStats();
-}, // <--- จุดที่ 2: เพิ่มเครื่องหมายจุลภาค (,)
-
-updateStats() {
+    
+    // Update stats
+    this.updateStats();
+  },
+  
+  updateStats() {
     AppState.stats.profiles = AppState.allProfiles.length;
     AppState.stats.featured = AppState.allProfiles.filter(p => p.isfeatured).length;
     AppState.stats.provinces = AppState.provinces.length;
-}, // <--- จุดที่ 3: เพิ่มเครื่องหมายจุลภาค (,)
-
-renderView(viewId, params = {}) {
+  },
+  
+  renderView(viewId, params = {}) {
     AppState.currentView = viewId;
     AppState.currentParams = params;
-    DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
+    
+    DOM.viewContent.innerHTML = `
+      <div class="flex justify-center p-16">
+        <div class="loader-lg"></div>
+      </div>
+    `;
+    
     UI.setActiveNav(viewId);
+    
     const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
     if (activeNav) {
-        const titleText = activeNav.textContent.trim();
-        DOM.headerTitle.textContent = titleText;
-        DOM.viewTitle.textContent = titleText;
+      const titleText = activeNav.textContent.trim();
+      DOM.headerTitle.textContent = titleText;
+      DOM.viewTitle.textContent = titleText;
     }
-    if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
+    
+    if (window.innerWidth < 1024) {
+      DOM.sidebar.classList.add('-translate-x-full');
+    }
+    
     const renderFunction = this[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
+    
     if (typeof renderFunction === 'function') {
-        renderFunction.call(this, params);
+      renderFunction.call(this, params);
     } else {
-        DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+      DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
     }
-},
- 
+  },
 
-    renderDashboardContainer() { 
-        const { profiles, featured, provinces } = AppState.stats;
-        const statsCards = [
-            { i: 'users', c: 'indigo', t: 'โปรไฟล์ทั้งหมด', v: profiles },
-            { i: 'star', c: 'amber', t: 'โปรไฟล์แนะนำ', v: featured },
-            { i: 'map-marked-alt', c: 'emerald', t: 'จังหวัดในระบบ', v: provinces }
-        ];
-        DOM.viewContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${statsCards.map(s => `<div class="bg-white p-6 rounded-xl shadow-md flex items-center gap-5"><i class="fas fa-${s.i} text-3xl text-${s.c}-500 bg-${s.c}-100 p-4 rounded-full"></i><div><p class="text-sm text-slate-500">${s.t}</p><p class="text-3xl font-bold text-slate-800">${s.v}</p></div></div>`).join('')}</div>`;
-    },
-    renderProfilesListContainer() { 
-        DOM.viewContent.innerHTML = `<div class="space-y-6"><div class="bg-white p-4 rounded-xl shadow-md"><input type="text" id="search-input" placeholder="ค้นหาด้วยชื่อ..." class="form-input"></div><div id="profiles-grouped-list" class="space-y-8"></div></div>`; 
-        this.renderGroupedProfileCards(); 
-        document.getElementById('search-input').addEventListener('input', UI.debounce(() => this.renderGroupedProfileCards(), 300)); 
-    },
+  calculateDashboardStats() {
+    const profiles = AppState.allProfiles;
+    const stats = {
+        uploadsLast7Days: { labels: [], values: Array(7).fill(0) },
+        profilesByProvince: {},
+    };
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
 
-    renderGroupedProfileCards() { 
-        const listEl = document.getElementById('profiles-grouped-list'); 
-        if (!listEl) return; 
-        const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || ''; 
-        const filteredProfiles = AppState.allProfiles.filter(p => !searchTerm || (p.name && p.name.toLowerCase().includes(searchTerm))); 
-        let html = AppState.provinces.map(province => {
-            const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
-            if (profilesInProvince.length === 0) return '';
-            return `<div class="province-group"><h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4">${province.nameThai}</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}</div></div>`;
-        }).join('');
-        listEl.innerHTML = html || `<p class="col-span-full text-center py-16 text-slate-500">ไม่พบโปรไฟล์ที่ตรงกับการค้นหา</p>`;
-    },
+    // คำนวณโปรไฟล์ที่อัปเดตใน 7 วันล่าสุด
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        stats.uploadsLast7Days.labels.push(d.toLocaleDateString('th-TH', { weekday: 'short' }));
 
-    getProfileCardHTML(p) { 
-        const provinceName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || 'N/A'; 
-        const imageUrl = (p.imagePaths && p.imagePaths[0]) || p.imagePath ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl((p.imagePaths && p.imagePaths[0]) || p.imagePath).data.publicUrl : 'https://placehold.co/400x500/f3f4f6/9ca3af?text=No+Image'; 
-        const placeholder = 'https://placehold.co/400x500/f3f4f6/9ca3af?text=No+Image'; 
-        return `<div class="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col group profile-card-clickable cursor-pointer" data-id="${p.id}"><div class="relative aspect-[3/4]"><img src="${imageUrl}" alt="${p.altText || p.name}" class="w-full h-full object-cover transition-transform group-hover:scale-105" onerror="this.onerror=null;this.src='${placeholder}';" loading="lazy"> ${p.isfeatured ? '<div class="absolute top-3 left-3 bg-amber-400 text-black text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5"><i class="fas fa-star"></i>แนะนำ</div>' : ''}</div><div class="p-3 md:p-4 flex-grow flex flex-col"><h4 class="text-base md:text-lg font-bold text-slate-800 truncate">${p.name || 'N/A'}</h4><p class="text-xs md:text-sm text-slate-500">${provinceName}</p><div class="mt-auto pt-3 md:pt-4 border-t border-slate-200/80 flex space-x-2 md:space-x-3"><button data-id="${p.id}" class="edit-profile-btn flex-1 py-1.5 md:py-2 px-2 md:px-3 text-xs md:text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">แก้ไข</button><button data-id="${p.id}" data-name="${p.name}" data-imagepath="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}" class="delete-profile-btn flex-1 py-1.5 md:py-2 px-2 md:px-3 text-xs md:text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">ลบ</button></div></div></div>`; 
-    },
+        const startOfDay = new Date(d);
+        startOfDay.setHours(0, 0, 0, 0);
 
-async renderProfileFormContainer(params = {}) { 
-        const profileId = params.profileId;
-        const isEditing = !!profileId;
-        let p = {};
-        if (isEditing) {
-            const { data, error } = await supabase.from('profiles').select('*').eq('id', profileId).single();
-            if (error) { UI.showToast("หาโปรไฟล์ไม่เจอ", "error"); return this.renderView('profiles-list-container'); }
-            p = data;
+        profiles.forEach(p => {
+            if (p.lastUpdated) {
+                const updatedDate = new Date(p.lastUpdated);
+                if (updatedDate >= startOfDay && updatedDate <= d) {
+                    stats.uploadsLast7Days.values[i]++;
+                }
+            }
+        });
+    }
+    stats.uploadsLast7Days.labels.reverse();
+    stats.uploadsLast7Days.values.reverse();
+
+    // คำนวณสัดส่วนโปรไฟล์ในแต่ละจังหวัด
+    AppState.provinces.forEach(prov => {
+        const count = profiles.filter(p => p.provinceKey === prov.key).length;
+        if (count > 0) {
+            stats.profilesByProvince[prov.nameThai] = count;
         }
-        const imageUrl = (p.imagePaths && p.imagePaths[0]) || p.imagePath ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl((p.imagePaths && p.imagePaths[0]) || p.imagePath).data.publicUrl : null;
-        const formHTML = `<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-4xl mx-auto"><form id="profile-form" class="space-y-8"><input type="hidden" id="profile-id" value="${p.id || ''}"><input type="hidden" id="current-image-path" value="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}"><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รูปภาพและสถานะ</h3><div class="flex flex-col md:flex-row gap-6 items-start"><div id="image-uploader" class="flex-shrink-0"></div><div class="flex-grow space-y-4"><label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded" ${p.isfeatured ? 'checked' : ''}><span class="font-medium text-gray-700">ปักหมุดเป็นโปรไฟล์แนะนำ</span></label><div><label for="availability" class="block text-sm font-medium text-slate-700 mb-1">สถานะรับงาน</label><select id="availability" class="form-input">${['สอบถามคิว', 'รับงาน', 'ว่าง', 'รับงานบางวัน', 'ไม่ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลส่วนตัว</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><div><label for="name" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ*</label><input type="text" id="name" required class="form-input" value="${p.name || ''}"></div><div>
-<div class="mb-4">
-  <label for="image-file-input" class="block text-sm font-medium text-gray-700 mb-1">
-    เพิ่มรูปโปรไฟล์หลายรูป
-  </label>
-  
-  <div id="dropzone"
-       class="border-2 border-dashed border-pink-400/60 rounded-xl p-6 text-center cursor-pointer hover:bg-pink-50 transition">
-    <p class="mb-2 text-gray-500">ลากและวางรูปภาพที่นี่ หรือกดปุ่มเลือกหลายรูป</p>
-    <button type="button" id="choose-images" class="btn-primary">เลือกหลายรูป</button>
-    <input type="file" id="image-file-input" multiple accept="image/*" class="hidden">
-  </div>
+    });
 
-  <!-- Preview -->
-  <div id="deluxe-preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3"></div>
-  
-  <p class="mt-2 text-xs text-gray-400">
-    ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 80% โดยอัตโนมัติ
-  </p>
-</div>
-<label for="age" class="block text-sm font-medium text-slate-700 mb-1">อายุ</label><input type="number" id="age" class="form-input" value="${p.age || ''}"></div><div><label for="stats" class="block text-sm font-medium text-slate-700 mb-1">สัดส่วน</label><input type="text" id="stats" class="form-input" value="${p.stats || ''}" placeholder="36-24-35"></div><div><label for="height" class="block text-sm font-medium text-slate-700 mb-1">สูง (cm)</label><input type="text" id="height" class="form-input" value="${p.height || ''}"></div><div><label for="weight" class="block text-sm font-medium text-slate-700 mb-1">หนัก (kg)</label><input type="text" id="weight" class="form-input" value="${p.weight || ''}"></div><div><label for="skinTone" class="block text-sm font-medium text-slate-700 mb-1">สีผิว</label><input type="text" id="skinTone" class="form-input" value="${p.skinTone || ''}" placeholder="ขาวเหลือง"></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลบริการและการติดต่อ</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="provinceKey" class="block text-sm font-medium text-slate-700 mb-1">จังหวัด/หัวข้อ*</label><select id="provinceKey" required class="form-input">${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}</select></div><div><label for="location" class="block text-sm font-medium text-slate-700 mb-1">พิกัด (ย่อย)</label><input type="text" id="location" class="form-input" value="${p.location || ''}" placeholder="นิมมาน, สันติธรรม"></div><div><label for="rate" class="block text-sm font-medium text-slate-700 mb-1">เรทราคา</label><input type="text" id="rate" class="form-input" value="${p.rate || ''}" placeholder="1500/1"></div><div><label for="lineId" class="block text-sm font-medium text-slate-700 mb-1">LINE ID</label><input type="text" id="lineId" class="form-input" value="${p.lineId || ''}"></div></div></div><div><h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รายละเอียดเพิ่มเติม</h3><div class="space-y-4"><div><label for="quote" class="block text-sm font-medium text-slate-700 mb-1">คำโปรยสั้นๆ</label><input type="text" id="quote" class="form-input" value="${p.quote || ''}"></div><div><label for="description" class="block text-sm font-medium text-slate-700 mb-1">รายละเอียด</label><textarea id="description" rows="4" class="form-input">${p.description || ''}</textarea></div><div><label class="block text-sm font-medium text-slate-700 mb-1">สไตล์ (Tags)</label><div id="tag-input-component"></div></div><div><label for="altText" class="block text-sm font-medium text-slate-700 mb-1">คำอธิบายรูปภาพ (Alt Text)</label><input type="text" id="altText" class="form-input" value="${p.altText || ''}" placeholder="น้องใยไหม ไซด์ไลน์เชียงใหม่"></div></div></div><div class="pt-5 flex justify-between items-center border-t"><button type="button" class="nav-button px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200" data-view="profiles-list-container">ยกเลิก</button><div class="flex items-center space-x-3"><button type="button" id="preview-profile-button" class="px-4 py-2.5 text-sm font-medium text-indigo-600 bg-indigo-100 rounded-lg hover:bg-indigo-200"><i class="fas fa-eye mr-2"></i>ดูตัวอย่าง</button><button type="submit" id="save-profile-button" class="flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 btn-pro">${isEditing ? 'บันทึก' : 'สร้าง'}</button></div></div></form></div>`;
-        DOM.viewContent.innerHTML = formHTML;
-        this.initImageUploader(imageUrl);
-        this.initTagInput(p.styleTags || []);
-        document.getElementById('profile-form').addEventListener('submit', e => this.handleProfileFormSubmit(e));
-    },
+    return stats;
+  },
 
-    initImageUploader(imageUrl) {
-      const uploaderEl = document.getElementById('image-uploader');
-      uploaderEl.innerHTML = `
-        <div class="space-y-3">
-          <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50
-                             hover:border-indigo-400 transition cursor-pointer">
-            <input type="file" id="image-file-input" accept="image/*" multiple
-                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <div class="pointer-events-none text-center">
-              <p class="text-sm text-slate-600 font-medium">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
-              <p class="text-xs text-slate-500 mt-1">ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 85%</p>
+// ================== คัดลอกโค้ดทั้งหมดนี้ไป "แทนที่" ของเดิม ==================
+
+  renderDashboardContainer() {
+    const { profiles, featured, provinces } = AppState.stats;
+    const dashboardStats = this.calculateDashboardStats();
+
+    const statsCards = [
+        { i: 'users', c: 'indigo', t: 'โปรไฟล์ทั้งหมด', v: profiles || 0 },
+        { i: 'star', c: 'amber', t: 'โปรไฟล์แนะนำ', v: featured || 0 },
+        { i: 'map-marked-alt', c: 'emerald', t: 'จังหวัดในระบบ', v: provinces || 0 }
+    ];
+
+    DOM.viewContent.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${statsCards.map(s => `
+            <div class="bg-white p-6 rounded-xl shadow-md flex items-center gap-5">
+                <i class="fas fa-${s.i} text-3xl text-${s.c}-500 bg-${s.c}-100 p-4 rounded-full"></i>
+                <div>
+                <p class="text-sm text-slate-500">${s.t}</p>
+                <p class="text-3xl font-bold text-slate-800">${s.v}</p>
+                </div>
+            </div>
+            `).join('')}
+        </div>
+        
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h4 class="text-lg font-semibold text-slate-800 mb-3">โปรไฟล์ที่อัปเดตใน 7 วันล่าสุด</h4>
+                <canvas id="chart-uploads"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h4 class="text-lg font-semibold text-slate-800 mb-3">สัดส่วนโปรไฟล์ตามจังหวัด</h4>
+                <canvas id="chart-provinces"></canvas>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        const chartUploadsCtx = document.getElementById('chart-uploads')?.getContext('2d');
+        if(chartUploadsCtx) {
+            new Chart(chartUploadsCtx, {
+                type: 'bar',
+                data: {
+                    labels: dashboardStats.uploadsLast7Days.labels,
+                    datasets: [{
+                        label: 'จำนวน',
+                        data: dashboardStats.uploadsLast7Days.values,
+                        backgroundColor: 'rgba(129, 140, 248, 0.6)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+        }
+
+        const chartProvincesCtx = document.getElementById('chart-provinces')?.getContext('2d');
+        if(chartProvincesCtx) {
+            new Chart(chartProvincesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(dashboardStats.profilesByProvince),
+                    datasets: [{
+                        data: Object.values(dashboardStats.profilesByProvince),
+                        backgroundColor: ['#ec4899', '#a855f7', '#38bdf8', '#34d399', '#f59e0b', '#94a3b8'],
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'right' } } }
+            });
+        }
+    }, 100);
+  },
+  
+  renderProfilesListContainer() {
+    DOM.viewContent.innerHTML = `
+      <div class="space-y-6">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="md:col-span-2">
+              <label for="search-input" class="block text-sm font-medium text-slate-700 mb-1">ค้นหาอัจฉริยะ</label>
+              <input type="text" id="search-input" placeholder="ชื่อ, พิกัด, LINE, สไตล์..." class="form-input">
+            </div>
+            <div>
+              <label for="filter-province" class="block text-sm font-medium text-slate-700 mb-1">จังหวัด</label>
+              <select id="filter-province" class="form-input">
+                <option value="">ทุกจังหวัด</option>
+                ${AppState.provinces.map(p => `<option value="${p.key}">${p.nameThai}</option>`).join('')}
+              </select>
+            </div>
+            <div class="flex items-center justify-start md:justify-end pb-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="filter-featured" class="h-4 w-4 text-indigo-600 rounded">
+                  <span class="font-medium text-slate-700">เฉพาะที่แนะนำ</span>
+                </label>
             </div>
           </div>
-          <div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </div>
+        <div id="profiles-grouped-list" class="space-y-8"></div>
+      </div>
+    `;
+
+    document.getElementById('search-input').addEventListener('input', UI.debounce(() => this.renderGroupedProfileCards(), 300));
+    document.getElementById('filter-province').addEventListener('change', () => this.renderGroupedProfileCards());
+    document.getElementById('filter-featured').addEventListener('change', () => this.renderGroupedProfileCards());
+    
+    this.renderGroupedProfileCards();
+  },
+  
+  renderGroupedProfileCards() {
+    const listEl = document.getElementById('profiles-grouped-list');
+    if (!listEl) return;
+
+    const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
+    const selectedProvince = document.getElementById('filter-province')?.value || '';
+    const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
+
+    let filteredProfiles = AppState.allProfiles;
+
+    if (searchTerm) {
+      filteredProfiles = filteredProfiles.filter(p => {
+        const tagsString = (p.styleTags || []).join(' ').toLowerCase();
+        return (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+               (p.location && p.location.toLowerCase().includes(searchTerm)) ||
+               (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) ||
+               (tagsString.includes(searchTerm));
+      });
+    }
+
+    if (selectedProvince) {
+      filteredProfiles = filteredProfiles.filter(p => p.provinceKey === selectedProvince);
+    }
+
+    if (isFeaturedOnly) {
+      filteredProfiles = filteredProfiles.filter(p => p.isfeatured);
+    }
+    
+    let html = AppState.provinces.map(province => {
+      const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
+      if (profilesInProvince.length === 0) return '';
+      
+      return `
+        <div class="province-group">
+          <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4">
+            ${province.nameThai}
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
+          </div>
         </div>
       `;
+    }).join('');
+    
+    listEl.innerHTML = html || `
+      <p class="col-span-full text-center py-16 text-slate-500">
+        ไม่พบโปรไฟล์ที่ตรงกับเงื่อนไขการค้นหา
+      </p>
+    `;
+  },
 
-      const fileInput = document.getElementById('image-file-input');
-      const dz = document.getElementById('dz');
-      const previewGrid = document.getElementById('multi-preview');
-
-      const renderPreview = (files) => {
-        previewGrid.innerHTML = '';
-        files.forEach(f => {
-          const url = URL.createObjectURL(f);
-          const card = document.createElement('div');
-          card.className = 'relative rounded-xl overflow-hidden shadow bg-white';
-          card.innerHTML = `<img src="${url}" class="w-full h-40 object-cover" alt="">
-                            <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">${f.name}</div>`;
-          previewGrid.appendChild(card);
-        });
-      };
-
-      dz.addEventListener('click', () => fileInput.click());
-      dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('border-indigo-400'); });
-      dz.addEventListener('dragleave', () => dz.classList.remove('border-indigo-400'));
-      dz.addEventListener('drop', e => {
-        e.preventDefault();
-        dz.classList.remove('border-indigo-400');
-        const dtFiles = Array.from(e.dataTransfer.files || []).filter(f => /^image\//.test(f.type));
-        if (!dtFiles.length) return;
-        const dataTransfer = new DataTransfer();
-        dtFiles.forEach(f => dataTransfer.items.add(f));
-        fileInput.files = dataTransfer.files;
-        renderPreview(dtFiles);
-      });
-
-      fileInput.addEventListener('change', e => {
-        renderPreview(Array.from(e.target.files || []));
-      });
-
-      if (imageUrl) {
-        previewGrid.innerHTML = `
-          <div class="relative rounded-xl overflow-hidden shadow bg-white">
-            <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
-            <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">ภาพปัจจุบัน</div>
-          </div>`;
-      }
-    },
-
-    initTagInput(initialTags = []) { 
-        const container = document.getElementById('tag-input-component');
-        let tags = [...initialTags];
-        const render = () => {
-            container.innerHTML = `<div class="tag-input-container bg-white">${tags.map(tag => `<div class="tag-item"><span>${tag}</span><i class="fas fa-times tag-remove-btn" data-tag="${tag}"></i></div>`).join('')}<input type="text" class="tag-input" placeholder="เพิ่มสไตล์แล้วกด Enter..."></div>`;
-            container.querySelector('.tag-input').addEventListener('keydown', e => {
-                if (e.key === 'Enter' && e.target.value.trim()) {
-                    e.preventDefault();
-                    tags.push(e.target.value.trim());
-                    tags = [...new Set(tags)];
-                    render();
-                }
-            });
-            container.querySelectorAll('.tag-remove-btn').forEach(btn => {
-                btn.addEventListener('click', e => {
-                    tags = tags.filter(t => t !== e.target.dataset.tag);
-                    render();
-                });
-            });
-        };
-        render();
-    },
-
-    async handleProfileFormSubmit(e) {
-        e.preventDefault();
-        const form = e.target;
-        const profileId = form.querySelector('#profile-id').value;
-        const isEditing = !!profileId;
-        const saveButton = form.querySelector('#save-profile-button');
-        UI.toggleButtonLoading(saveButton, true, isEditing ? 'บันทึก' : 'สร้าง');
-
-        try {
-            const fileInput = form.querySelector('#image-file-input');
-            let imagePath = form.querySelector('#current-image-path').value || '';
-            let uploadedPaths = [];
-
-            const files = Array.from(fileInput?.files || []);
-
-            if (!isEditing && !files.length && !imagePath) {
-                throw new Error('ต้องใส่รูปภาพอย่างน้อย 1 รูป');
-            }
-
-            if (files.length) {
-                UI.showToast(`กำลังอัปโหลดรูปภาพ ${files.length} ไฟล์...`, 'info');
-
-                const toWebp1200 = async (file) => {
-                    const bitmap = await createImageBitmap(file);
-                    const scale = bitmap.width > 1200 ? 1200 / bitmap.width : 1;
-                    const w = Math.round(bitmap.width * scale);
-                    const h = Math.round(bitmap.height * scale);
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-                    ctx.filter = 'contrast(1.06) saturate(1.06) brightness(1.02)';
-                    ctx.drawImage(bitmap, 0, 0, w, h);
-                    const blob = await new Promise(res => canvas.toBlob(res, 'image/webp', 0.85));
-                    return new File([blob], (file.name.replace(/\.[^.]+$/, '') || 'img') + '.webp', { type: 'image/webp' });
-                };
-
-                for (const f of files) {
-                    const webpFile = await toWebp1200(f);
-                    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.webp`;
-                    const { data, error } = await supabase.storage.from(STORAGE_BUCKET).upload(fileName, webpFile, { upsert: true });
-                    if (error) throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${error.message}`);
-                    uploadedPaths.push(data.path);
-                }
-
-                imagePath = uploadedPaths[0];
-            }
-
-            const profileData = this.collectFormData(form);
-            if (imagePath) profileData.imagePath = imagePath;
-            if (uploadedPaths.length) profileData.galleryPaths = uploadedPaths;
-
-            let dbRes;
-            if (isEditing) {
-                dbRes = await supabase.from('profiles').update(profileData).eq('id', profileId).select().single();
-            } else {
-                dbRes = await supabase.from('profiles').insert(profileData).select().single();
-            }
-            if (dbRes.error) throw new Error(dbRes.error.message);
-
-            UI.showToast(isEditing ? 'อัปเดตโปรไฟล์สำเร็จ' : 'สร้างโปรไฟล์สำเร็จ', 'success');
-            this.renderView('profiles-list-container');
-        } catch (err) {
-            console.error(err);
-            UI.showToast(err.message || 'เกิดข้อผิดพลาด', 'error');
-        } finally {
-            UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
-        }
-    },
-
-    collectFormData(form) {
-        const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
-        return {
-            name: form.querySelector('#name').value.trim(), age: parseInt(form.querySelector('#age').value) || null,
-            height: form.querySelector('#height').value.trim(), weight: form.querySelector('#weight').value.trim(),
-            stats: form.querySelector('#stats').value.trim(), skinTone: form.querySelector('#skinTone').value.trim(),
-            provinceKey: form.querySelector('#provinceKey').value, location: form.querySelector('#location').value.trim(),
-            rate: form.querySelector('#rate').value.trim(), availability: form.querySelector('#availability').value,
-            lineId: form.querySelector('#lineId').value.trim(), quote: form.querySelector('#quote').value.trim(),
-            description: form.querySelector('#description').value.trim(), 
-            altText: form.querySelector('#altText').value.trim() || form.querySelector('#name').value.trim(),
-            isfeatured: form.querySelector('#isFeatured').checked, styleTags, lastUpdated: new Date().toISOString()
-        };
-    },
-
-    handlePreviewProfile() {
-        const form = document.getElementById('profile-form');
-        if (!form) return;
-        const profileData = this.collectFormData(form);
-        const currentImagePath = form.querySelector('#current-image-path').value;
-        const imageFile = form.querySelector('#image-file-input').files[0];
-        if (imageFile) {
-            profileData.imagePath = URL.createObjectURL(imageFile);
-        } else {
-            profileData.imagePath = currentImagePath;
-        }
-        UI.showProfileLightbox(profileData);
-    },
-
-    handleDeleteProfile({ id, name, imagepath }) { 
-        UI.showModal({
-            title: 'ยืนยันการลบ',
-            message: `แน่ใจนะว่าจะลบโปรไฟล์ของ <strong>${name}</strong>? การกระทำนี้ไม่สามารถย้อนกลับได้`,
-            onConfirm: async () => {
-                UI.showToast(`กำลังลบ ${name}...`, 'info');
-                try {
-                    const { error } = await supabase.from('profiles').delete().eq('id', id);
-                    if (error) throw error;
-                    if (imagepath && imagepath !== 'null' && imagepath.trim() !== '') {
-                        const { error: storageError } = await supabase.storage.from(STORAGE_BUCKET).remove([imagepath]);
-                        if (storageError) console.warn("Failed to delete image from storage:", storageError.message);
-                    }
-                    UI.showToast('ลบโปรไฟล์สำเร็จ', 'success');
-                    await this.fetchData();
-                    this.renderView(AppState.currentView, AppState.currentParams);
-                } catch (error) {
-                    UI.showToast(`เกิดข้อผิดพลาดในการลบ: ${error.message}`, "error");
-                }
-            }
-        });
-    },
-
-    renderProvincesManagementContainer() { 
-        DOM.viewContent.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div class="bg-white p-6 rounded-xl shadow-lg"><h4 class="text-lg font-semibold text-indigo-700 mb-4 border-b pb-3">เพิ่มจังหวัด/หัวข้อ</h4><form id="add-province-form" class="space-y-4"><div><label for="province-name-thai" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ (ไทย)*</label><input type="text" id="province-name-thai" required class="form-input"></div><div><label for="province-key" class="block text-sm font-medium text-slate-700 mb-1">คีย์ (อังกฤษ)*</label><input type="text" id="province-key" required class="form-input" placeholder="english-no-space"><p class="text-xs text-slate-500 mt-1">ใช้ตัวพิมพ์เล็ก, ไม่มีเว้นวรรค</p></div><button type="submit" id="add-province-btn" class="w-full py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">เพิ่ม</button></form></div><div class="bg-white p-6 rounded-xl shadow-lg"><h4 class="text-lg font-semibold text-indigo-700 mb-4 border-b pb-3">รายการทั้งหมด</h4><div class="overflow-x-auto">${AppState.provinces.length === 0 ? '<p class="text-center py-8 text-slate-500">ไม่มีข้อมูล</p>' : `<table class="min-w-full"><thead class="bg-slate-50"><tr><th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">ชื่อ</th><th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">คีย์</th><th class="px-4 py-3 text-right"></th></tr></thead><tbody class="bg-white divide-y divide-slate-200">${AppState.provinces.map(p => `<tr><td class="px-4 py-3 text-sm text-slate-700">${p.nameThai}</td><td class="px-4 py-3 text-sm font-mono text-slate-500">${p.key}</td><td class="px-4 py-3 text-right"><button data-id="${p.id}" data-name="${p.nameThai}" class="delete-province-btn text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></td></tr>`).join('')}</tbody></table>`}</div></div></div>`;
-        document.getElementById('add-province-form').addEventListener('submit', e => this.handleAddProvince(e));
-    },
-
-    async handleAddProvince(e) { 
-        e.preventDefault();
-        const form = e.target;
-        const nameThai = form.querySelector('#province-name-thai').value.trim();
-        const key = form.querySelector('#province-key').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if (!nameThai || !key) { return UI.showToast('กรุณากรอกข้อมูลให้ครบ', 'error'); }
-        const saveButton = form.querySelector('#add-province-btn');
-        UI.toggleButtonLoading(saveButton, true, 'เพิ่ม');
-        try {
-            const { error } = await supabase.from('provinces').insert([{ nameThai, key }]);
-            if (error) throw error;
-            UI.showToast('เพิ่มสำเร็จ', 'success');
-            form.reset();
-            await this.fetchData();
-            this.renderView('provinces-management-container');
-        } catch (error) {
-            UI.showToast(`เกิดพลาด: ${error.message}`, 'error');
-        } finally {
-            UI.toggleButtonLoading(saveButton, false, 'เพิ่ม');
-        }
-    },
-
-    handleDeleteProvince({ id, name }) { 
-        UI.showModal({
-            title: 'ยืนยันการลบ',
-            message: `จะลบ <strong>${name}</strong>?`,
-            onConfirm: async () => {
-                try {
-                    const { error } = await supabase.from('provinces').delete().eq('id', id);
-                    if (error) throw error;
-                    UI.showToast('ลบสำเร็จ', 'success');
-                    await this.fetchData();
-                    this.renderView('provinces-management-container');
-                } catch (error) {
-                    UI.showToast(`ลบไม่สำเร็จ: ${error.message}`, 'error');
-                }
-            }
-        });
+getProfileCardHTML(p) {
+    // 1. เช็ครูปภาพ (รองรับทั้งระบบเก่าและใหม่)
+    let imgUrl = 'https://placehold.co/400x500?text=No+Image';
+    if (p.imagePaths && p.imagePaths.length > 0) {
+        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePaths[0]).data.publicUrl;
+    } else if (p.imagePath) {
+        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePath).data.publicUrl;
     }
+
+    // 2. เช็คชื่อจังหวัด
+    const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
+
+    // 3. ส่งคืน HTML (เพิ่ม class 'profile-card-clickable' และ 'data-id' แล้ว)
+    return `
+      <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer" data-id="${p.id}">
+        <div class="relative aspect-[3/4]">
+            <img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+            ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded font-bold">แนะนำ</span>' : ''}
+        </div>
+        <div class="p-3 flex flex-col flex-grow">
+          <h4 class="font-bold text-lg truncate" style="color: var(--color-text-main)">${p.name || 'ไม่ระบุชื่อ'}</h4>
+          <p class="text-sm opacity-70 mb-2" style="color: var(--color-text-muted)">${provName}</p>
+          
+          <div class="mt-auto flex gap-2 pt-2 border-t border-gray-200">
+            <!-- ปุ่มแก้ไข -->
+            <button class="edit-profile-btn flex-1 py-1.5 bg-pink-500 text-white text-sm rounded shadow hover:bg-pink-600 transition" data-id="${p.id}">
+              แก้ไข
+            </button>
+            
+            <!-- ปุ่มลบ -->
+            <button class="delete-profile-btn px-3 py-1.5 bg-gray-200 text-gray-600 text-sm rounded hover:bg-red-500 hover:text-white transition" 
+                    data-id="${p.id}" 
+                    data-name="${p.name}" 
+                    data-imagepath="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+// ================ แทนที่ renderProfileFormContainer ทั้งหมดด้วยโค้ดนี้ ================
+  async renderProfileFormContainer(params = {}) {
+    const profileId = params.profileId;
+    const isEditing = !!profileId;
+    let p = {};
+    
+    if (isEditing) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', profileId)
+        .single();
+      
+      if (error) {
+        UI.showToast("หาโปรไฟล์ไม่เจอ", "error");
+        return this.renderView('profiles-list-container');
+      }
+      p = data;
+    }
+    
+    const imageUrl = (p.imagePaths && p.imagePaths[0]) || p.imagePath
+      ? supabase.storage.from(STORAGE_BUCKET).getPublicUrl((p.imagePaths && p.imagePaths[0]) || p.imagePath).data.publicUrl
+      : null;
+    
+    const formHTML = `
+      <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+        <form id="profile-form" class="space-y-8">
+          <input type="hidden" id="profile-id" value="${p.id || ''}">
+          <input type="hidden" id="current-image-path" value="${(p.imagePaths && p.imagePaths[0]) || p.imagePath || ''}">
+          
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รูปภาพและสถานะ</h3>
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+              <div id="image-uploader" class="flex-shrink-0"></div>
+              <div class="flex-grow space-y-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded" ${p.isfeatured ? 'checked' : ''}>
+                  <span class="font-medium text-gray-700">ปักหมุดเป็นโปรไฟล์แนะนำ</span>
+                </label>
+                <div>
+                  <label for="availability" class="block text-sm font-medium text-slate-700 mb-1">สถานะรับงาน</label>
+                  <select id="availability" class="form-input">
+                    ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'รับงานบางวัน', 'ไม่ว่าง', 'พัก'].map(s => `
+                      <option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>
+                    `).join('')}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลส่วนตัว</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div><label for="name" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ*</label><input type="text" id="name" required class="form-input" value="${p.name || ''}"></div>
+              <div><label for="age" class="block text-sm font-medium text-slate-700 mb-1">อายุ</label><input type="number" id="age" class="form-input" value="${p.age || ''}"></div>
+              <div><label for="stats" class="block text-sm font-medium text-slate-700 mb-1">สัดส่วน</label><input type="text" id="stats" class="form-input" value="${p.stats || ''}" placeholder="36-24-35"></div>
+              <div><label for="height" class="block text-sm font-medium text-slate-700 mb-1">สูง (cm)</label><input type="text" id="height" class="form-input" value="${p.height || ''}"></div>
+              <div><label for="weight" class="block text-sm font-medium text-slate-700 mb-1">หนัก (kg)</label><input type="text" id="weight" class="form-input" value="${p.weight || ''}"></div>
+              <div><label for="skinTone" class="block text-sm font-medium text-slate-700 mb-1">สีผิว</label><input type="text" id="skinTone" class="form-input" value="${p.skinTone || ''}" placeholder="ขาวเหลือง"></div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">ข้อมูลบริการและการติดต่อ</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label for="provinceKey" class="block text-sm font-medium text-slate-700 mb-1">จังหวัด/หัวข้อ*</label><select id="provinceKey" required class="form-input">${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}</select></div>
+              <div><label for="location" class="block text-sm font-medium text-slate-700 mb-1">พิกัด (ย่อย)</label><input type="text" id="location" class="form-input" value="${p.location || ''}" placeholder="นิมมาน, สันติธรรม"></div>
+              <div><label for="rate" class="block text-sm font-medium text-slate-700 mb-1">เรทราคา</label><input type="text" id="rate" class="form-input" value="${p.rate || ''}" placeholder="1500/1"></div>
+              <div><label for="lineId" class="block text-sm font-medium text-slate-700 mb-1">LINE ID</label><input type="text" id="lineId" class="form-input" value="${p.lineId || ''}"></div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">รายละเอียดและ Keyword</h3>
+            <div class="space-y-4">
+              <div><label for="quote" class="block text-sm font-medium text-slate-700 mb-1">คำโปรยสั้นๆ</label><input type="text" id="quote" class="form-input" value="${p.quote || ''}"></div>
+              <div><label for="description" class="block text-sm font-medium text-slate-700 mb-1">รายละเอียด</label><textarea id="description" rows="6" class="form-input">${p.description || ''}</textarea></div>
+              <div><label class="block text-sm font-medium text-slate-700 mb-1">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
+              <div><label for="altText" class="block text-sm font-medium text-slate-700 mb-1">คำอธิบายรูปภาพ (Alt Text)</label><input type="text" id="altText" class="form-input" value="${p.altText || ''}" placeholder="น้อง..? ไซด์ไลน์เชียงใหม่ รับงาน.จังหวัด? ฟิวแฟน ไม่มีมัดจำ"></div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">การตั้งค่า SEO (สำหรับ Google)</h3>
+            <div class="space-y-4">
+              <div><label for="seo-title" class="block text-sm font-medium text-slate-700 mb-1">SEO Title</label><input type="text" id="seo-title" class="form-input" value="${p.seo_title || ''}"></div>
+              <div><label for="meta-description" class="block text-sm font-medium text-slate-700 mb-1">Meta Description</label><textarea id="meta-description" rows="3" class="form-input">${p.meta_description || ''}</textarea></div>
+              <div><label for="slug" class="block text-sm font-medium text-slate-700 mb-1">ใส่ชื่อเล่น </label><input type="text" id="slug" class="form-input" value="${p.slug || ''}" placeholder="nong-yaimai-chiangmai"></div>
+            </div>
+          </div>
+          
+          <div class="pt-5 flex justify-between items-center border-t">
+            <button type="button" class="nav-button px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200" data-view="profiles-list-container">ยกเลิก</button>
+            <div class="flex items-center space-x-3">
+              <button type="button" id="preview-profile-button" class="px-4 py-2.5 text-sm font-medium text-indigo-600 bg-indigo-100 rounded-lg hover:bg-indigo-200"><i class="fas fa-eye mr-2"></i>ดูตัวอย่าง</button>
+              <button type="submit" id="save-profile-button" class="flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 btn-pro">${isEditing ? 'บันทึก' : 'สร้าง'}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    `;
+
+    DOM.viewContent.innerHTML = formHTML;
+    this.initImageUploader(imageUrl);
+    this.initTagInput(p.styleTags || []);
+    document.getElementById('profile-form').addEventListener('submit', e => this.handleProfileFormSubmit(e));
+  },
+
+// =========================================================================
+// =========================================================================
+// =========================================================================
+
+  initImageUploader(imageUrl) {
+    const uploaderEl = document.getElementById('image-uploader');
+    uploaderEl.innerHTML = `
+      <div class="space-y-3">
+        <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50
+                           hover:border-indigo-400 transition cursor-pointer">
+          <input type="file" id="image-file-input" accept="image/*" multiple
+                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div class="pointer-events-none text-center">
+            <p class="text-sm text-slate-600 font-medium">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
+            <p class="text-xs text-slate-500 mt-1">ระบบจะบีบอัดเป็น .webp ขนาด 1200px / คุณภาพ 85%</p>
+          </div>
+        </div>
+        <div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
+    `;
+    
+    const fileInput = document.getElementById('image-file-input');
+    const dz = document.getElementById('dz');
+    const previewGrid = document.getElementById('multi-preview');
+    
+    const renderPreview = (files) => {
+      previewGrid.innerHTML = '';
+      files.forEach(f => {
+        const url = URL.createObjectURL(f);
+        const card = document.createElement('div');
+        card.className = 'relative rounded-xl overflow-hidden shadow bg-white';
+        card.innerHTML = `
+          <img src="${url}" class="w-full h-40 object-cover" alt="">
+          <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">${f.name}</div>
+        `;
+        previewGrid.appendChild(card);
+      });
+    };
+    
+    dz.addEventListener('click', () => fileInput.click());
+    dz.addEventListener('dragover', e => {
+      e.preventDefault();
+      dz.classList.add('border-indigo-400');
+    });
+    
+    dz.addEventListener('dragleave', () => {
+      dz.classList.remove('border-indigo-400');
+    });
+    
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('border-indigo-400');
+      const dtFiles = Array.from(e.dataTransfer.files || []).filter(f => /^image\//.test(f.type));
+      if (!dtFiles.length) return;
+      
+      const dataTransfer = new DataTransfer();
+      dtFiles.forEach(f => dataTransfer.items.add(f));
+      fileInput.files = dataTransfer.files;
+      renderPreview(dtFiles);
+    });
+    
+    fileInput.addEventListener('change', e => {
+      renderPreview(Array.from(e.target.files || []));
+    });
+    
+    if (imageUrl) {
+      previewGrid.innerHTML = `
+        <div class="relative rounded-xl overflow-hidden shadow bg-white">
+          <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
+          <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs p-1 truncate">ภาพปัจจุบัน</div>
+        </div>
+      `;
+    }
+  },
+  
+  // ภายใน const Controller = { ... };
+// ให้มองหา initTagInput เดิมแล้วลบทิ้งทั้งหมด แล้ววางโค้ดนี้แทนที่
+
+  initTagInput(initialTags = []) {
+    const container = document.getElementById('tag-input-component');
+    let tags = [...initialTags];
+    
+    // รายการ Tag แนะนำ (คุณสามารถปรับแก้รายการนี้ได้ตามต้องการ)
+    const suggestedTags = ['น่ารัก', 'เอาใจเก่ง', 'สายฝอ', 'ตัวเล็ก', 'ผิวขาว', 'อวบ', 'คุยสนุก', 'ฟิลแฟน', 'ไม่เร่งรีบ'];
+
+    const render = () => {
+      container.innerHTML = `
+        <div class="tag-input-container bg-white">
+          ${tags.map(tag => `
+            <div class="tag-item">
+              <span>${tag}</span>
+              <i class="fas fa-times tag-remove-btn" data-tag="${tag}"></i>
+            </div>
+          `).join('')}
+          <input type="text" class="tag-input" placeholder="เพิ่มสไตล์แล้วกด Enter...">
+        </div>
+        <p class="text-xs text-slate-500 mt-1">
+          Tag ช่วยให้ลูกค้าหาเจอง่ายขึ้น และมีผลต่อ SEO
+        </p>
+        <!-- แสดงปุ่ม Tag แนะนำที่ยังไม่ได้ถูกเลือก -->
+        <div class="mt-2 flex flex-wrap gap-2">
+          ${suggestedTags.map(tag => 
+            !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full hover:bg-indigo-200">${tag}</button>` : ''
+          ).join('')}
+        </div>
+      `;
+      
+      const inputEl = container.querySelector('.tag-input');
+      if (inputEl) {
+        inputEl.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && e.target.value.trim()) {
+            e.preventDefault();
+            const newTags = e.target.value.trim().split(',').map(t => t.trim()).filter(Boolean);
+            tags.push(...newTags);
+            tags = [...new Set(tags)]; // ป้องกัน Tag ซ้ำ
+            render();
+            e.target.value = '';
+            inputEl.focus();
+          }
+        });
+      }
+      
+      container.querySelectorAll('.tag-remove-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          tags = tags.filter(t => t !== e.target.dataset.tag);
+          render();
+        });
+      });
+
+      // ทำให้ปุ่ม Tag แนะนำคลิกได้
+      container.querySelectorAll('.suggest-tag-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            tags.push(btn.textContent);
+            tags = [...new Set(tags)];
+            render();
+        });
+      });
+    };
+    
+    render();
+  },
+  
+  async handleProfileFormSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const profileId = form.querySelector('#profile-id').value;
+    const isEditing = !!profileId;
+    const saveButton = form.querySelector('#save-profile-button');
+    
+    UI.toggleButtonLoading(saveButton, true, isEditing ? 'บันทึก' : 'สร้าง');
+    
+    try {
+      const fileInput = form.querySelector('#image-file-input');
+      let imagePath = form.querySelector('#current-image-path').value || '';
+      let uploadedPaths = [];
+      
+      const files = Array.from(fileInput?.files || []);
+      
+      if (!isEditing && !files.length && !imagePath) {
+        throw new Error('ต้องใส่รูปภาพอย่างน้อย 1 รูป');
+      }
+      
+      if (files.length) {
+        UI.showToast(`กำลังอัปโหลดรูปภาพ ${files.length} ไฟล์...`, 'info');
+        
+        const toWebp1200 = async (file) => {
+          const bitmap = await createImageBitmap(file);
+          const scale = bitmap.width > 1200 ? 1200 / bitmap.width : 1;
+          const w = Math.round(bitmap.width * scale);
+          const h = Math.round(bitmap.height * scale);
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.filter = 'contrast(1.06) saturate(1.06) brightness(1.02)';
+          ctx.drawImage(bitmap, 0, 0, w, h);
+          
+          const blob = await new Promise(res => canvas.toBlob(res, 'image/webp', 0.85));
+          return new File([blob], (file.name.replace(/\.[^.]+$/, '') || 'img') + '.webp', { type: 'image/webp' });
+        };
+        
+        for (const f of files) {
+          const webpFile = await toWebp1200(f);
+          const fileName = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.webp`;
+          const { data, error } = await supabase.storage
+            .from(STORAGE_BUCKET)
+            .upload(fileName, webpFile, { upsert: true });
+          
+          if (error) throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${error.message}`);
+          uploadedPaths.push(data.path);
+        }
+        
+        imagePath = uploadedPaths[0];
+      }
+      
+      const profileData = this.collectFormData(form);
+      
+      if (imagePath) profileData.imagePath = imagePath;
+      if (uploadedPaths.length) profileData.imagePaths = uploadedPaths;
+      
+      let dbRes;
+      if (isEditing) {
+        dbRes = await supabase
+          .from('profiles')
+          .update(profileData)
+          .eq('id', profileId)
+          .select()
+          .single();
+      } else {
+        dbRes = await supabase
+          .from('profiles')
+          .insert(profileData)
+          .select()
+          .single();
+      }
+      
+      if (dbRes.error) throw new Error(dbRes.error.message);
+      
+      UI.showToast(isEditing ? 'อัปเดตโปรไฟล์สำเร็จ' : 'สร้างโปรไฟล์สำเร็จ', 'success');
+      this.renderView('profiles-list-container');
+    } catch (err) {
+      console.error(err);
+      UI.showToast(err.message || 'เกิดข้อผิดพลาด', 'error');
+    } finally {
+      UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
+    }
+  },
+  
+// ================ แทนที่ collectFormData ทั้งหมดด้วยโค้ดนี้ ================
+  collectFormData(form) {
+    const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
+    return {
+      name: form.querySelector('#name').value.trim(),
+      age: parseInt(form.querySelector('#age').value) || null,
+      height: form.querySelector('#height').value.trim(),
+      weight: form.querySelector('#weight').value.trim(),
+      stats: form.querySelector('#stats').value.trim(),
+      skinTone: form.querySelector('#skinTone').value.trim(),
+      provinceKey: form.querySelector('#provinceKey').value,
+      location: form.querySelector('#location').value.trim(),
+      rate: form.querySelector('#rate').value.trim(),
+      availability: form.querySelector('#availability').value,
+      lineId: form.querySelector('#lineId').value.trim(),
+      quote: form.querySelector('#quote').value.trim(),
+      description: form.querySelector('#description').value.trim(),
+      altText: form.querySelector('#altText').value.trim() || form.querySelector('#name').value.trim(),
+      isfeatured: form.querySelector('#isFeatured').checked,
+      styleTags,
+      lastUpdated: new Date().toISOString(),
+      seo_title: form.querySelector('#seo-title').value.trim(),
+      meta_description: form.querySelector('#meta-description').value.trim(),
+      slug: form.querySelector('#slug').value.trim().toLowerCase().replace(/\s+/g, '-'),
+    };
+  },
+  
+  handlePreviewProfile() {
+    const form = document.getElementById('profile-form');
+    if (!form) return;
+    
+    const profileData = this.collectFormData(form);
+    const currentImagePath = form.querySelector('#current-image-path').value;
+    const imageFile = form.querySelector('#image-file-input').files[0];
+    
+    if (imageFile) {
+      profileData.imagePath = URL.createObjectURL(imageFile);
+    } else {
+      profileData.imagePath = currentImagePath;
+    }
+    
+    UI.showProfileLightbox(profileData);
+  },
+  
+  handleDeleteProfile({ id, name, imagepath }) {
+    UI.showModal({
+      title: 'ยืนยันการลบ',
+      message: `แน่ใจนะว่าจะลบโปรไฟล์ของ <strong>${name}</strong>? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+      onConfirm: async () => {
+        UI.showToast(`กำลังลบ ${name}...`, 'info');
+        
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .delete()
+            .eq('id', id);
+          
+          if (error) throw error;
+          
+          if (imagepath && imagepath !== 'null' && imagepath.trim() !== '') {
+            const { error: storageError } = await supabase.storage
+              .from(STORAGE_BUCKET)
+              .remove([imagepath]);
+            
+            if (storageError) {
+              console.warn("Failed to delete image from storage:", storageError.message);
+            }
+          }
+          
+          UI.showToast('ลบโปรไฟล์สำเร็จ', 'success');
+          await this.fetchData();
+          this.renderView(AppState.currentView, AppState.currentParams);
+        } catch (error) {
+          UI.showToast(`เกิดข้อผิดพลาดในการลบ: ${error.message}`, "error");
+        }
+      }
+    });
+  },
+  
+  renderProvincesManagementContainer() {
+    DOM.viewContent.innerHTML = `
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h4 class="text-lg font-semibold text-indigo-700 mb-4 border-b pb-3">เพิ่มจังหวัด/หัวข้อ</h4>
+          <form id="add-province-form" class="space-y-4">
+            <div>
+              <label for="province-name-thai" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ (ไทย)*</label>
+              <input type="text" id="province-name-thai" required class="form-input">
+            </div>
+            <div>
+              <label for="province-key" class="block text-sm font-medium text-slate-700 mb-1">คีย์ (อังกฤษ)*</label>
+              <input type="text" id="province-key" required class="form-input" placeholder="english-no-space">
+              <p class="text-xs text-slate-500 mt-1">ใช้ตัวพิมพ์เล็ก, ไม่มีเว้นวรรค</p>
+            </div>
+            <button type="submit" id="add-province-btn" class="w-full py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+              เพิ่ม
+            </button>
+          </form>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h4 class="text-lg font-semibold text-indigo-700 mb-4 border-b pb-3">รายการทั้งหมด</h4>
+          <div class="overflow-x-auto">
+            ${AppState.provinces.length === 0 ? 
+              '<p class="text-center py-8 text-slate-500">ไม่มีข้อมูล</p>' : 
+              `<table class="min-w-full">
+                <thead class="bg-slate-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">ชื่อ</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">คีย์</th>
+                    <th class="px-4 py-3 text-right"></th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-200">
+                  ${AppState.provinces.map(p => `
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-slate-700">${p.nameThai}</td>
+                      <td class="px-4 py-3 text-sm font-mono text-slate-500">${p.key}</td>
+                      <td class="px-4 py-3 text-right">
+                        <button data-id="${p.id}" data-name="${p.nameThai}" class="delete-province-btn text-red-500 hover:text-red-700">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>`
+            }
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('add-province-form').addEventListener('submit', e => this.handleAddProvince(e));
+  },
+  
+  async handleAddProvince(e) {
+    e.preventDefault();
+    const form = e.target;
+    const nameThai = form.querySelector('#province-name-thai').value.trim();
+    const key = form.querySelector('#province-key').value.trim().toLowerCase().replace(/\s+/g, '-');
+    
+    if (!nameThai || !key) {
+      UI.showToast('กรุณากรอกข้อมูลให้ครบ', 'error');
+      return;
+    }
+    
+    const saveButton = form.querySelector('#add-province-btn');
+    UI.toggleButtonLoading(saveButton, true, 'เพิ่ม');
+    
+    try {
+      const { error } = await supabase
+        .from('provinces')
+        .insert([{ nameThai, key }]);
+      
+      if (error) throw error;
+      
+      UI.showToast('เพิ่มสำเร็จ', 'success');
+      form.reset();
+      await this.fetchData();
+      this.renderView('provinces-management-container');
+    } catch (error) {
+      UI.showToast(`เกิดพลาด: ${error.message}`, 'error');
+    } finally {
+      UI.toggleButtonLoading(saveButton, false, 'เพิ่ม');
+    }
+  },
+  
+  handleDeleteProvince({ id, name }) {
+    UI.showModal({
+      title: 'ยืนยันการลบ',
+      message: `จะลบ <strong>${name}</strong>?`,
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase
+            .from('provinces')
+            .delete()
+            .eq('id', id);
+          
+          if (error) throw error;
+          
+          UI.showToast('ลบสำเร็จ', 'success');
+          await this.fetchData();
+          this.renderView('provinces-management-container');
+        } catch (error) {
+          UI.showToast(`ลบไม่สำเร็จ: ${error.message}`, 'error');
+        }
+      }
+    });
+  }
 };
 
+// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    Controller.setupEventListeners();
-    Controller.initApp();
+  Controller.setupEventListeners();
+  Controller.initApp();
 });
 </script>
-
-
 <script>
-// === Multi-image Preview Enhancer ===
+// Multi-image Preview Enhancer
 (function(){
-    function byId(id){ return document.getElementById(id); }
-    const input = byId('image-file-input');
-    const preview = document.getElementById('multi-preview');
-    if (!input || !preview) return;
+  function byId(id){ return document.getElementById(id); }
+  const input = byId('image-file-input');
+  const preview = document.getElementById('multi-preview');
+  if (!input || !preview) return;
+  
+  preview.innerHTML = '';
+  input.addEventListener('change', () => {
     preview.innerHTML = '';
-    input.addEventListener('change', () => {
-        preview.innerHTML = '';
-        const files = Array.from(input.files || []);
-        files.forEach(file => {
-            const url = URL.createObjectURL(file);
-            const card = document.createElement('div');
-            card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01]';
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = file.name;
-            img.className = 'w-full h-32 object-cover';
-            const badge = document.createElement('div');
-            badge.className = 'absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
-            badge.textContent = (file.type || '').replace('image/','').toUpperCase();
-            card.appendChild(img);
-            card.appendChild(badge);
-            preview.appendChild(card);
-        });
-    }, { once:false });
-})();
-</script>
-<script>
-// === Rehydrate multi-preview from existing imagePaths/imagePath ===
-(function(){
-    const preview = document.getElementById('multi-preview');
-    if (!preview) return;
-    const form = document.getElementById('profile-form') || document.querySelector('form');
-    if (!form) return;
-    const currentSingle = form.querySelector('#current-image-path')?.value;
-    let embedded = null;
-    try { embedded = window.__CURRENT_PROFILE__ || null; } catch(_) {}
-    const paths = (embedded && embedded.imagePaths) ? embedded.imagePaths
-                  : (currentSingle ? [currentSingle] : []);
-    if (paths && paths.length) {
-        preview.innerHTML = '';
-        paths.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01]';
-            const img = document.createElement('img');
-            img.src = (typeof CDN_PUBLIC_URL !== 'undefined' ? CDN_PUBLIC_URL : '') + p;
-            img.className = 'w-full h-32 object-cover';
-            card.appendChild(img);
-            preview.appendChild(card);
-        });
-    }
-})();
-</script>
-<script>
-// === Auto-close sidebar on navigation (mobile) ===
-(function(){
-    const mq = window.matchMedia('(max-width: 1024px)');
-    const closeSidebar = () => {
-        try {
-            AppState.isSidebarOpen = false;
-            document.documentElement.classList.remove('overflow-hidden');
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar) sidebar.classList.add('-translate-x-full');
-        } catch(_) {}
-    };
-    const nav = document.getElementById('sidebar') || document;
-    nav.addEventListener('click', (e) => {
-        const el = e.target.closest('a,[data-nav],[data-action="navigate"]');
-        if (!el) return;
-        if (mq.matches) setTimeout(closeSidebar, 50);
+    const files = Array.from(input.files || []);
+    files.forEach(file => {
+      const url = URL.createObjectURL(file);
+      const card = document.createElement('div');
+      card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01]';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = file.name;
+      img.className = 'w-full h-32 object-cover';
+      const badge = document.createElement('div');
+      badge.className = 'absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
+      badge.textContent = (file.type || '').replace('image/','').toUpperCase();
+      card.appendChild(img);
+      card.appendChild(badge);
+      preview.appendChild(card);
     });
-    const origRenderView = (window.App && App.renderView) || null;
-    if (origRenderView) {
-        App.renderView = (...args) => {
-            const res = origRenderView.apply(App, args);
-            if (mq.matches) closeSidebar();
-            return res;
-        };
-    }
+  }, { once:false });
 })();
-</script>
-<script>
-// === Advanced Multi-Preview: drag & drop, remove items, limit, de-dup ===
+
+// Rehydrate multi-preview from existing imagePaths
 (function(){
-    const input = document.getElementById('image-file-input');
-    const preview = document.getElementById('multi-preview');
-    if (!input || !preview) return;
-    const dropArea = input.closest('.relative') || preview.parentElement;
-    const MAX_FILES = 20;
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-    
-    const dedup = (files) => {
-        const seen = new Set();
-        const out = [];
-        for (const f of files) {
-            const key = `${f.name}|${f.size}|${f.lastModified}`;
-            if (!seen.has(key)) {
-                seen.add(key); out.push(f);
-            }
-        }
-        return out;
+  const preview = document.getElementById('multi-preview');
+  if (!preview) return;
+  const form = document.getElementById('profile-form') || document.querySelector('form');
+  if (!form) return;
+  
+  const currentSingle = form.querySelector('#current-image-path')?.value;
+  let embedded = null;
+  try { embedded = window.__CURRENT_PROFILE__ || null; } catch(_) {}
+  
+  const paths = (embedded && embedded.imagePaths) ? embedded.imagePaths
+                : (currentSingle ? [currentSingle] : []);
+  
+  if (paths && paths.length) {
+    preview.innerHTML = '';
+    paths.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01]';
+      const img = document.createElement('img');
+      img.src = (typeof CDN_PUBLIC_URL !== 'undefined' ? CDN_PUBLIC_URL : '') + p;
+      img.className = 'w-full h-32 object-cover';
+      card.appendChild(img);
+      preview.appendChild(card);
+    });
+  }
+})();
+
+// Auto-close sidebar on navigation (mobile)
+(function(){
+  const mq = window.matchMedia('(max-width: 1024px)');
+  const closeSidebar = () => {
+    try {
+      AppState.isSidebarOpen = false;
+      document.documentElement.classList.remove('overflow-hidden');
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) sidebar.classList.add('-translate-x-full');
+    } catch(_) {}
+  };
+  
+  const nav = document.getElementById('sidebar') || document;
+  nav.addEventListener('click', (e) => {
+    const el = e.target.closest('a,[data-nav],[data-action="navigate"]');
+    if (!el) return;
+    if (mq.matches) setTimeout(closeSidebar, 50);
+  });
+  
+  const origRenderView = (window.App && App.renderView) || null;
+  if (origRenderView) {
+    App.renderView = (...args) => {
+      const res = origRenderView.apply(App, args);
+      if (mq.matches) closeSidebar();
+      return res;
     };
-    const rebuildInputFiles = (files) => {
-        const dt = new DataTransfer();
-        files.forEach(f => dt.items.add(f));
-        input.files = dt.files;
-    };
-    const render = () => {
-        preview.innerHTML = '';
-        const files = Array.from(input.files || []);
-        files.forEach((file, idx) => {
-            const url = URL.createObjectURL(file);
-            const card = document.createElement('div');
-            card.className = 'group relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01] subtle-pop';
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = file.name;
-            img.className = 'w-full h-32 object-cover';
-            const topbar = document.createElement('div');
-            topbar.className = 'absolute inset-x-0 top-0 flex justify-between p-2 opacity-0 group-hover:opacity-100 transition';
-            const badge = document.createElement('div');
-            badge.className = 'text-[10px] px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
-            badge.textContent = (file.type || '').replace('image/','').toUpperCase();
-            const del = document.createElement('button');
-            del.type = 'button';
-            del.className = 'text-white bg-red-500/80 hover:bg-red-600 text-xs px-2 py-1 rounded';
-            del.textContent = 'ลบ';
-            del.addEventListener('click', () => {
-                const arr = Array.from(input.files);
-                arr.splice(idx, 1);
-                rebuildInputFiles(arr);
-                render();
-            });
-            topbar.appendChild(badge);
-            topbar.appendChild(del);
-            card.appendChild(img);
-            card.appendChild(topbar);
-            preview.appendChild(card);
-        });
-    };
-    const accept = (files) => {
-        let current = Array.from(input.files || []);
-        const newList = [];
-        for (const f of files) {
-            if (!/^image\//i.test(f.type)) continue;
-            if (f.size > MAX_SIZE) {
-                UI && UI.showToast ? UI.showToast(`ไฟล์ ${f.name} ใหญ่เกิน 10MB`, 'warning') : console.warn('oversize', f.name);
-                continue;
-            }
-            newList.push(f);
-        }
-        current = current.concat(newList);
-        current = dedup(current).slice(0, MAX_FILES);
-        rebuildInputFiles(current);
-        render();
-    };
-    input.addEventListener('change', () => accept(Array.from(input.files || [])));
-    if (dropArea) {
-        ['dragenter','dragover'].forEach(ev => dropArea.addEventListener(ev, e => { e.preventDefault(); dropArea.classList.add('ring-2','ring-indigo-400'); }));
-        ['dragleave','drop'].forEach(ev => dropArea.addEventListener(ev, e => { e.preventDefault(); dropArea.classList.remove('ring-2','ring-indigo-400'); }));
-        dropArea.addEventListener('drop', (e)=>{
-            const files = Array.from(e.dataTransfer.files || []);
-            accept(files);
-        });
+  }
+})();
+
+// Advanced Multi-Preview: drag & drop, remove items, limit, de-dup
+(function(){
+  const input = document.getElementById('image-file-input');
+  const preview = document.getElementById('multi-preview');
+  if (!input || !preview) return;
+  
+  const dropArea = input.closest('.relative') || preview.parentElement;
+  const MAX_FILES = 20;
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  
+  const dedup = (files) => {
+    const seen = new Set();
+    const out = [];
+    for (const f of files) {
+      const key = `${f.name}|${f.size}|${f.lastModified}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(f);
+      }
     }
+    return out;
+  };
+  
+  const rebuildInputFiles = (files) => {
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  };
+  
+  const render = () => {
+    preview.innerHTML = '';
+    const files = Array.from(input.files || []);
+    
+    files.forEach((file, idx) => {
+      const url = URL.createObjectURL(file);
+      const card = document.createElement('div');
+      card.className = 'group relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01] subtle-pop';
+      
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = file.name;
+      img.className = 'w-full h-32 object-cover';
+      
+      const topbar = document.createElement('div');
+      topbar.className = 'absolute inset-x-0 top-0 flex justify-between p-2 opacity-0 group-hover:opacity-100 transition';
+      
+      const badge = document.createElement('div');
+      badge.className = 'text-[10px] px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
+      badge.textContent = (file.type || '').replace('image/','').toUpperCase();
+      
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'text-white bg-red-500/80 hover:bg-red-600 text-xs px-2 py-1 rounded';
+      del.textContent = 'ลบ';
+      del.addEventListener('click', () => {
+        const arr = Array.from(input.files);
+        arr.splice(idx, 1);
+        rebuildInputFiles(arr);
+        render();
+      });
+      
+      topbar.appendChild(badge);
+      topbar.appendChild(del);
+      card.appendChild(img);
+      card.appendChild(topbar);
+      preview.appendChild(card);
+    });
+  };
+  
+  const accept = (files) => {
+    let current = Array.from(input.files || []);
+    const newList = [];
+    
+    for (const f of files) {
+      if (!/^image\//i.test(f.type)) continue;
+      if (f.size > MAX_SIZE) {
+        UI && UI.showToast ? UI.showToast(`ไฟล์ ${f.name} ใหญ่เกิน 10MB`, 'warning') : console.warn('oversize', f.name);
+        continue;
+      }
+      newList.push(f);
+    }
+    
+    current = current.concat(newList);
+    current = dedup(current).slice(0, MAX_FILES);
+    rebuildInputFiles(current);
     render();
+  };
+  
+  input.addEventListener('change', () => accept(Array.from(input.files || [])));
+  
+  if (dropArea) {
+    ['dragenter','dragover'].forEach(ev => {
+      dropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        dropArea.classList.add('ring-2','ring-indigo-400');
+      });
+    });
+    
+    ['dragleave','drop'].forEach(ev => {
+      dropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        dropArea.classList.remove('ring-2','ring-indigo-400');
+      });
+    });
+    
+    dropArea.addEventListener('drop', (e) => {
+      const files = Array.from(e.dataTransfer.files || []);
+      accept(files);
+    });
+  }
+  
+  render();
 })();
 </script>
-<!-- === Theme toggle === -->
+
+<!-- Theme Toggle -->
 <div class="toggle-wrap">
   <button id="theme-toggle" class="theme-toggle">สลับธีม</button>
 </div>
+
 <script>
+// Theme Toggle Functionality
 (function(){
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
+  
   const root = document.documentElement;
   const saved = localStorage.getItem('theme');
-  if (saved) root.setAttribute('data-theme', saved);
-  else root.setAttribute('data-theme', 'light');
-  btn.addEventListener('click', ()=>{
-    const cur = root.getAttribute('data-theme') === 'dark' ? 'light':'dark';
+  
+  if (saved) {
+    root.setAttribute('data-theme', saved);
+  } else {
+    root.setAttribute('data-theme', 'light');
+  }
+  
+  btn.addEventListener('click', () => {
+    const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', cur);
     localStorage.setItem('theme', cur);
   });
 })();
-</script>
-<!-- === Lazy load images === -->
-<script>
+
+// Lazy Load Images
 (function(){
-  function onLoad(e){ e.target.classList.add('lazyloaded'); }
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelectorAll('img').forEach(img=>{
+  function onLoad(e) {
+    e.target.classList.add('lazyloaded');
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('img').forEach(img => {
       img.loading = 'lazy';
       img.classList.add('blur-up');
-      if (img.complete) { img.classList.add('lazyloaded'); }
-      else { img.addEventListener('load', onLoad, { once:true }); }
+      
+      if (img.complete) {
+        img.classList.add('lazyloaded');
+      } else {
+        img.addEventListener('load', onLoad, { once: true });
+      }
     });
   });
 })();
 </script>
-<!-- === Cropper modal === -->
+
+<!-- Cropper Modal -->
 <div id="cropper-modal">
   <div id="cropper-box" class="card-surface">
     <h3 class="text-lg font-semibold mb-2">ครอปรูปภาพ</h3>
@@ -1066,31 +1705,45 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+
 <script>
+// Image Cropper Functionality
 (function(){
   const input = document.getElementById('image-file-input');
   const preview = document.getElementById('deluxe-preview');
   if (!input || !preview) return;
-
-  function rebuild(files){ const dt = new DataTransfer(); files.forEach(f => dt.items.add(f)); input.files = dt.files; }
-  function equip(){
-    Array.from(preview.children).forEach((card, i)=>{
+  
+  function rebuild(files) {
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  }
+  
+  function equip() {
+    Array.from(preview.children).forEach((card, i) => {
       card.classList.add('reorder-card');
       card.setAttribute('draggable','true');
-      if (!card.querySelector('.btn-crop')){
+      
+      if (!card.querySelector('.btn-crop')) {
         const bar = card.querySelector('.absolute.inset-x-0.top-0');
         const cropBtn = document.createElement('button');
         cropBtn.type = 'button';
         cropBtn.textContent = 'ครอป';
         cropBtn.className = 'btn-crop text-white bg-indigo-500/90 hover:bg-indigo-600 text-xs px-2 py-1 rounded';
         bar.appendChild(cropBtn);
-        cropBtn.addEventListener('click', ()=> openCrop(i));
+        cropBtn.addEventListener('click', () => openCrop(i));
       }
+      
       card.addEventListener('dragstart', ev => {
         ev.dataTransfer.setData('text/plain', i.toString());
         ev.dataTransfer.effectAllowed = 'move';
       });
-      card.addEventListener('dragover', ev => { ev.preventDefault(); ev.dataTransfer.dropEffect = 'move'; });
+      
+      card.addEventListener('dragover', ev => {
+        ev.preventDefault();
+        ev.dataTransfer.dropEffect = 'move';
+      });
+      
       card.addEventListener('drop', ev => {
         ev.preventDefault();
         const from = parseInt(ev.dataTransfer.getData('text/plain'),10);
@@ -1102,14 +1755,24 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+  
   const modal = document.getElementById('cropper-modal');
   const canvas = document.getElementById('crop-canvas');
   const ctx = canvas.getContext('2d');
-  let cropState = { img:null, aspect:1, fileIndex:0, bmp:null, sel:{x:0,y:0,w:0,h:0} };
-  function openCrop(index){
+  
+  let cropState = {
+    img: null,
+    aspect: 1,
+    fileIndex: 0,
+    bmp: null,
+    sel: { x: 0, y: 0, w: 0, h: 0 }
+  };
+  
+  function openCrop(index) {
     const file = Array.from(input.files)[index];
     cropState.fileIndex = index;
-    createImageBitmap(file, { imageOrientation:'from-image' }).then(bmp => {
+    
+    createImageBitmap(file, { imageOrientation: 'from-image' }).then(bmp => {
       cropState.bmp = bmp;
       canvas.width = Math.min(1024, bmp.width);
       canvas.height = Math.min(600, Math.round(canvas.width * (bmp.height/bmp.width)));
@@ -1117,266 +1780,85 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.classList.add('active');
     });
   }
-  function drawCrop(){
+  
+  function drawCrop() {
     const bmp = cropState.bmp;
-    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    
     const asp = cropState.aspect || 1;
     let w = canvas.width * 0.8;
     let h = w / asp;
-    if (h > canvas.height * 0.8){ h = canvas.height * 0.8; w = h * asp; }
-    const x = (canvas.width - w)/2, y = (canvas.height - h)/2;
-    cropState.sel = {x,y,w,h};
+    
+    if (h > canvas.height * 0.8) {
+      h = canvas.height * 0.8;
+      w = h * asp;
+    }
+    
+    const x = (canvas.width - w) / 2;
+    const y = (canvas.height - h) / 2;
+    cropState.sel = { x, y, w, h };
+    
     ctx.fillStyle = "rgba(0,0,0,.35)";
-    ctx.fillRect(0,0,canvas.width, y);
-    ctx.fillRect(0,y+h,canvas.width, canvas.height-(y+h));
-    ctx.fillRect(0,y,w,y+h-y);
-    ctx.fillRect(x+w,y,canvas.width-(x+w),h);
-    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.strokeRect(x,y,w,h);
+    ctx.fillRect(0, 0, canvas.width, y);
+    ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
+    ctx.fillRect(0, y, w, y + h - y);
+    ctx.fillRect(x + w, y, canvas.width - (x + w), h);
+    
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
   }
-  document.querySelectorAll('#cropper-box [data-aspect]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ cropState.aspect = parseFloat(btn.dataset.aspect); drawCrop(); });
+  
+  document.querySelectorAll('#cropper-box [data-aspect]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cropState.aspect = parseFloat(btn.dataset.aspect);
+      drawCrop();
+    });
   });
-  document.getElementById('crop-cancel').addEventListener('click', ()=> modal.classList.remove('active'));
-  document.getElementById('crop-apply').addEventListener('click', async ()=>{
+  
+  document.getElementById('crop-cancel').addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+  
+  document.getElementById('crop-apply').addEventListener('click', async () => {
     const scale = cropState.bmp.width / canvas.width;
     const s = cropState.sel;
-    const cw = Math.round(s.w * scale), ch = Math.round(s.h * scale);
-    const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-    c.getContext('2d').drawImage(cropState.bmp, Math.round(s.x*scale), Math.round(s.y*scale), cw, ch, 0,0,cw,ch);
+    const cw = Math.round(s.w * scale);
+    const ch = Math.round(s.h * scale);
+    
+    const c = document.createElement('canvas');
+    c.width = cw;
+    c.height = ch;
+    
+    c.getContext('2d').drawImage(
+      cropState.bmp,
+      Math.round(s.x * scale),
+      Math.round(s.y * scale),
+      cw, ch,
+      0, 0, cw, ch
+    );
+    
     const blob = await new Promise(res => c.toBlob(res, 'image/webp', 0.95));
-    const file = new File([blob], 'cropped.webp', { type:'image/webp', lastModified: Date.now() });
+    const file = new File([blob], 'cropped.webp', {
+      type: 'image/webp',
+      lastModified: Date.now()
+    });
+    
     const arr = Array.from(input.files);
     arr.splice(cropState.fileIndex, 1, file);
     rebuild(arr);
     input.dispatchEvent(new Event('change'));
     modal.classList.remove('active');
   });
+  
   const observer = new MutationObserver(equip);
-  observer.observe(preview, { childList:true, subtree:false });
+  observer.observe(preview, { childList: true, subtree: false });
   equip();
 })();
 </script>
-<!-- Dashboard stats -->
-<div class="container-pro section-gap">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div class="card-surface p-4">
-<div class="text-sm text-gray-500">จำนวนโปรไฟล์ทั้งหมด</div>
-<div id="stat-total" class="text-3xl font-bold gradient-text">–</div>
-</div>
-<div class="card-surface p-4">
-<div class="text-sm text-gray-500">อัปโหลดรูปใน 7 วัน</div>
-<canvas id="chart-uploads" height="120"></canvas>
-</div>
-<div class="card-surface p-4">
-<div class="text-sm text-gray-500">สัดส่วนไฟล์ (webp/jpg/png)</div>
-<canvas id="chart-ratio" height="120"></canvas>
-</div>
-</div>
-</div>
-<script>
-(function(){
-  function barChart(canvas, labels, values){
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0,0,W,H);
-    const max = Math.max(...values, 1);
-    const pad = 24, bw = (W - pad*2) / values.length * 0.7;
-    labels.forEach((lb, i) => {
-      const x = pad + i * ((W-pad*2)/values.length) + 6;
-      const h = (H - pad*2) * (values[i]/max);
-      const y = H - pad - h;
-      ctx.fillStyle = '#a855f7';
-      ctx.fillRect(x, y, bw, h);
-      ctx.fillStyle = '#6b7280'; ctx.font = '10px sans-serif';
-      ctx.fillText(lb, x, H - pad + 12);
-    });
-  }
-  function pieChart(canvas, counts){
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0,0,W,H);
-    const total = Object.values(counts).reduce((a,b)=>a+b,0) || 1;
-    let start = -Math.PI/2;
-    const colors = ['#ec4899','#a855f7','#06b6d4','#22c55e','#f97316'];
-    Object.keys(counts).forEach((k, idx)=>{
-      const val = counts[k];
-      const ang = (val/total) * Math.PI*2;
-      ctx.beginPath();
-      ctx.moveTo(W/2,H/2);
-      ctx.arc(W/2,H/2, Math.min(W,H)/2 - 10, start, start+ang);
-      ctx.closePath();
-      ctx.fillStyle = colors[idx%colors.length];
-      ctx.fill();
-      start += ang;
-    });
-  }
-  const uploads7 = [3,5,2,6,4,8,5];
-  const ratio = { webp: 12, jpg: 4, png: 2 };
-  const c1 = document.getElementById('chart-uploads');
-  const c2 = document.getElementById('chart-ratio');
-  if (c1) { c1.width = c1.clientWidth; barChart(c1, ['จ','อ','พ','พฤ','ศ','ส','อา'], uploads7); }
-  if (c2) { c2.width = c2.clientWidth; pieChart(c2, ratio); }
-  const total = document.getElementById('stat-total');
-  if (total) total.textContent = window.__TOTAL_PROFILES__ || '—';
-})();
-</script>
-<script>
-(function(){
-  const search = document.getElementById('search-input');
-  if (!search) return;
-  const list = document.querySelectorAll('.profile-card');
-  const on = () => {
-    const q = search.value.toLowerCase();
-    list.forEach(el => {
-      const text = (el.dataset.name||'') + ' ' + (el.dataset.tags||'');
-      el.style.display = text.toLowerCase().includes(q) ? '' : 'none';
-    });
-  };
-  search.addEventListener('input', on);
-  on();
-})();
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', ()=>{
-  const btn = document.getElementById('choose-images');
-  const input = document.getElementById('image-file-input');
-  if (btn && input) btn.addEventListener('click', ()=> input.click());
-});
-</script>
 
-<!-- Assistant enhancement: performance, UX, accessibility, and stability -->
-<script>
-(function(){
-  'use strict';
-  // Utilities
-  window.__assist = window.__assist || {};
-  const $ = sel => document.querySelector(sel);
-  const $$ = sel => Array.from(document.querySelectorAll(sel));
-  function debounce(fn, delay=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),delay); }; }
-  function safeCall(fn){ try{ fn(); }catch(e){ console.error('assist.safeCall',e); } }
-
-  // Improve image loading: set loading=lazy & decoding=async where missing
-  safeCall(()=>{
-    $$('img').forEach(img=>{
-      if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
-      if(!img.hasAttribute('decoding')) img.setAttribute('decoding','async');
-      if(!img.alt) img.alt = img.getAttribute('data-alt') || 'Sideline profile image';
-    });
-  });
-
-  // Debounce search inputs
-  safeCall(()=>{
-    const search = $('#search-input') || document.querySelector('input[placeholder*="ค้นหา"]');
-    if(search){
-      const orig = search.oninput;
-      search.addEventListener('input', debounce((e)=>{
-        // call existing handler if any by dispatching input event
-        const ev = new Event('input',{bubbles:true});
-        search.dispatchEvent(ev);
-      }, 300));
-    }
-  });
-
-  // Accessibility: ensure modals can be closed by ESC and focus management
-  safeCall(()=>{
-    document.addEventListener('keydown', (e)=>{
-      if(e.key==='Escape'){
-        $$('#modal-root > *').forEach(m=>m.remove());
-        const crop = document.getElementById('cropper-modal');
-        if(crop) crop.classList.remove('active');
-      }
-    });
-    document.addEventListener('click', (e)=>{
-      if(e.target && e.target.matches('.lightbox-backdrop, .modal-backdrop')){
-        const p = e.target.closest('#modal-root');
-        if(p) p.innerHTML='';
-      }
-    });
-  });
-
-  // Form auto-save draft (localStorage) for profile form to prevent data loss
-  safeCall(()=>{
-    const form = document.getElementById('profile-form');
-    if(!form) return;
-    const key = 'sideline_admin_profile_draft_v1';
-    // restore
-    try{
-      const data = localStorage.getItem(key);
-      if(data){
-        const obj = JSON.parse(data);
-        Object.keys(obj).forEach(k=>{
-          const el = form.querySelector('#'+k);
-          if(el && !el.value) el.value = obj[k];
-        });
-      }
-    }catch(e){}
-    // save on input (debounced)
-    form.addEventListener('input', debounce(()=>{
-      const inputs = form.querySelectorAll('input,textarea,select');
-      const out = {};
-      inputs.forEach(i=>{ if(i.id) out[i.id]=i.value; });
-      try{ localStorage.setItem(key, JSON.stringify(out)); }catch(e){}
-    }, 500));
-    // clear on successful submit (listen for button click)
-    const saveBtn = form.querySelector('#save-profile-button');
-    if(saveBtn) saveBtn.addEventListener('click', ()=>{ try{ localStorage.removeItem(key);}catch(e){} });
-  });
-
-  // Prevent double form submit across app
-  safeCall(()=>{
-    document.addEventListener('submit', function(e){
-      const btn = e.submitter || e.target.querySelector('button[type="submit"]');
-      if(btn && btn.disabled) { e.preventDefault(); return; }
-      if(btn) btn.disabled = true;
-      setTimeout(()=>{ if(btn) btn.disabled = false; }, 2000);
-    }, true);
-  });
-
-  // Improve toast container behavior: ensure stacking and aria-live
-  safeCall(()=>{
-    const container = document.getElementById('toast-container');
-    if(container) container.setAttribute('aria-live','polite');
-  });
-
-  // Performance hint: defer non-critical scripts (mark scripts with data-defer="assistant") 
-  safeCall(()=>{
-    $$('script[data-defer="assistant"]').forEach(s=>{
-      try{ const src = s.getAttribute('src'); if(src){ const sc = document.createElement('script'); sc.src = src; sc.defer = true; document.body.appendChild(sc); s.remove(); } }
-      catch(e){}
-    });
-  });
-
-  // Small visual polish: respect prefers-reduced-motion
-  safeCall(()=>{
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      document.documentElement.classList.add('reduce-motion');
-    }
-  });
-
-  // Log assistant boot
-  console.info('Assistant enhancements applied: ', new Date().toISOString());
-
-</script>
-
-
-<script>
-(function () {
-    'use strict';
-    document.addEventListener("DOMContentLoaded", function() {
-        const aiChatButton = document.querySelector('.nav-button[data-view="ai-chat-container"]');
-
-        if (aiChatButton) {
-            aiChatButton.addEventListener('click', function(e) {
-                e.preventDefault(); 
-                // แก้ตรงนี้: ลิงก์ไปยังไฟล์ในเครื่องเดียวกัน
-                window.open('/ai-chat.html', '_blank'); 
-            });
-        }
-    });
-})();
-</script>
+<!-- โค้ด Assistant Enhancement Script ทั้งหมดจะถูกลบออกไปจากตรงนี้ -->
 
 </body>
 </html>
-
