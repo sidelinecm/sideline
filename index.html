@@ -1987,251 +1987,338 @@ document.addEventListener('DOMContentLoaded', () => {
   equip();
 })();
 </script>
-<!-- ================================================================================== -->
-<!-- 🎵 ULTIMATE ADMIN WIDGET (iOS Style + Magnetic + Media Center) -->
-<!-- ================================================================================== -->
 
-<!-- 1. Import Vidstack (Engine วิดีโอระดับโลก) -->
-<link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
-<link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
-<script type="module" src="https://cdn.vidstack.io/player"></script>
+<!-- ================================================================================== -->
+<!-- 🎵 ULTIMATE ADMIN WIDGET (Final Fixed: Video Priority Mode) -->
+<!-- ================================================================================== -->
 
 <style>
-  /* --- High-End CSS Variables (เก็บไว้ได้ครับ สวยดี) --- */
+  /* --- Widget Style --- */
   :root {
     --widget-size: 60px;
-    --widget-bg: rgba(255, 255, 255, 0.75);
+    --widget-bg: rgba(255, 255, 255, 0.95);
     --widget-blur: blur(20px) saturate(180%);
-    --widget-shadow: 0 12px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0,0,0,0.05);
-    --primary-gradient: linear-gradient(135deg, #FF6F61, #D667C3);
+    --widget-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    --primary-color: #FF6F61;
   }
 
-  /* --- Widget Container (แก้ไขให้รองรับการลาก) --- */
   #admin-assistive-root {
-    position: fixed; 
-    z-index: 999999; /* ชั้นสูงสุด */
-    top: 70%; left: 80%;
-    touch-action: none; /* สำคัญมาก! ห้ามลืมเด็ดขาด ไม่งั้นลากบนมือถือไม่ได้ */
-    user-select: none;
-    -webkit-user-select: none;
+    position: fixed; z-index: 999999; top: 75%; left: 80%;
+    touch-action: none; user-select: none;
   }
-
-  /* --- Floating Button --- */
+  
   .assistive-btn {
     width: var(--widget-size); height: var(--widget-size);
     background: var(--widget-bg);
     backdrop-filter: var(--widget-blur); -webkit-backdrop-filter: var(--widget-blur);
-    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     box-shadow: var(--widget-shadow);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; position: relative;
-    /* เอา transition ออกจากตรงนี้ เพื่อไม่ให้หน่วงตอนลาก */
+    color: var(--primary-color); font-size: 26px;
+    transition: transform 0.1s;
   }
-  
-  .assistive-btn:active { transform: scale(0.92); }
-  .assistive-btn i { font-size: 24px; color: #FF6F61; }
-  
-  /* --- Animation ตอนปล่อยมือ (เพิ่มใหม่) --- */
-  /* คลาสนี้จะถูก JS เติมใส่ตอนปล่อยมือ เพื่อให้เด้งเข้าขอบนุ่มๆ */
-  .snap-transition {
-    transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), top 0.3s ease !important;
+  .assistive-btn:active { transform: scale(0.9); }
+
+  .playing-pulse { animation: pulse 1.5s infinite; color: #D667C3; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(214, 103, 195, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(214, 103, 195, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(214, 103, 195, 0); }
   }
 
-  /* --- Pulse Animation --- */
-  .playing-pulse::before {
-    content: ''; position: absolute; inset: -4px; border-radius: 50%;
-    border: 2px solid #FF6F61; opacity: 0;
-    animation: pulse-ring 2s infinite;
-  }
-  @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
-
-  /* --- Panel (หน้าต่างเมนู) --- */
   .control-center-panel {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-    width: 90%; max-width: 420px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(40px);
+    position: fixed; top: 50%; left: 50%; 
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%; max-width: 380px;
+    background: #ffffff;
     border-radius: 24px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
-    padding: 24px;
+    box-shadow: 0 50px 100px rgba(0,0,0,0.4);
+    padding: 20px;
     opacity: 0; pointer-events: none; z-index: 100001;
-    transition: all 0.3s ease;
-    display: flex; flex-direction: column; gap: 15px;
+    transition: all 0.25s ease;
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 85vh;
+    overflow: hidden;
   }
   .control-center-panel.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
 
-  /* --- Media Areas --- */
-  .video-frame {
-    width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px;
-    overflow: hidden; display: none; 
+  /* 🎬 Video Container (แก้โดยการใช้ display: block ผ่าน JS โดยตรง) */
+  #video-display-area {
+    position: relative; 
+    width: 100%; 
+    background: #000;
+    border-radius: 14px; 
+    overflow: hidden; 
+    display: none; /* เริ่มต้นซ่อนไว้ */
+    min-height: 220px; 
+    justify-content: center; 
+    align-items: center;
+    z-index: 20; /* ให้อยู่บนสุดเสมอ */
   }
-  .video-frame iframe, .video-frame video { width: 100%; height: 100%; border: none; }
+  
+  #video-display-area iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+  #video-display-area video { width: 100%; max-height: 250px; }
 
+  /* 🎵 Music Display */
+  #music-display-area { text-align: center; padding: 10px; display: block; }
+  
   .music-cover {
-    width: 120px; height: 120px; margin: 0 auto;
+    width: 120px; height: 120px; margin: 0 auto 10px;
     border-radius: 20px; overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   }
   .music-cover img { width: 100%; height: 100%; object-fit: cover; }
-  
-  /* --- Controls --- */
-  .media-input {
-    width: 100%; background: #f0f0f5; border: 1px solid #e0e0e0;
-    padding: 10px 15px; border-radius: 10px; outline: none; text-align: center;
-  }
-  .preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .preset-btn {
-    padding: 8px; background: #fff; border: 1px solid #eee; border-radius: 8px;
-    font-size: 13px; color: #555; cursor: pointer; transition: all 0.2s;
-  }
-  .preset-btn:hover { background: #FF6F61; color: #fff; border-color: #FF6F61; }
-  .preset-btn.highlight { background: #D667C3; color: white; border-color: #D667C3; }
 
+  /* 📂 Playlist View */
+  .playlist-view {
+    display: none; flex-direction: column; gap: 8px;
+    max-height: 300px; overflow-y: auto;
+    padding-right: 5px;
+  }
+  .playlist-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; background: #f8f9fa; border-radius: 10px;
+    cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+  }
+  .playlist-item:hover { background: #f0f0f0; }
+  .playlist-info { flex: 1; overflow: hidden; }
+  .playlist-title { font-size: 13px; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .playlist-type { font-size: 10px; color: #888; text-transform: uppercase; }
+
+  /* Controls */
+  .media-input {
+    width: 100%; background: #f3f4f6; border: none;
+    padding: 12px; border-radius: 12px; outline: none;
+    font-size: 14px; text-align: center; color: #333;
+  }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  
+  .preset-btn {
+    padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 12px;
+    font-size: 12px; font-weight: 600; color: #555; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .preset-btn:hover { background: #f9fafb; }
+  .preset-btn.highlight { background: var(--primary-color); color: white; border: none; }
+  .preset-btn.highlight i { color: white; }
+  
   .close-btn {
     position: absolute; top: 15px; right: 15px;
-    width: 30px; height: 30px; border-radius: 50%; background: #eee;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    width: 30px; height: 30px; border-radius: 50%; background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+  }
+  .back-btn {
+    display: none; font-size: 12px; color: #555; cursor: pointer; margin-bottom: 5px;
   }
 </style>
+
+<!-- UI Elements -->
 <div id="admin-assistive-root">
-  <!-- ปุ่มเปิด/ปิด -->
-  <div class="assistive-btn" id="assistive-main-btn">
-    <i class="fas fa-music"></i>
-  </div>
+  <div class="assistive-btn" id="assistive-main-btn"><i class="fas fa-compact-disc"></i></div>
 </div>
 
-<!-- หน้าต่างควบคุม -->
 <div class="control-center-panel" id="admin-control-panel">
   <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   
   <div class="text-center">
-    <h3 class="font-bold text-gray-800">Media Center</h3>
-    <p class="text-xs text-gray-500">Video & Music Player</p>
-  </div>
-
-  <!-- ส่วนแสดงผล Video -->
-  <div id="video-display-area" class="video-frame"></div>
-
-  <!-- ส่วนแสดงผล Music -->
-  <div id="music-display-area">
-    <div class="music-cover mb-4">
-      <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" id="album-art-img">
+    <h3 class="font-bold text-gray-800" id="panel-title">Media Center</h3>
+    <div class="back-btn" id="playlist-back-btn" onclick="AdminOS.toggleView('player')">
+      <i class="fas fa-arrow-left"></i> กลับไปหน้าเล่น
     </div>
   </div>
 
-  <!-- ช่องกรอก Link -->
-  <input type="text" class="media-input" id="media-url-input" 
-         placeholder="วางลิงก์ YouTube หรือ MP3 แล้วกด Enter..." 
-         onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
-
-<div class="preset-grid">
-    <!-- 🎵 ปุ่มเพลงที่คุณเลือกมา (ใส่ลิงก์ให้แล้วครับ) -->
-    <button class="preset-btn highlight" onclick="AdminOS.playMedia('https://youtu.be/MLB7JKDmYnM', 'youtube')">
-        🎧 เพลงของฉัน (YouTube)
-    </button>
-
-    <!-- ปุ่มสำรอง (Lofi Girl) -->
-    <button class="preset-btn" onclick="AdminOS.playMedia('https://www.youtube.com/watch?v=jfKfPfyJRdk', 'youtube')">
-        ☕ Lofi Girl
-    </button>
+  <!-- PLAYER VIEW -->
+  <div id="player-view-container">
     
-    <!-- ปุ่มเลือกไฟล์ในเครื่อง -->
-    <button class="preset-btn" onclick="document.getElementById('local-file-picker').click()">
-        📂 ไฟล์เครื่อง
-    </button>
+    <!-- ⚠️ ส่วนแสดงวิดีโอ (YouTube/File) -->
+    <div id="video-display-area"></div>
     
-    <!-- ปุ่มหยุด -->
-    <button class="preset-btn" style="color: red;" onclick="AdminOS.stopAll()">
-        ⏹️ หยุดเล่น
-    </button>
-</div>
+    <!-- 🎵 ส่วนแสดงหน้าปกเพลง (จะถูกซ่อนเมื่อเล่นวิดีโอ) -->
+    <div id="music-display-area">
+      <div class="music-cover">
+        <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80">
+      </div>
+      <p class="text-xs text-gray-500 mt-2" id="current-track-name">Ready to Play</p>
+    </div>
+
+    <!-- ช่องกรอก URL -->
+    <input type="text" class="media-input mb-3" id="media-url-input" 
+           placeholder="วางลิงก์ YouTube หรือ Video..." 
+           onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
+
+    <div class="preset-grid">
+      <!-- ปุ่มเปิดคลังเพลง -->
+      <button class="preset-btn highlight" style="grid-column: span 2;" 
+              onclick="AdminOS.toggleView('playlist')">
+        <i class="fas fa-list-ul"></i> 📂 เปิดคลังเพลงของฉัน
+      </button>
+
+      <button class="preset-btn" onclick="AdminOS.playMedia('https://www.youtube.com/watch?v=jfKfPfyJRdk', 'youtube', 'Lofi Girl')">
+        <i class="fas fa-coffee"></i> Lofi Girl
+      </button>
+      
+      <button class="preset-btn" onclick="document.getElementById('local-file-picker').click()">
+        <i class="fas fa-folder-open"></i> ไฟล์เครื่อง
+      </button>
+      
+      <button class="preset-btn" style="color:red; grid-column: span 2;" onclick="AdminOS.stopAll()">
+        <i class="fas fa-stop"></i> หยุดเล่น
+      </button>
+    </div>
+  </div>
+
+  <!-- PLAYLIST VIEW (หน้ารายการเพลง) -->
+  <div id="playlist-view-container" class="playlist-view"></div>
   
-  <input type="file" id="local-file-picker" hidden accept="audio/*,video/*" onchange="AdminOS.playLocalFile(this)">
+  <input type="file" id="local-file-picker" hidden accept="video/*,audio/*" onchange="AdminOS.playLocalFile(this)">
 </div>
+
 <script>
 const AdminOS = {
+  // --- 💿 คลังเพลงบนโฮสต์ (ใส่ชื่อไฟล์ตรงนี้) ---
+  myAlbum: [
+    // แบบที่ 1: ไฟล์บนโฮสต์ (ใส่ path ให้ถูก)
+    { 
+      title: "เวอร์ชั่น - น้อนน", 
+      url: "./songs/เวอร์ชั่น - น้อนน.mp4", 
+      type: "video" 
+    },
+
+    // ถ้ามีเพลงอื่นในโฟลเดอร์ songs อีก ก็เพิ่มบรรทัดต่อได้เลย
+    { 
+      title: "เพลงที่ 2", 
+      url: "./songs/ชื่อเพลงที่2.mp4", 
+      type: "video" 
+    },
+
+    // แบบที่ 2: ลิงก์ YouTube (ผสมกันได้)
+    { 
+      title: "นนท์ ธนนท์ - วันที่อ่อนแอ (Live)", 
+      url: "https://www.youtube.com/watch?v=PrlV8Q_FvjM", 
+      type: "youtube" 
+    }
+    
+  ],
+  
+
   root: document.getElementById('admin-assistive-root'),
   btn: document.getElementById('assistive-main-btn'),
   panel: document.getElementById('admin-control-panel'),
+  
+  playerView: document.getElementById('player-view-container'),
+  playlistView: document.getElementById('playlist-view-container'),
+  backBtn: document.getElementById('playlist-back-btn'),
+  panelTitle: document.getElementById('panel-title'),
+  
   videoArea: document.getElementById('video-display-area'),
   musicArea: document.getElementById('music-display-area'),
+  trackName: document.getElementById('current-track-name'),
   audioPlayer: new Audio(),
-  
-  isDragging: false, // ตัวแปรเช็คว่ากำลังลากอยู่ไหม
+  isDragging: false,
 
   init() {
-    // 1. เริ่มระบบลาก (สำคัญที่สุด)
     this.setupDraggable();
-
-    // 2. ตั้งค่าปุ่มกด (ให้ทำงานเฉพาะตอนไม่ได้ลาก)
-    this.btn.addEventListener('click', (e) => {
-      if (!this.isDragging) {
-        this.panel.classList.toggle('active');
-      }
+    this.renderPlaylist();
+    this.btn.addEventListener('click', () => {
+      if (!this.isDragging) this.panel.classList.toggle('active');
     });
-
-    // 3. ตั้งค่า Player
-    this.audioPlayer.addEventListener('play', () => this.btn.classList.add('playing-pulse'));
-    this.audioPlayer.addEventListener('pause', () => this.btn.classList.remove('playing-pulse'));
   },
 
   closePanel() { this.panel.classList.remove('active'); },
 
-  stopAll() {
-    this.videoArea.innerHTML = ''; 
-    this.videoArea.style.display = 'none';
-    this.audioPlayer.pause(); 
-    this.audioPlayer.currentTime = 0;
-    if(this.musicArea) this.musicArea.style.display = 'block';
-    this.btn.classList.remove('playing-pulse');
-  },
-
-  // ฟังก์ชันแยกแยะประเภทสื่อ (YouTube / Video / Audio)
-  playFromInput(url) {
-    url = url.trim();
-    if (!url) return;
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      this.playMedia(url, 'youtube');
-    } else if (url.match(/\.(mp4|webm|ogg)$/i)) {
-      this.playMedia(url, 'video'); // เล่นแบบ Video File
+  // สลับหน้าจอ
+  toggleView(view) {
+    if (view === 'playlist') {
+      this.playerView.style.display = 'none';
+      this.playlistView.style.display = 'flex';
+      this.backBtn.style.display = 'inline-block';
+      this.panelTitle.innerText = "My Album";
     } else {
-      this.playMedia(url, 'audio'); // เล่นแบบเสียง
+      this.playerView.style.display = 'block';
+      this.playlistView.style.display = 'none';
+      this.backBtn.style.display = 'none';
+      this.panelTitle.innerText = "Media Center";
     }
   },
 
-  playMedia(source, type) {
-    this.stopAll();
-    
-    if (type === 'youtube') {
-      // ดึง ID จากลิงก์ YouTube
-      let vId = '';
-      if (source.includes('youtu.be')) {
-        vId = source.split('/').pop().split('?')[0];
-      } else if (source.includes('v=')) {
-        vId = source.split('v=')[1].split('&')[0];
-      }
-
-      this.videoArea.style.display = 'block';
-      if(this.musicArea) this.musicArea.style.display = 'none';
+  renderPlaylist() {
+    this.playlistView.innerHTML = '';
+    this.myAlbum.forEach((item) => {
+      const el = document.createElement('div');
+      el.className = 'playlist-item';
+      let icon = item.type === 'video' ? 'fa-video' : 'fa-youtube';
       
-      // Iframe Youtube มาตรฐาน
-      this.videoArea.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-      this.btn.classList.add('playing-pulse');
+      el.innerHTML = `
+        <i class="fas ${icon}" style="color:${item.type==='youtube'?'red':'#555'}"></i>
+        <div class="playlist-info">
+          <div class="playlist-title">${item.title}</div>
+          <div class="playlist-type">${item.type}</div>
+        </div>
+        <i class="fas fa-play-circle" style="color:var(--primary-color)"></i>
+      `;
+      el.onclick = () => {
+        this.playMedia(item.url, item.type, item.title);
+        this.toggleView('player');
+      };
+      this.playlistView.appendChild(el);
+    });
+  },
+
+  stopAll() {
+    this.videoArea.innerHTML = '';
+    this.videoArea.style.display = 'none'; // ซ่อนจอวิดีโอ
+    this.musicArea.style.display = 'block'; // โชว์ปกเพลงคืนมา
+    this.audioPlayer.pause();
+    this.btn.classList.remove('playing-pulse');
+    this.trackName.innerText = "Stopped";
+  },
+
+  playFromInput(url) {
+    url = url.trim();
+    if (!url) return;
+    let type = (url.includes('youtube') || url.includes('youtu.be')) ? 'youtube' : 'video';
+    this.playMedia(url, type, 'Unknown Track');
+  },
+
+  // ✅ ฟังก์ชันเล่นสื่อ (แก้ไขให้แสดงผลแน่นอน)
+  playMedia(source, type, title) {
+    // 1. หยุดเสียงเพลงพื้นหลังก่อนเสมอ
+    this.audioPlayer.pause();
+    
+    // 2. อัปเดตชื่อเพลง / เอฟเฟกต์ปุ่ม
+    this.btn.classList.add('playing-pulse');
+    if(title) this.trackName.innerText = title;
+
+    // 3. จัดการการแสดงผล (สำคัญมาก!)
+    if (type === 'youtube' || type === 'video') {
+      this.musicArea.style.display = 'none';  // บังคับปิดปกเพลง!
+      this.videoArea.style.display = 'flex';  // บังคับเปิดจอวิดีโอ!
+    } else {
+      this.musicArea.style.display = 'block';
+      this.videoArea.style.display = 'none';
+    }
+
+    // 4. เล่นตามประเภท
+    if (type === 'youtube') {
+      let vId = '';
+      if (source.includes('youtu.be')) vId = source.split('/').pop().split('?')[0];
+      else if (source.includes('v=')) vId = source.split('v=')[1].split('&')[0];
+      
+      // Iframe มาตรฐาน + autoplay
+      this.videoArea.innerHTML = `
+        <iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&playsinline=1&rel=0&controls=1" 
+        allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
 
     } else if (type === 'video') {
-       // เล่นไฟล์ Video MP4
-       this.videoArea.style.display = 'block';
-       if(this.musicArea) this.musicArea.style.display = 'none';
-       this.videoArea.innerHTML = `<video src="${source}" controls autoplay style="width:100%; height:100%"></video>`;
-       this.btn.classList.add('playing-pulse');
+      this.videoArea.innerHTML = `
+        <video src="${source}" controls autoplay playsinline webkit-playsinline 
+               style="width:100%; height:100%; object-fit:contain;"></video>`;
 
     } else {
-      // เล่นไฟล์ Audio
-      if(this.musicArea) this.musicArea.style.display = 'block';
+      // Audio Only
       this.audioPlayer.src = source;
-      this.audioPlayer.play().catch(e => console.error(e));
+      this.audioPlayer.play();
     }
   },
 
@@ -2239,91 +2326,52 @@ const AdminOS = {
     const file = input.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      if (file.type.startsWith('video')) {
-        this.playMedia(url, 'video');
-      } else {
-        this.playMedia(url, 'audio');
-      }
+      const type = file.type.startsWith('video') ? 'video' : 'audio';
+      this.playMedia(url, type, file.name);
     }
   },
 
-  // --- ระบบลากแบบ iPhone (AssistiveTouch Logic) ---
   setupDraggable() {
     const el = this.root;
-    let startX, startY, initialLeft, initialTop;
-    let hasMoved = false;
-
-    // เริ่มแตะ
-    const onStart = (e) => {
-      const evt = e.type === 'touchstart' ? e.touches[0] : e;
-      startX = evt.clientX;
-      startY = evt.clientY;
+    let startX, startY, initX, initY, moved = false;
+    const start = (e) => {
+      const evt = e.touches ? e.touches[0] : e;
+      startX = evt.clientX; startY = evt.clientY;
       const rect = el.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-      hasMoved = false;
-      this.isDragging = false;
-      
-      // เอา Animation ออกชั่วคราว (เพื่อให้ลากติดนิ้วทันที)
-      el.classList.remove('snap-transition');
-      
-      document.addEventListener('touchmove', onMove, { passive: false });
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('touchend', onEnd);
-      document.addEventListener('mouseup', onEnd);
+      initX = rect.left; initY = rect.top;
+      moved = false; this.isDragging = false;
+      el.style.transition = 'none';
+      document.addEventListener('touchmove', move, {passive:false});
+      document.addEventListener('touchend', end);
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', end);
     };
-
-    // ขณะลาก
-    const onMove = (e) => {
-      const evt = e.type === 'touchmove' ? e.touches[0] : e;
-      const dx = evt.clientX - startX;
-      const dy = evt.clientY - startY;
-
-      // ถ้าขยับเกิน 5px ถือว่าตั้งใจลาก
+    const move = (e) => {
+      const evt = e.touches ? e.touches[0] : e;
+      const dx = evt.clientX - startX; const dy = evt.clientY - startY;
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-        if (e.cancelable) e.preventDefault(); // ห้ามหน้าจอ Scroll
-        hasMoved = true;
-        this.isDragging = true;
-        
-        // ขยับปุ่มตามนิ้ว
-        el.style.left = `${initialLeft + dx}px`;
-        el.style.top = `${initialTop + dy}px`;
+        if(e.cancelable) e.preventDefault();
+        moved = true; this.isDragging = true;
+        el.style.left = `${initX + dx}px`;
+        el.style.top = `${initY + dy}px`;
       }
     };
-
-    // ปล่อยมือ
-    const onEnd = () => {
-      document.removeEventListener('touchmove', onMove);
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('touchend', onEnd);
-      document.removeEventListener('mouseup', onEnd);
-
-      if (hasMoved) {
-        // ใส่ Animation กลับเข้าไป (เพื่อให้เด้งนุ่มๆ)
-        el.classList.add('snap-transition'); 
-        
-        const screenW = window.innerWidth;
+    const end = () => {
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('touchend', end);
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', end);
+      if (moved) {
+        el.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        const w = window.innerWidth;
         const rect = el.getBoundingClientRect();
-        const centerX = rect.left + (rect.width / 2);
-
-        // คำนวณ: ถ้าอยู่เกินครึ่งจอขวา -> เด้งขวา, ถ้าไม่เกิน -> เด้งซ้าย
-        if (centerX > screenW / 2) {
-          el.style.left = `${screenW - 70}px`; 
-        } else {
-          el.style.left = `10px`; 
-        }
-
-        // กันปุ่มหลุดขอบบน/ล่าง
-        if (rect.top < 0) el.style.top = '10px';
-        if (rect.bottom > window.innerHeight) el.style.top = `${window.innerHeight - 70}px`;
-        
-        // ดีเลย์นิดนึงค่อยบอกว่าหยุดลาก (กัน Click ซ้อน)
-        setTimeout(() => { this.isDragging = false; }, 100);
+        if (rect.left + rect.width/2 > w/2) el.style.left = (w - 70) + 'px';
+        else el.style.left = '10px';
+        setTimeout(() => this.isDragging = false, 100);
       }
     };
-
-    el.addEventListener('touchstart', onStart, { passive: false });
-    el.addEventListener('mousedown', onStart);
+    el.addEventListener('touchstart', start, {passive:false});
+    el.addEventListener('mousedown', start);
   }
 };
 
