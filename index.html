@@ -993,18 +993,20 @@ const Controller = {
   },
 
 getProfileCardHTML(p) {
-    // 1. เช็ครูปภาพ (รองรับทั้งระบบเก่าและใหม่)
+    // 1. เช็ครูปภาพ (เพิ่ม ?v= เพื่อป้องกัน Cache เมื่อมีการอัปโหลดทับ)
     let imgUrl = 'https://placehold.co/400x500?text=No+Image';
+    const version = p.lastUpdated ? new Date(p.lastUpdated).getTime() : Date.now();
+
     if (p.imagePaths && p.imagePaths.length > 0) {
-        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePaths[0]).data.publicUrl;
+        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePaths[0]).data.publicUrl + `?v=${version}`;
     } else if (p.imagePath) {
-        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePath).data.publicUrl;
+        imgUrl = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(p.imagePath).data.publicUrl + `?v=${version}`;
     }
 
     // 2. เช็คชื่อจังหวัด
     const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
 
-    // 3. ส่งคืน HTML (เพิ่ม class 'profile-card-clickable' และ 'data-id' แล้ว)
+    // 3. ส่งคืน HTML
     return `
       <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer" data-id="${p.id}">
         <div class="relative aspect-[3/4]">
@@ -1016,12 +1018,9 @@ getProfileCardHTML(p) {
           <p class="text-sm opacity-70 mb-2" style="color: var(--color-text-muted)">${provName}</p>
           
           <div class="mt-auto flex gap-2 pt-2 border-t border-gray-200">
-            <!-- ปุ่มแก้ไข -->
             <button class="edit-profile-btn flex-1 py-1.5 bg-pink-500 text-white text-sm rounded shadow hover:bg-pink-600 transition" data-id="${p.id}">
               แก้ไข
             </button>
-            
-            <!-- ปุ่มลบ -->
             <button class="delete-profile-btn px-3 py-1.5 bg-gray-200 text-gray-600 text-sm rounded hover:bg-red-500 hover:text-white transition" 
                     data-id="${p.id}" 
                     data-name="${p.name}" 
@@ -1032,7 +1031,7 @@ getProfileCardHTML(p) {
         </div>
       </div>
     `;
-  },
+},
 // ================ แทนที่ renderProfileFormContainer ทั้งหมดด้วยโค้ดนี้ ================
   async renderProfileFormContainer(params = {}) {
     const profileId = params.profileId;
@@ -1305,34 +1304,36 @@ getProfileCardHTML(p) {
       }
       
       if (files.length) {
-        UI.showToast(`กำลังอัปโหลดรูปภาพ ${files.length} ไฟล์...`, 'info');
+        UI.showToast(`กำลังอัปโหลดรูปภาพ...`, 'info');
         
+        // ดึงชื่อจาก slug มาเป็นชื่อไฟล์เพื่อให้มันทับไฟล์เดิม
+        const slugValue = form.querySelector('#slug').value.trim();
+        const nameValue = form.querySelector('#name').value.trim();
+        const baseFileName = (slugValue || nameValue || 'profile').toLowerCase().replace(/\s+/g, '-');
+
         const toWebp1200 = async (file) => {
           const bitmap = await createImageBitmap(file);
           const scale = bitmap.width > 1200 ? 1200 / bitmap.width : 1;
           const w = Math.round(bitmap.width * scale);
           const h = Math.round(bitmap.height * scale);
-          
           const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
+          canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext('2d');
-          
-          ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          ctx.filter = 'contrast(1.06) saturate(1.06) brightness(1.02)';
           ctx.drawImage(bitmap, 0, 0, w, h);
-          
           const blob = await new Promise(res => canvas.toBlob(res, 'image/webp', 0.85));
-          return new File([blob], (file.name.replace(/\.[^.]+$/, '') || 'img') + '.webp', { type: 'image/webp' });
+          return new File([blob], 'temp.webp', { type: 'image/webp' });
         };
         
-        for (const f of files) {
-          const webpFile = await toWebp1200(f);
-          const fileName = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.webp`;
+        for (let i = 0; i < files.length; i++) {
+          const webpFile = await toWebp1200(files[i]);
+          
+          // ตั้งชื่อไฟล์คงที่: ถ้ามีหลายรูปจะเป็น name-0.webp, name-1.webp
+          const fileName = `${baseFileName}${i > 0 ? '-' + i : ''}.webp`;
+          
           const { data, error } = await supabase.storage
             .from(STORAGE_BUCKET)
-            .upload(fileName, webpFile, { upsert: true });
+            .upload(fileName, webpFile, { upsert: true }); // <--- เขียนทับแน่นอน
           
           if (error) throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${error.message}`);
           uploadedPaths.push(data.path);
@@ -1342,29 +1343,19 @@ getProfileCardHTML(p) {
       }
       
       const profileData = this.collectFormData(form);
-      
       if (imagePath) profileData.imagePath = imagePath;
       if (uploadedPaths.length) profileData.imagePaths = uploadedPaths;
       
       let dbRes;
       if (isEditing) {
-        dbRes = await supabase
-          .from('profiles')
-          .update(profileData)
-          .eq('id', profileId)
-          .select()
-          .single();
+        dbRes = await supabase.from('profiles').update(profileData).eq('id', profileId).select().single();
       } else {
-        dbRes = await supabase
-          .from('profiles')
-          .insert(profileData)
-          .select()
-          .single();
+        dbRes = await supabase.from('profiles').insert(profileData).select().single();
       }
       
       if (dbRes.error) throw new Error(dbRes.error.message);
       
-      UI.showToast(isEditing ? 'อัปเดตโปรไฟล์สำเร็จ' : 'สร้างโปรไฟล์สำเร็จ', 'success');
+      UI.showToast(isEditing ? 'อัปเดตสำเร็จ' : 'สร้างสำเร็จ', 'success');
       this.renderView('profiles-list-container');
     } catch (err) {
       console.error(err);
@@ -1372,7 +1363,7 @@ getProfileCardHTML(p) {
     } finally {
       UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
     }
-  },
+},
   
 // ================ แทนที่ collectFormData ทั้งหมดด้วยโค้ดนี้ ================
   collectFormData(form) {
