@@ -1,9 +1,1 @@
-function handleDeleteProfile() {
-    // Existing code...
-    // Fixing the syntax error by adding missing closing bracket
-}
-
-function renderProvincesManagementContainer() {
-    // Existing code for the function...
-    // Ensure image upload functionality works with multiple images and webp compression
-}
+<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Sideline Management</title>\n</head>\n<body>\n    <h1>Manage Your Profile</h1>\n    <div id=\"uploadContainer\">\n        <input type=\"file\" id=\"imageUpload\" accept=\"image/*\" multiple>\n        <button onclick=\"uploadImages()\">Upload Images</button>\n    </div>\n    <div id=\"profilesManagementContainer\">\n        <!-- Content related to profiles management -->\n    </div>\n    <script>\n        function handleDeleteProfile(id) {\n            // Function to delete a profile using the id parameter.\n            // Some deletion logic here...\n        }\n        function renderProvincesManagementContainer() {\n            // Code to render provinces management.\n        }\n        function uploadImages() {\n            const files = document.getElementById('imageUpload').files;\n            if (files.length === 0) return;\n            const formData = new FormData();\n            for (let i = 0; i < files.length; i++) {\n                const file = files[i];\n                // Here we would process and compress image to webp format if necessary.\n                // Use appropriate libraries or API for webp conversion\n                formData.append('images[]', file);\n            }\n            fetch('/upload-endpoint', {\n                method: 'POST',\n                body: formData\n            })\n            .then(response => response.json())\n            .then(data => {\n                console.log('Success:', data);\n            })\n            .catch((error) => {\n                console.error('Error:', error);\n            });\n        }\n    <\/script>\n</body>\n</html>
