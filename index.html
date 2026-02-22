@@ -681,9 +681,9 @@ const Controller = {
     });
     
     DOM.refreshButton.addEventListener('click', async () => {
-      UI.showToast('กำลังรีเฟรช...', 'info');
-      await this.loadInitialData();
-    });
+    await Controller.fetchData(true); // ใส่ true เพื่อรีโหลดจังหวัดใหม่ทั้งหมด
+    Controller.renderView(AppState.currentView);
+});
     
     document.body.addEventListener('click', e => {
       const navButton = e.target.closest('.nav-button');
@@ -729,47 +729,39 @@ const Controller = {
     const currentParams = AppState.currentParams;
     this.renderView(currentView, currentParams);
   },
-  
-  async fetchData(force = false) {
-    const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
+async fetchData(force = false) {
+    // 1. ดึงข้อมูลโปรไฟล์ (ใช้แบบ Fetch ทั้งหมดไปเลยถ้า data ไม่เยอะ เพื่อป้องกันความซ้ำซ้อนของ Timestamp)
+    const { data: profiles, error: pErr } = await supabase
+        .from('profiles')
+        .select('*');
     
-    // Fetch profiles updated since last fetch
-    const profilesResponse = await supabase
-      .from('profiles')
-      .select('*')
-      .gte('lastUpdated', lastFetchTime);
+    if (pErr) throw pErr;
     
-    if (profilesResponse.error) throw profilesResponse.error;
-    
-    const newProfiles = profilesResponse.data || [];
-    
-    // Update AppState.allProfiles
-    newProfiles.forEach(p => {
-      const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
-      if (index !== -1) {
-        AppState.allProfiles[index] = p;
-      } else {
-        AppState.allProfiles.push(p);
-      }
-    });
-    
-    // Update lastFetchTime
+    // เก็บเข้า AppState แบบล้างค่าเก่าทิ้งเลย (ชัวร์ที่สุด)
+    AppState.allProfiles = profiles || [];
     AppState.lastFetchTime = new Date().toISOString();
     
-    // Fetch provinces if needed
-    if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
-      const provincesResponse = await supabase
-        .from('provinces')
-        .select('*')
-        .order('nameThai');
-      
-      if (provincesResponse.error) throw provincesResponse.error;
-      AppState.provinces = provincesResponse.data || [];
+    // 2. ดึงข้อมูลจังหวัดและทำ Unique ทันที
+    if (force || AppState.provinces.length === 0) {
+        const { data: provinces, error: provErr } = await supabase
+            .from('provinces')
+            .select('*')
+            .order('nameThai');
+        
+        if (provErr) throw provErr;
+
+        // ป้องกันจังหวัดซ้ำด้วยการใช้ Map กรองตาม Key (ตัวกันตาย)
+        const uniqueMap = new Map();
+        provinces.forEach(item => {
+            if (!uniqueMap.has(item.key)) {
+                uniqueMap.set(item.key, item);
+            }
+        });
+        AppState.provinces = Array.from(uniqueMap.values());
     }
     
-    // Update stats
     this.updateStats();
-  },
+},
   
   updateStats() {
     AppState.stats.profiles = AppState.allProfiles.length;
@@ -957,76 +949,69 @@ const Controller = {
     this.renderGroupedProfileCards();
   },
   
-  renderGroupedProfileCards() {
+renderGroupedProfileCards() {
     const listEl = document.getElementById('profiles-grouped-list');
     if (!listEl) return;
 
-    // ดึงค่าการค้นหาจาก UI
+    // 1. ดึงค่าจาก Filter UI (ตรวจสอบ ID ให้ตรงกับ HTML ของคุณ)
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
     const selectedProvince = document.getElementById('filter-province')?.value || '';
     const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
 
-    // กรองข้อมูลจาก State ทั้งหมด
-    let filteredProfiles = AppState.allProfiles || [];
+    // 2. กรองข้อมูลโปรไฟล์ตามเงื่อนไขทั้งหมด
+    let filteredProfiles = AppState.allProfiles.filter(p => {
+        const matchesSearch = !searchTerm || 
+            (p.name && p.name.toLowerCase().includes(searchTerm)) || 
+            (p.lineId && p.lineId.toLowerCase().includes(searchTerm));
+        
+        const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
+        
+        const matchesFeatured = !isFeaturedOnly || p.isfeatured;
 
-    if (searchTerm) {
-      filteredProfiles = filteredProfiles.filter(p => {
-        const tagsString = (p.styleTags || []).join(' ').toLowerCase();
-        return (p.name && p.name.toLowerCase().includes(searchTerm)) ||
-               (p.location && p.location.toLowerCase().includes(searchTerm)) ||
-               (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) ||
-               (tagsString.includes(searchTerm));
-      });
-    }
+        return matchesSearch && matchesProvince && matchesFeatured;
+    });
 
-    if (selectedProvince) {
-      filteredProfiles = filteredProfiles.filter(p => p.provinceKey === selectedProvince);
-    }
-
-    if (isFeaturedOnly) {
-      filteredProfiles = filteredProfiles.filter(p => p.isfeatured);
-    }
-    
-    // สร้าง HTML แยกตามจังหวัด
+    // 3. สร้าง HTML แยกตามกลุ่มจังหวัด
     let html = AppState.provinces.map(province => {
-      const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
-      if (profilesInProvince.length === 0) return '';
-      
-      return `
-        <div class="province-group animate-fade-in">
-          <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4 flex items-center gap-2">
-            <i class="fas fa-map-marker-alt text-indigo-500"></i>
-            ${province.nameThai}
-            <span class="text-sm font-normal text-slate-400">(${profilesInProvince.length} โปรไฟล์)</span>
-          </h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
-          </div>
-        </div>
-      `;
+        const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
+        
+        // ถ้าจังหวัดนี้ไม่มีโปรไฟล์ที่ตรงเงื่อนไข ไม่ต้องแสดงหัวข้อ
+        if (profilesInProvince.length === 0) return '';
+        
+        return `
+            <div class="province-group mb-10 animate-fade-in">
+                <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-indigo-500"></i>
+                    ${province.nameThai}
+                    <span class="text-sm font-normal text-slate-400">(${profilesInProvince.length} โปรไฟล์)</span>
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
+                </div>
+            </div>
+        `;
     }).join('');
     
-    // พ่น HTML ลงใน Container
+    // 4. แสดงผลลงหน้าจอ
     listEl.innerHTML = html || `
-      <div class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-        <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
-        <p class="text-slate-500 font-medium">ไม่พบโปรไฟล์ที่ตรงกับเงื่อนไขการค้นหา</p>
-      </div>
+        <div class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+            <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
+            <p class="text-slate-500 font-medium">ไม่พบโปรไฟล์ที่ตรงตามเงื่อนไข</p>
+        </div>
     `;
 
-    // --- ส่วนสำคัญ: ผูก Event Listener ทันทีหลัง Render เสร็จ ---
+    // 5. ผูก Event Listeners ให้กับปุ่มที่สร้างขึ้นใหม่ (ต้องอยู่ในฟังก์ชันนี้)
     
-    // 1. ปุ่มแก้ไข (Edit)
+    // ปุ่มแก้ไข (Edit)
     listEl.querySelectorAll('.edit-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
             const id = btn.dataset.id;
-            // เรียก View ฟอร์มพร้อมส่ง profileId เพื่อเข้าโหมดแก้ไข
             this.renderView('profile-form-container', { profileId: id });
         };
     });
 
-    // 2. ปุ่มลบ (Delete)
+    // ปุ่มลบ (Delete)
     listEl.querySelectorAll('.delete-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -1035,15 +1020,17 @@ const Controller = {
         };
     });
 
-    // 3. คลิกที่ตัว Card เพื่อ Preview หรือ Edit (Optional)
+    // คลิกที่ตัว Card เพื่อดู Lightbox (อ้างอิงตาม UI.showProfileLightbox)
     listEl.querySelectorAll('.profile-card-clickable').forEach(card => {
         card.onclick = () => {
             const id = card.dataset.id;
-            // หากต้องการให้คลิกแล้วแก้ไขทันที ให้เปิดบรรทัดล่างนี้
-            // this.renderView('profile-form-container', { profileId: id });
+            const profile = AppState.allProfiles.find(p => String(p.id) === String(id));
+            if (profile && typeof UI.showProfileLightbox === 'function') {
+                UI.showProfileLightbox(profile);
+            }
         };
     });
-  },
+},
 
 getProfileCardHTML(p) {
     let imgUrl = 'https://placehold.co/400x500?text=No+Image';
