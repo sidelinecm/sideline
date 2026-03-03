@@ -265,7 +265,15 @@
   border-color: #f0abfc;
 }
 
-
+/* ไอคอนสามเหลี่ยม Play */
+.icon-play {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-left: 15px solid white;
+  border-bottom: 10px solid transparent;
+  margin-left: 5px;
+}
 </style>
 </head>
 <body>
@@ -524,6 +532,7 @@ const UI = {
                   </span>
                 </div>
               </div>
+              
               ${detailItem('ruler-combined', 'สัดส่วน', profile.stats)}
               ${detailItem('arrows-alt-v', 'สูง / หนัก', [profile.height, profile.weight].filter(Boolean).join(' / '))}
               ${detailItem('palette', 'สีผิว', profile.skinTone)}
@@ -681,9 +690,9 @@ const Controller = {
     });
     
     DOM.refreshButton.addEventListener('click', async () => {
-    await Controller.fetchData(true); // ใส่ true เพื่อรีโหลดจังหวัดใหม่ทั้งหมด
-    Controller.renderView(AppState.currentView);
-});
+      UI.showToast('กำลังรีเฟรช...', 'info');
+      await this.loadInitialData();
+    });
     
     document.body.addEventListener('click', e => {
       const navButton = e.target.closest('.nav-button');
@@ -729,39 +738,47 @@ const Controller = {
     const currentParams = AppState.currentParams;
     this.renderView(currentView, currentParams);
   },
-async fetchData(force = false) {
-    // 1. ดึงข้อมูลโปรไฟล์ (ใช้แบบ Fetch ทั้งหมดไปเลยถ้า data ไม่เยอะ เพื่อป้องกันความซ้ำซ้อนของ Timestamp)
-    const { data: profiles, error: pErr } = await supabase
-        .from('profiles')
-        .select('*');
+  
+  async fetchData(force = false) {
+    const lastFetchTime = AppState.lastFetchTime || '1970-01-01T00:00:00Z';
     
-    if (pErr) throw pErr;
+    // Fetch profiles updated since last fetch
+    const profilesResponse = await supabase
+      .from('profiles')
+      .select('*')
+      .gte('lastUpdated', lastFetchTime);
     
-    // เก็บเข้า AppState แบบล้างค่าเก่าทิ้งเลย (ชัวร์ที่สุด)
-    AppState.allProfiles = profiles || [];
+    if (profilesResponse.error) throw profilesResponse.error;
+    
+    const newProfiles = profilesResponse.data || [];
+    
+    // Update AppState.allProfiles
+    newProfiles.forEach(p => {
+      const index = AppState.allProfiles.findIndex(existing => existing.id === p.id);
+      if (index !== -1) {
+        AppState.allProfiles[index] = p;
+      } else {
+        AppState.allProfiles.push(p);
+      }
+    });
+    
+    // Update lastFetchTime
     AppState.lastFetchTime = new Date().toISOString();
     
-    // 2. ดึงข้อมูลจังหวัดและทำ Unique ทันที
-    if (force || AppState.provinces.length === 0) {
-        const { data: provinces, error: provErr } = await supabase
-            .from('provinces')
-            .select('*')
-            .order('nameThai');
-        
-        if (provErr) throw provErr;
-
-        // ป้องกันจังหวัดซ้ำด้วยการใช้ Map กรองตาม Key (ตัวกันตาย)
-        const uniqueMap = new Map();
-        provinces.forEach(item => {
-            if (!uniqueMap.has(item.key)) {
-                uniqueMap.set(item.key, item);
-            }
-        });
-        AppState.provinces = Array.from(uniqueMap.values());
+    // Fetch provinces if needed
+    if (force || !Array.isArray(AppState.provinces) || AppState.provinces.length === 0) {
+      const provincesResponse = await supabase
+        .from('provinces')
+        .select('*')
+        .order('nameThai');
+      
+      if (provincesResponse.error) throw provincesResponse.error;
+      AppState.provinces = provincesResponse.data || [];
     }
     
+    // Update stats
     this.updateStats();
-},
+  },
   
   updateStats() {
     AppState.stats.profiles = AppState.allProfiles.length;
@@ -949,69 +966,74 @@ async fetchData(force = false) {
     this.renderGroupedProfileCards();
   },
   
-renderGroupedProfileCards() {
+  renderGroupedProfileCards() {
     const listEl = document.getElementById('profiles-grouped-list');
     if (!listEl) return;
 
-    // 1. ดึงค่าจาก Filter UI (ตรวจสอบ ID ให้ตรงกับ HTML ของคุณ)
+    // ดึงค่าการค้นหาจาก UI
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
     const selectedProvince = document.getElementById('filter-province')?.value || '';
     const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
 
-    // 2. กรองข้อมูลโปรไฟล์ตามเงื่อนไขทั้งหมด
-    let filteredProfiles = AppState.allProfiles.filter(p => {
-        const matchesSearch = !searchTerm || 
-            (p.name && p.name.toLowerCase().includes(searchTerm)) || 
-            (p.lineId && p.lineId.toLowerCase().includes(searchTerm));
-        
-        const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
-        
-        const matchesFeatured = !isFeaturedOnly || p.isfeatured;
+    // กรองข้อมูลจาก State ทั้งหมด
+    let filteredProfiles = AppState.allProfiles || [];
 
-        return matchesSearch && matchesProvince && matchesFeatured;
-    });
+    if (searchTerm) {
+      filteredProfiles = filteredProfiles.filter(p => {
+        const tagsString = (p.styleTags || []).join(' ').toLowerCase();
+        return (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+               (p.location && p.location.toLowerCase().includes(searchTerm)) ||
+               (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) ||
+               (tagsString.includes(searchTerm));
+      });
+    }
 
-    // 3. สร้าง HTML แยกตามกลุ่มจังหวัด
+    if (selectedProvince) {
+      filteredProfiles = filteredProfiles.filter(p => p.provinceKey === selectedProvince);
+    }
+
+    if (isFeaturedOnly) {
+      filteredProfiles = filteredProfiles.filter(p => p.isfeatured);
+    }
+    
+    // สร้าง HTML แยกตามจังหวัด
     let html = AppState.provinces.map(province => {
-        const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
-        
-        // ถ้าจังหวัดนี้ไม่มีโปรไฟล์ที่ตรงเงื่อนไข ไม่ต้องแสดงหัวข้อ
-        if (profilesInProvince.length === 0) return '';
-        
-        return `
-            <div class="province-group mb-10 animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4 flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-indigo-500"></i>
-                    ${province.nameThai}
-                    <span class="text-sm font-normal text-slate-400">(${profilesInProvince.length} โปรไฟล์)</span>
-                </h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                    ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
-                </div>
-            </div>
-        `;
+      const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
+      if (profilesInProvince.length === 0) return '';
+      
+      return `
+        <div class="province-group animate-fade-in">
+          <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4 flex items-center gap-2">
+            <i class="fas fa-map-marker-alt text-indigo-500"></i>
+            ${province.nameThai}
+            <span class="text-sm font-normal text-slate-400">(${profilesInProvince.length} โปรไฟล์)</span>
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
+          </div>
+        </div>
+      `;
     }).join('');
     
-    // 4. แสดงผลลงหน้าจอ
+    // พ่น HTML ลงใน Container
     listEl.innerHTML = html || `
-        <div class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-            <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
-            <p class="text-slate-500 font-medium">ไม่พบโปรไฟล์ที่ตรงตามเงื่อนไข</p>
-        </div>
+      <div class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+        <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
+        <p class="text-slate-500 font-medium">ไม่พบโปรไฟล์ที่ตรงกับเงื่อนไขการค้นหา</p>
+      </div>
     `;
 
-    // 5. ผูก Event Listeners ให้กับปุ่มที่สร้างขึ้นใหม่ (ต้องอยู่ในฟังก์ชันนี้)
-    
-    // ปุ่มแก้ไข (Edit)
+
     listEl.querySelectorAll('.edit-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
             const id = btn.dataset.id;
+            // เรียก View ฟอร์มพร้อมส่ง profileId เพื่อเข้าโหมดแก้ไข
             this.renderView('profile-form-container', { profileId: id });
         };
     });
 
-    // ปุ่มลบ (Delete)
+    // 2. ปุ่มลบ (Delete)
     listEl.querySelectorAll('.delete-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -1020,69 +1042,216 @@ renderGroupedProfileCards() {
         };
     });
 
-    // คลิกที่ตัว Card เพื่อดู Lightbox (อ้างอิงตาม UI.showProfileLightbox)
+
     listEl.querySelectorAll('.profile-card-clickable').forEach(card => {
         card.onclick = () => {
             const id = card.dataset.id;
-            const profile = AppState.allProfiles.find(p => String(p.id) === String(id));
-            if (profile && typeof UI.showProfileLightbox === 'function') {
-                UI.showProfileLightbox(profile);
-            }
+
         };
     });
-},
+  },
 
+// =========================================================================
+// PROFILE CARD - แสดงการ์ดโปรไฟล์
+// =========================================================================
 getProfileCardHTML(p) {
-    let imgUrl = 'https://placehold.co/400x500?text=No+Image';
+  let imgUrl = 'https://placehold.co/400x500?text=No+Image';
 
-    // Logic การเลือกรูปภาพแบบ Dev ขั้นสูงสุด (Cloudinary > Supabase Storage > Gallery)
-    if (p.imagePath && p.imagePath.startsWith('http')) {
-        imgUrl = p.imagePath;
-    } 
-    else if (p.imagePath && p.imagePath !== '') {
-        imgUrl = supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
-    } 
-    else if (p.galleryPaths && p.galleryPaths.length > 0) {
-        imgUrl = p.galleryPaths[0];
-    }
+  if (p.imagePath && p.imagePath.startsWith('http')) {
+    imgUrl = p.imagePath;
+  } else if (p.imagePath && p.imagePath !== '') {
+    imgUrl = supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
+  } else if (p.galleryPaths && p.galleryPaths.length > 0) {
+    imgUrl = p.galleryPaths[0];
+  }
 
-    const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
+  const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
 
-    return `
-      <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-100" data-id="${p.id}">
-        <div class="relative aspect-[3/4] overflow-hidden">
-            <img src="${imgUrl}" 
-                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                 onerror="this.src='https://placehold.co/400x500?text=Image+Error'" 
-                 loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-yellow-400 text-black text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">RECOMMENDED</span>' : ''}
-        </div>
-        <div class="p-3 flex flex-col flex-grow">
-          <h4 class="font-bold text-slate-800 truncate">${p.name || 'ไม่ระบุชื่อ'}</h4>
-          <p class="text-xs text-slate-500 mb-2 flex items-center gap-1">
-            <i class="fas fa-map-pin text-[10px]"></i> ${provName}
-          </p>
-          
-          <div class="mt-auto flex gap-2 pt-2 border-t border-slate-100">
-            <button class="edit-profile-btn flex-1 py-1.5 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700 transition font-bold" data-id="${p.id}">
-              <i class="fas fa-edit mr-1"></i> แก้ไข
-            </button>
-            <button class="delete-profile-btn px-3 py-1.5 bg-slate-100 text-slate-400 text-xs rounded-lg hover:bg-red-500 hover:text-white transition" 
-                    data-id="${p.id}" data-name="${p.name}">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
+  return `
+    <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-100" data-id="${p.id}">
+      <div class="relative aspect-[3/4] overflow-hidden">
+        <img src="${imgUrl}" 
+             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+             onerror="this.src='https://placehold.co/400x500?text=Image+Error'" 
+             loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-yellow-400 text-black text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">RECOMMENDED</span>' : ''}
+      </div>
+      <div class="p-3 flex flex-col flex-grow">
+        <h4 class="font-bold text-slate-800 truncate">${p.name || 'ไม่ระบุชื่อ'}</h4>
+        <p class="text-xs text-slate-500 mb-2 flex items-center gap-1">
+          <i class="fas fa-map-pin text-[10px]"></i> ${provName}
+        </p>
+        
+        <div class="mt-auto flex gap-2 pt-2 border-t border-slate-100">
+          <button class="edit-profile-btn flex-1 py-1.5 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700 transition font-bold" data-id="${p.id}">
+            <i class="fas fa-edit mr-1"></i> แก้ไข
+          </button>
+          <button class="delete-profile-btn px-3 py-1.5 bg-slate-100 text-slate-400 text-xs rounded-lg hover:bg-red-500 hover:text-white transition" 
+                  data-id="${p.id}" data-name="${p.name}">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </div>
       </div>
-    `;
-  },
-async renderProfileFormContainer(params = {}) {
+    </div>
+  `;
+},
+
+// =========================================================================
+// INITIALIZE IMAGE UPLOADER - ส่วนอัปโหลดรูปภาพ
+// =========================================================================
+initImageUploader(previewUrl = '') {
+  const container = document.getElementById('image-uploader');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
+      <div class="mb-4">
+        <img id="profile-image-preview" 
+             src="${previewUrl || 'https://placehold.co/400x500?text=เลือกรูปภาพ'}" 
+             class="w-48 h-64 object-cover rounded-lg shadow-md border border-slate-200"
+             onerror="this.src='https://placehold.co/400x500?text=Image+Error'">
+      </div>
+      <div class="text-center space-y-3">
+        <input type="file" 
+               id="image-file-input" 
+               accept="image/*" 
+               class="hidden" 
+               multiple>
+        <button type="button" 
+                id="choose-image-btn" 
+                class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-600 hover:to-purple-700 transition-all shadow-md">
+          <i class="fas fa-cloud-upload-alt mr-2"></i>เลือกรูปภาพ
+        </button>
+        <p class="text-xs text-slate-500">รองรับไฟล์ JPG, PNG, WebP (แนะนำ 400x500px)</p>
+        <div id="thumbnail-previews" class="flex flex-wrap gap-2 mt-4"></div>
+      </div>
+    </div>
+  `;
+
+  const chooseBtn = document.getElementById('choose-image-btn');
+  const fileInput = document.getElementById('image-file-input');
+  const previewImg = document.getElementById('profile-image-preview');
+  const thumbnailsContainer = document.getElementById('thumbnail-previews');
+
+  chooseBtn.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    // แสดงรูปหลัก
+    const firstFile = files[0];
+    previewImg.src = URL.createObjectURL(firstFile);
+
+    // แสดง thumbnail สำหรับหลายรูป
+    thumbnailsContainer.innerHTML = '';
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-300';
+        thumb.innerHTML = `
+          <img src="${e.target.result}" class="w-full h-full object-cover">
+          ${index === 0 ? '<div class="absolute bottom-0 w-full bg-green-500 text-white text-[10px] text-center py-0.5">รูปหลัก</div>' : ''}
+        `;
+        thumbnailsContainer.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+},
+
+// =========================================================================
+// INITIALIZE TAG INPUT - ส่วนจัดการแท็ก
+// =========================================================================
+initTagInput(initialTags = []) {
+  const container = document.getElementById('tag-input-component');
+  if (!container) return;
+
+  let tags = [...initialTags];
+  
+  container.innerHTML = `
+    <div class="tag-input-wrapper border border-slate-300 rounded-xl p-3 bg-white">
+      <div class="flex flex-wrap gap-2 mb-3 min-h-10" id="tags-container">
+        ${tags.map(tag => `
+          <div class="tag-item inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full text-sm font-medium">
+            <span>${tag}</span>
+            <button type="button" class="remove-tag text-indigo-600 hover:text-red-600" data-tag="${tag}">
+              <i class="fas fa-times text-xs"></i>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="flex gap-2">
+        <input type="text" 
+               id="tag-input" 
+               class="form-input flex-1" 
+               placeholder="พิมพ์แท็กแล้วกด Enter หรือ Spacebar">
+        <button type="button" id="add-tag-btn" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300">
+          <i class="fas fa-plus mr-1"></i>เพิ่ม
+        </button>
+      </div>
+      <div class="mt-2 text-xs text-slate-500">
+        <p><i class="fas fa-lightbulb mr-1"></i>ตัวอย่าง: สาวไซด์ไลน์, น่ารัก, ฟิลแฟน, รับงานเชียงใหม่</p>
+      </div>
+    </div>
+  `;
+
+  const tagsContainer = document.getElementById('tags-container');
+  const tagInput = document.getElementById('tag-input');
+  const addBtn = document.getElementById('add-tag-btn');
+
+  const renderTags = () => {
+    tagsContainer.innerHTML = tags.map(tag => `
+      <div class="tag-item inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full text-sm font-medium">
+        <span>${tag}</span>
+        <button type="button" class="remove-tag text-indigo-600 hover:text-red-600" data-tag="${tag}">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+    `).join('');
+  };
+
+  const addTag = () => {
+    const value = tagInput.value.trim();
+    if (value && !tags.includes(value)) {
+      tags.push(value);
+      renderTags();
+      tagInput.value = '';
+    }
+  };
+
+  tagInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      addTag();
+    }
+  });
+
+  addBtn.addEventListener('click', addTag);
+
+  tagsContainer.addEventListener('click', (e) => {
+    if (e.target.closest('.remove-tag')) {
+      const tagToRemove = e.target.closest('.remove-tag').dataset.tag;
+      tags = tags.filter(t => t !== tagToRemove);
+      renderTags();
+    }
+  });
+
+  renderTags();
+},
+
+
+  
+  // =========================================================================
+  // RENDER PROFILE FORM - หน้าเพิ่ม/แก้ไขโปรไฟล์ (สมบูรณ์ตามรูปภาพ)
+  // =========================================================================
+  async renderProfileFormContainer(params = {}) {
     const profileId = params.profileId;
     const isEditing = !!profileId;
     let p = {};
     
-    // หากเป็นโหมดแก้ไข ให้ดึงข้อมูลล่าสุดจาก Supabase
     if (isEditing) {
       UI.showToast("กำลังดึงข้อมูล...", "info");
       const { data, error } = await supabase
@@ -1098,49 +1267,40 @@ async renderProfileFormContainer(params = {}) {
       p = data;
     }
 
-    // เตรียมรูปสำหรับ Preview
-    let previewUrl = null;
-    if (p.imagePath) {
-        previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
-    }
+    let previewUrl = p.imagePath || '';
     
     const formHTML = `
-      <div class="max-w-5xl mx-auto animate-slide-up">
+      <div class="max-w-5xl mx-auto animate-slide-up pb-24">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold text-slate-800">${isEditing ? 'แก้ไขโปรไฟล์: ' + p.name : 'สร้างโปรไฟล์ใหม่'}</h2>
-            <button class="nav-button text-slate-500 hover:text-slate-800 transition" data-view="profiles-list-container">
-                <i class="fas fa-times text-xl"></i>
+            <button class="nav-button p-2 text-slate-400 hover:text-red-500 transition" data-view="profiles-list-container">
+                <i class="fas fa-times-circle text-2xl"></i>
             </button>
         </div>
 
-        <form id="profile-form" class="space-y-6 pb-20">
+        <form id="profile-form" class="space-y-6">
           <input type="hidden" id="profile-id" value="${p.id || ''}">
           <input type="hidden" id="current-image-path" value="${p.imagePath || ''}">
           
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- ส่วนที่ 1: รูปภาพและสถานะ (ซ้าย) -->
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
                     <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-image text-indigo-500"></i> รูปภาพโปรไฟล์
+                        <i class="fas fa-image text-coral"></i> รูปภาพโปรไฟล์
                     </h3>
-                    <div id="image-uploader" class="w-full"></div>
-                    <p class="text-[11px] text-slate-400 mt-3">* แนะนำขนาด 3:4 หรือ 600x800px (รองรับหลายรูป)</p>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-toggle-on text-indigo-500"></i> สถานะและการแสดงผล
-                    </h3>
-                    <div class="space-y-4">
-                        <label class="flex items-center gap-3 p-3 bg-indigo-50 rounded-xl cursor-pointer transition hover:bg-indigo-100">
-                            <input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded-md" ${p.isfeatured ? 'checked' : ''}>
-                            <span class="font-bold text-indigo-700 text-sm">ปักหมุดแนะนำ (Featured)</span>
+                    <div id="image-uploader"></div>
+                    <div class="mt-4 space-y-3">
+                        <label class="flex items-center gap-2 cursor-pointer p-3 bg-amber-50 rounded-xl border border-amber-100 transition hover:bg-amber-100">
+                            <input type="checkbox" id="isFeatured" ${p.isfeatured ? 'checked' : ''} class="w-5 h-5 text-orange-500 rounded">
+                            <span class="text-sm font-bold text-amber-700">ปักหมุดเป็นโปรไฟล์แนะนำ</span>
                         </label>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">สถานะรับงาน</label>
-                            <select id="availability" class="form-input w-full p-2.5 border-2 rounded-xl focus:border-indigo-500 outline-none">
-                                ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'รับงานบางวัน', 'ไม่ว่าง', 'พัก'].map(s => `
-                                  <option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">สถานะรับงาน</label>
+                            <select id="availability" class="form-input w-full">
+                                ${['รับงาน', 'ว่าง', 'สอบถามคิว', 'ไม่ว่าง', 'พัก'].map(s => `
+                                    <option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>
                                 `).join('')}
                             </select>
                         </div>
@@ -1148,366 +1308,156 @@ async renderProfileFormContainer(params = {}) {
                 </div>
             </div>
 
+            <!-- ส่วนที่ 2-4: ข้อมูลรายละเอียด (ขวา) -->
             <div class="lg:col-span-2 space-y-6">
+                
+                <!-- ข้อมูลส่วนตัว -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">ข้อมูลพื้นฐาน</h3>
+                    <h3 class="font-bold text-indigo-600 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-user-circle"></i> ข้อมูลส่วนตัว
+                    </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
-                        <div><label class="label-style">อายุ</label><input type="number" id="age" class="form-input-high" value="${p.age || ''}"></div>
-                        <div><label class="label-style">จังหวัด*</label>
-                            <select id="provinceKey" required class="form-input-high">
-                                ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
+                        <div class="md:col-span-2">
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">ชื่อ*</label>
+                            <input type="text" id="name" required class="form-input w-full" value="${p.name || ''}" placeholder="ระบุชื่อ">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">อายุ</label>
+                            <input type="number" id="age" class="form-input w-full" value="${p.age || ''}" placeholder="20">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">สัดส่วน (เช่น 34-24-36)</label>
+                            <input type="text" id="stats" class="form-input w-full" value="${p.stats || ''}" placeholder="34-24-36">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-sm font-semibold text-slate-700 mb-1 block">สูง (cm)</label>
+                                <input type="number" id="height" class="form-input w-full" value="${p.height || ''}" placeholder="160">
+                            </div>
+                            <div>
+                                <label class="text-sm font-semibold text-slate-700 mb-1 block">หนัก (kg)</label>
+                                <input type="number" id="weight" class="form-input w-full" value="${p.weight || ''}" placeholder="48">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">สีผิว</label>
+                            <input type="text" id="skinTone" class="form-input w-full" value="${p.skinTone || ''}" placeholder="ขาว, ขาวเหลือง, แทน">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ข้อมูลบริการและการติดต่อ -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-indigo-600 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-phone-alt"></i> ข้อมูลบริการและการติดต่อ
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">จังหวัด/หัวข้อ*</label>
+                            <select id="provinceKey" required class="form-input w-full">
+                                <option value="">เลือกจังหวัด</option>
+                                ${AppState.provinces.map(prov => `
+                                    <option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>
+                                `).join('')}
                             </select>
                         </div>
-                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="นิมมาน, ตัวเมือง"></div>
-                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="1500/1"></div>
-                        <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">พิกัด)
+                            
+                           ตัวเมือง?และ..'นิมมาน', 'สันติธรรม', 'ช้างเผือก', 'เจ็ดยอด', 'แม่โจ้', 'หางดง' </label>
+                            <input type="text" id="location" class="form-input w-full" value="${p.location || ''}" placeholder="ในตัวเมือง / ใกล้เคียง">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">เรทราคา</label>
+                            <input type="text" id="rate" class="form-input w-full" value="${p.rate || ''}" placeholder="1500.-">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">LINE ID (หรือลิงก์)</label>
+                            <input type="text" id="lineId" class="form-input w-full" value="${p.lineId || ''}" placeholder="https://lin.ee/xxxx">
+                        </div>
                     </div>
                 </div>
 
+                <!-- รายละเอียดและ Keyword -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">รายละเอียดและสไตล์</h3>
+                    <h3 class="font-bold text-indigo-600 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-file-alt"></i> รายละเอียดและ Keyword
+                    </h3>
                     <div class="space-y-4">
-                        <div><label class="label-style">คำโปรย (Quote)</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}" placeholder="สั้นๆ โดนๆ"></div>
-                        <div><label class="label-style">รายละเอียดเพิ่มเติม</label><textarea id="description" rows="4" class="form-input-high">${p.description || ''}</textarea></div>
-                        <div><label class="label-style">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">คำโปรยสั้นๆ</label>
+                            <input type="text" id="quote" class="form-input w-full" value="${p.quote || ''}" placeholder="ฟิลแฟน ตรงปก">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">รายละเอียด - เพิ่มให้เยอะน่าจะดี</label>
+                            <textarea id="description" rows="5" class="form-input w-full" placeholder="รายละเอียดเพิ่มเติม...">${p.description || ''}</textarea>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">สไตล์ (Tags)</label>
+                            <div id="tag-input-component"></div>
+                            <p class="text-[11px] text-slate-400 mt-1">Tag ช่วยให้ลูกค้าหาเจอง่ายขึ้น และมีผลต่อ SEO</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">คำอธิบายรูปภาพ (Alt Text)</label>
+                            <input type="text" id="altText" class="form-input w-full" value="${p.altText || ''}" placeholder="น้อง... รับงาน... ฟิลแฟน ตรงปก">
+                        </div>
                     </div>
                 </div>
 
+                <!-- SEO Settings -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2 text-indigo-600">SEO & Google Settings</h3>
+                    <h3 class="font-bold text-indigo-600 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-search"></i> (การตั้งค่า SEO สำหรับ Google) ไม่ต้องเพิ่มอะไร จะดีที่สุด เพราะมันจะสร้างให้เอง  แต่ถ้าอยากเพิ่มก็เพิ่มได้คับ
+                    </h3>
                     <div class="space-y-4">
-                        <div><label class="label-style">SEO Title</label><input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}"></div>
-                        <div><label class="label-style">Slug (URL)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="nong-name-chiangmai"></div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">SEO Title</label>
+                            <input type="text" id="seo-title" class="form-input w-full" value="${p.seo_title || ''}" placeholder="รับงานไซด์ไลน์... ตรงปกฟิลแฟน">
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">Meta Description</label>
+                            <textarea id="meta-description" rows="3" class="form-input w-full" placeholder="รับงานไซด์ไลน์... ไม่มีมัดจำ">${p.meta_description || ''}</textarea>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 mb-1 block">ใส่ชื่อเล่น (สำหรับ URL Slug)</label>
+                            <input type="text" id="slug" class="form-input w-full" value="${p.slug || ''}" placeholder="aeommi-91">
+                        </div>
                     </div>
                 </div>
             </div>
           </div>
 
-          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white flex justify-between items-center z-50">
-            <button type="button" class="nav-button px-6 py-3 font-bold text-slate-500 hover:text-slate-800 transition" data-view="profiles-list-container">ยกเลิก</button>
-            <div class="flex gap-3">
-                <button type="button" id="preview-profile-button" class="px-6 py-3 font-bold text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition flex items-center gap-2">
-                    <i class="fas fa-eye"></i> ดูตัวอย่าง
-                </button>
-                <button type="submit" id="save-profile-button" class="px-10 py-3 font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2">
-                    <i class="fas fa-save"></i> ${isEditing ? 'อัปเดตข้อมูล' : 'บันทึกโปรไฟล์'}
-                </button>
-            </div>
+          <!-- ปุ่มควบคุมลอยตัว -->
+          <div class="fixed bottom-0 left-0 right-0 lg:left-64 bg-white/80 backdrop-blur-md p-4 border-t flex justify-center items-center gap-4 z-50 shadow-2xl">
+            <button type="button" class="px-8 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold transition hover:bg-slate-200" data-view="profiles-list-container">ยกเลิก</button>
+            <button type="button" id="preview-profile-button" class="px-8 py-3 bg-indigo-100 text-indigo-700 rounded-xl font-bold transition hover:bg-indigo-200">
+                <i class="fas fa-eye mr-2"></i>ดูตัวอย่าง
+            </button>
+            <button type="submit" id="save-profile-button" class="px-12 py-3 bg-rose-500 text-white rounded-xl font-bold shadow-lg hover:bg-rose-600 transition-all transform active:scale-95">
+                บันทึกข้อมูล
+            </button>
           </div>
         </form>
       </div>
     `;
 
     DOM.viewContent.innerHTML = formHTML;
-    
-    // เรียกใช้ Component เสริม (ต้องมีฟังก์ชันเหล่านี้ใน Controller)
     this.initImageUploader(previewUrl);
     this.initTagInput(p.styleTags || []);
     
-    // ผูก Event Submit
+    // ผูก Event
     document.getElementById('profile-form').addEventListener('submit', e => this.handleProfileFormSubmit(e));
     document.getElementById('preview-profile-button').addEventListener('click', () => this.handlePreviewProfile());
   },
-// =========================================================================
-// KISSMODEL ADMIN CONTROLLER - FULL VERSION (NO SHORTENED)
-// =========================================================================
 
-  initImageUploader(imageUrl) {
-    const uploaderEl = document.getElementById('image-uploader');
-    if (!uploaderEl) return;
-
-    uploaderEl.innerHTML = `
-      <div class="space-y-3">
-        <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50
-                            hover:border-indigo-400 transition cursor-pointer group">
-          <input type="file" id="image-file-input" accept="image/*" multiple
-                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-          <div class="pointer-events-none text-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 mb-3 group-hover:scale-110 transition">
-              <i class="fas fa-cloud-upload-alt text-xl"></i>
-            </div>
-            <p class="text-sm text-slate-600 font-bold">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
-            <p class="text-xs text-slate-400 mt-1">ไฟล์จะถูกส่งไปที่ Cloudinary (รองรับ .webp, .jpg, .png)</p>
-          </div>
-        </div>
-        <div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-      </div>
-    `;
-    
-    const fileInput = document.getElementById('image-file-input');
-    const dz = document.getElementById('dz');
-    const previewGrid = document.getElementById('multi-preview');
-    
-    const renderPreview = (files) => {
-      previewGrid.innerHTML = '';
-      files.forEach(f => {
-        const url = URL.createObjectURL(f);
-        const card = document.createElement('div');
-        card.className = 'relative rounded-xl overflow-hidden shadow-md bg-white border border-slate-200 subtle-pop';
-        card.innerHTML = `
-          <img src="${url}" class="w-full h-40 object-cover" alt="">
-          <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] p-2 truncate backdrop-blur-sm">
-            ${f.name}
-          </div>
-        `;
-        previewGrid.appendChild(card);
-      });
-    };
-    
-    dz.addEventListener('dragover', e => { 
-      e.preventDefault(); 
-      dz.classList.add('border-indigo-400', 'bg-indigo-50'); 
-    });
-    
-    dz.addEventListener('dragleave', () => { 
-      dz.classList.remove('border-indigo-400', 'bg-indigo-50'); 
-    });
-    
-    dz.addEventListener('drop', e => {
-      e.preventDefault();
-      dz.classList.remove('border-indigo-400', 'bg-indigo-50');
-      const dtFiles = Array.from(e.dataTransfer.files || []).filter(f => /^image\//.test(f.type));
-      if (!dtFiles.length) return;
-      
-      const dataTransfer = new DataTransfer();
-      dtFiles.forEach(f => dataTransfer.items.add(f));
-      fileInput.files = dataTransfer.files;
-      renderPreview(dtFiles);
-    });
-    
-    fileInput.addEventListener('change', e => {
-      renderPreview(Array.from(e.target.files || []));
-    });
-    
-    if (imageUrl) {
-      previewGrid.innerHTML = `
-        <div class="relative rounded-xl overflow-hidden shadow-lg border-2 border-indigo-500 bg-white">
-          <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
-          <div class="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">รูปปัจจุบัน</div>
-        </div>
-      `;
-    }
-  },
-
-  initTagInput(initialTags = []) {
-    const container = document.getElementById('tag-input-component');
-    if (!container) return;
-    let tags = Array.isArray(initialTags) ? [...initialTags] : [];
-    
-    const suggestedTags = ['น่ารัก', 'เอาใจเก่ง', 'สายฝอ', 'ตัวเล็ก', 'ผิวขาว', 'อวบ', 'คุยสนุก', 'ฟิลแฟน', 'ไม่เร่งรีบ'];
-
-    const render = () => {
-      container.innerHTML = `
-        <div class="tag-input-container bg-white border border-slate-300 rounded-xl p-2.5 flex flex-wrap gap-2 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 transition shadow-sm">
-          ${tags.map(tag => `
-            <div class="tag-item bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-2 border border-indigo-100 animate-fade-in">
-              <span>${tag}</span>
-              <i class="fas fa-times tag-remove-btn cursor-pointer hover:text-red-500 transition" data-tag="${tag}"></i>
-            </div>
-          `).join('')}
-          <input type="text" class="tag-input flex-1 min-w-[150px] outline-none text-sm bg-transparent" placeholder="เพิ่มสไตล์แล้วกด Enter...">
-        </div>
-        <div class="mt-3 flex flex-wrap gap-2 items-center">
-          <span class="text-[11px] text-slate-400 font-medium">แนะนำ:</span>
-          ${suggestedTags.map(tag => 
-            !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full hover:bg-indigo-600 hover:text-white transition-all transform hover:scale-105 shadow-sm">${tag}</button>` : ''
-          ).join('')}
-        </div>
-      `;
-      
-      const inputEl = container.querySelector('.tag-input');
-      inputEl?.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && e.target.value.trim()) {
-          e.preventDefault();
-          const newTags = e.target.value.trim().split(',').map(t => t.trim()).filter(Boolean);
-          tags = [...new Set([...tags, ...newTags])];
-          render();
-        }
-      });
-      
-      container.querySelectorAll('.tag-remove-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          tags = tags.filter(t => t !== btn.dataset.tag);
-          render();
-        });
-      });
-
-      container.querySelectorAll('.suggest-tag-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          tags = [...new Set([...tags, btn.textContent])];
-          render();
-        });
-      });
-    };
-    render();
-  },
-  
-  async handleProfileFormSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    // 1. ดึง ID มาเช็คให้ชัวร์
-    const profileId = form.querySelector('#profile-id').value;
-    const isEditing = !!profileId && profileId !== ""; 
-    const saveButton = form.querySelector('#save-profile-button');
-    
-    UI.toggleButtonLoading(saveButton, true, isEditing ? 'กำลังอัปเดตข้อมูล...' : 'กำลังสร้างโปรไฟล์...');
-    
-    try {
-        const fileInput = form.querySelector('#image-file-input');
-        // ดึง Path รูปปัจจุบันจาก Hidden Input
-        let currentImagePath = form.querySelector('#current-image-path').value || '';
-        let uploadedUrls = [];
-        const files = Array.from(fileInput?.files || []);
-        
-        // --- 1. Cloudinary Multi-Upload Logic ---
-        if (files.length) {
-            UI.showToast(`กำลังอัปโหลด ${files.length} รูป...`, 'info');
-            for (const [index, f] of files.entries()) {
-                const formData = new FormData();
-                formData.append('file', f);
-                formData.append('upload_preset', UPLOAD_PRESET);
-                formData.append('folder', 'images');
-
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await res.json();
-                if (data.secure_url) {
-                    uploadedUrls.push(data.secure_url);
-                } else {
-                    throw new Error(`Cloudinary Error: ${data.error?.message || "Upload Failed"}`);
-                }
-            }
-        }
-
-        // --- 2. Prepare Data for Supabase ---
-        const profileData = this.collectFormData(form);
-
-        // Logic การเลือกรูป: ถ้ามีรูปใหม่ใช้รูปใหม่ ถ้าไม่มีให้ใช้รูปเดิม
-        if (uploadedUrls.length > 0) {
-            profileData.imagePath = uploadedUrls[0];
-            profileData.galleryPaths = uploadedUrls;
-        } else {
-            profileData.imagePath = currentImagePath;
-            // ไม่ต้องใส่ galleryPaths เพื่อให้ Supabase ใช้ค่าเดิมที่มีอยู่แล้วใน DB
-        }
-
-        if (!profileData.imagePath && !isEditing) {
-            throw new Error('กรุณาเลือกรูปภาพอย่างน้อย 1 รูปสำหรับโปรไฟล์ใหม่');
-        }
-
-        // --- 3. Supabase Integration ---
-        let result;
-        if (isEditing) {
-            // มิติ Dev: การ Update ต้องลบ ID ออกจาก Object ข้อมูลก่อนเสมอ
-            const { id, ...updateData } = profileData; 
-
-            result = await supabase
-                .from('profiles')
-                .update(updateData)
-                .eq('id', profileId)
-                .select()
-                .single();
-        } else {
-            result = await supabase
-                .from('profiles')
-                .insert([profileData])
-                .select()
-                .single();
-        }
-        
-        if (result.error) throw result.error;
-        
-        UI.showToast(isEditing ? 'อัปเดตเรียบร้อย' : 'สร้างสำเร็จ', 'success');
-        await this.fetchData();
-        this.renderView('profiles-list-container');
-        
-    } catch (err) {
-        console.error("Critical Save Error:", err);
-        UI.showToast(err.message, 'error');
-    } finally {
-        UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
-    }
-  },
-  handleEditProfile(id) {
-    // 1. ค้นหาข้อมูลโปรไฟล์จาก State ด้วย ID
-    const p = AppState.profiles.find(item => item.id == id);
-    if (!p) {
-      UI.showToast('ไม่พบข้อมูลโปรไฟล์ที่ต้องการแก้ไข', 'error');
-      return;
-    }
-
-    // 2. เปลี่ยนหน้าไปที่ Form Container (ตรวจสอบชื่อ ID ของ Container คุณด้วย)
-    this.renderView('profile-form-container'); 
-
-    // 3. เข้าถึง Form
-    const form = document.getElementById('profile-form');
-    if (!form) return;
-
-    // --- ส่วนที่สำคัญที่สุด: ยัดค่าใส่ Input แต่ละตัว ---
-    
-    // Hidden Fields (ห้ามลืมเด็ดขาด!)
-    form.querySelector('#profile-id').value = p.id;
-    form.querySelector('#current-image-path').value = p.imagePath || '';
-
-    // Basic Info
-    form.querySelector('#name').value = p.name || '';
-    form.querySelector('#age').value = p.age || '';
-    form.querySelector('#height').value = p.height || '';
-    form.querySelector('#weight').value = p.weight || '';
-    form.querySelector('#stats').value = p.stats || '';
-    form.querySelector('#skinTone').value = p.skinTone || '';
-    form.querySelector('#provinceKey').value = p.provinceKey || '';
-    form.querySelector('#location').value = p.location || '';
-    form.querySelector('#rate').value = p.rate || '';
-    form.querySelector('#availability').value = p.availability || 'สอบถามคิว';
-    form.querySelector('#lineId').value = p.lineId || '';
-    form.querySelector('#quote').value = p.quote || '';
-    form.querySelector('#description').value = p.description || '';
-    form.querySelector('#altText').value = p.altText || '';
-    form.querySelector('#isFeatured').checked = !!p.isfeatured;
-
-    // SEO Data
-    form.querySelector('#seo-title').value = p.seo_title || '';
-    form.querySelector('#meta-description').value = p.meta_description || '';
-    form.querySelector('#slug').value = p.slug || '';
-
-    // --- การจัดการ Style Tags (ถ้ามีระบบ Tag) ---
-    const tagContainer = form.querySelector('#tags-container'); // ปรับตาม ID จริงของคุณ
-    if (tagContainer) {
-      tagContainer.innerHTML = ''; // ล้าง Tag เก่า
-      if (p.styleTags && Array.isArray(p.styleTags)) {
-        p.styleTags.forEach(tag => {
-          // สร้าง Tag Element (เรียกใช้ฟังก์ชันสร้าง Tag ของคุณ ถ้ามี)
-          this.addTagToUI(tag, tagContainer); 
-        });
-      }
-    }
-
-    // --- แสดง Preview รูปปัจจุบัน ---
-    const previewImg = document.getElementById('image-preview'); // ถ้ามี <img> สำหรับพรีวิว
-    if (previewImg) {
-      previewImg.src = p.imagePath || 'https://placehold.co/400x500?text=No+Image';
-    }
-
-    // 4. เปลี่ยนชื่อปุ่มบันทึกให้ชัดเจน
-    const saveButton = form.querySelector('#save-profile-button');
-    if (saveButton) saveButton.textContent = 'อัปเดตข้อมูล (Update Profile)';
-
-    UI.showToast(`กำลังแก้ไขข้อมูลของ: ${p.name}`, 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-collectFormData(form) {
+  // =========================================================================
+  // COLLECT DATA - รวบรวมข้อมูลจากฟอร์มให้ครบทุกฟิลด์
+  // =========================================================================
+  collectFormData(form) {
     if (!form) return {};
-
-    // Helper: ดึงค่าจากฟอร์มปัจจุบันเท่านั้น
     const fv = (id) => form.querySelector(`#${id}`)?.value?.trim() || '';
     const fc = (id) => form.querySelector(`#${id}`)?.checked || false;
 
-    // ดึง Tags
     const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
 
     return {
@@ -1524,17 +1474,105 @@ collectFormData(form) {
         lineId: fv('lineId'),
         quote: fv('quote'),
         description: fv('description'),
-        altText: fv('altText') || fv('name'), // ถ้าไม่มีให้ใช้ชื่อเป็น Alt Text
+        altText: fv('altText') || fv('name'),
         isfeatured: fc('isFeatured'),
         styleTags: styleTags,
-        lastUpdated: new Date().toISOString(),
         seo_title: fv('seo-title'),
         meta_description: fv('meta-description'),
-        slug: fv('slug').toLowerCase().replace(/\s+/g, '-') || fv('name').toLowerCase().replace(/\s+/g, '-')
+        slug: fv('slug').toLowerCase().replace(/\s+/g, '-') || fv('name').toLowerCase().replace(/\s+/g, '-'),
+        lastUpdated: new Date().toISOString()
     };
-},
-  
-  handlePreviewProfile() {
+  },
+
+  // =========================================================================
+  // SUBMIT FORM - บันทึกข้อมูล (Cloudinary + Supabase)
+  // =========================================================================
+  async handleProfileFormSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const profileId = form.querySelector('#profile-id').value;
+    const isEditing = !!profileId && profileId !== ""; 
+    const saveButton = form.querySelector('#save-profile-button');
+    const currentImagePath = form.querySelector('#current-image-path').value || '';
+    
+    UI.toggleButtonLoading(saveButton, true, isEditing ? 'กำลังอัปเดต...' : 'กำลังสร้าง...');
+    
+    try {
+        const fileInput = form.querySelector('#image-file-input');
+        const files = Array.from(fileInput?.files || []);
+        let uploadedUrls = [];
+        
+        // 1. จัดการรูปภาพผ่าน Cloudinary
+        if (files.length > 0) {
+            UI.showToast(`กำลังอัปโหลดรูปภาพ ${files.length} รูป...`, 'info');
+            for (const f of files) {
+                const url = await uploadToCloudinary(f);
+                if (url) uploadedUrls.push(url);
+            }
+        }
+
+        // 2. เตรียมข้อมูล
+        const profileData = this.collectFormData(form);
+
+        // 3. Logic รูปภาพ: ถ้ามีใหม่ใช้ใหม่ ถ้าไม่มีใช้เดิม
+        if (uploadedUrls.length > 0) {
+            profileData.imagePath = uploadedUrls[0];
+            profileData.galleryPaths = uploadedUrls;
+        } else {
+            profileData.imagePath = currentImagePath;
+            // galleryPaths จะถูกรักษาไว้ใน Supabase ถ้าไม่ได้ส่งไปทับ
+        }
+
+        if (!profileData.imagePath && !isEditing) {
+            throw new Error('กรุณาเลือกรูปภาพอย่างน้อย 1 รูปสำหรับโปรไฟล์ใหม่');
+        }
+
+        // 4. บันทึก
+        let result;
+        if (isEditing) {
+            const { id, ...updateData } = profileData; 
+            result = await supabase
+                .from('profiles')
+                .update(updateData)
+                .eq('id', profileId)
+                .select();
+        } else {
+            result = await supabase
+                .from('profiles')
+                .insert([profileData])
+                .select();
+        }
+        
+        if (result.error) throw result.error;
+        
+        UI.showToast(isEditing ? 'อัปเดตเรียบร้อย' : 'สร้างโปรไฟล์สำเร็จ', 'success');
+        await this.fetchData();
+        this.renderView('profiles-list-container');
+        
+    } catch (err) {
+        console.error("Critical Save Error:", err);
+        UI.showToast(err.message, 'error');
+    } finally {
+        UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
+    }
+  },
+
+  // =========================================================================
+  // EDIT PROFILE - เรียกหน้าแก้ไขและเติมข้อมูล
+  // =========================================================================
+  async handleEditProfile(id) {
+    UI.showToast('กำลังเตรียมข้อมูลแก้ไข...', 'info');
+    // เปลี่ยนมุมมองพร้อมส่ง Parameter ID
+    this.renderView('profile-form-container', { profileId: id });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+
+
+// =========================================================================
+// 5. ฟังก์ชันดูตัวอย่าง และ ลบข้อมูล
+// =========================================================================
+handlePreviewProfile() {
     const form = document.getElementById('profile-form');
     if (!form) return;
     
@@ -1542,7 +1580,7 @@ collectFormData(form) {
     const currentImagePath = form.querySelector('#current-image-path').value;
     const fileInput = form.querySelector('#image-file-input');
     
-    // Preview logic: เช็คว่ามีรูปใหม่ที่ยังไม่ได้อัปไหม
+    // จัดการรูปภาพชั่วคราวเพื่อแสดงผล
     if (fileInput && fileInput.files && fileInput.files[0]) {
       profileData.imagePath = URL.createObjectURL(fileInput.files[0]);
     } else {
@@ -1550,20 +1588,16 @@ collectFormData(form) {
     }
     
     UI.showProfileLightbox(profileData);
-  },
-  
-  handleDeleteProfile({ id, name }) {
+},
+
+handleDeleteProfile({ id, name }) {
     UI.showModal({
       title: 'ยืนยันการลบโปรไฟล์',
       message: `คุณกำลังจะลบ <strong>${name}</strong> ออกจากระบบ ข้อมูลนี้จะไม่สามารถกู้คืนได้ ยืนยันหรือไม่?`,
       onConfirm: async () => {
         UI.showToast(`กำลังลบข้อมูล...`, 'info');
         try {
-          const { error } = await supabase
-            .from('profiles')
-            .delete()
-            .eq('id', id);
-            
+          const { error } = await supabase.from('profiles').delete().eq('id', id);
           if (error) throw error;
           
           UI.showToast('ลบโปรไฟล์สำเร็จแล้ว', 'success');
@@ -1574,117 +1608,7 @@ collectFormData(form) {
         }
       }
     });
-  },
-  
-  renderProvincesManagementContainer() {
-    DOM.viewContent.innerHTML = `
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 animate-slide-up">
-          <h4 class="text-xl font-bold text-indigo-700 mb-6 flex items-center gap-3">
-            <i class="fas fa-map-marker-alt"></i> จัดการจังหวัด / หมวดหมู่
-          </h4>
-          <form id="add-province-form" class="space-y-5">
-            <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">ชื่อไทย (เช่น กรุงเทพฯ, เชียงใหม่)*</label>
-              <input type="text" id="province-name-thai" required class="form-input w-full p-3 border-2 rounded-xl focus:border-indigo-500 transition outline-none">
-            </div>
-            <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">Key ภาษาอังกฤษ (เช่น bangkok, chiang-mai)*</label>
-              <input type="text" id="province-key" required class="form-input w-full p-3 border-2 rounded-xl focus:border-indigo-500 transition outline-none" placeholder="ไม่ต้องใส่เว้นวรรค">
-              <p class="text-[11px] text-slate-400 mt-2 italic">** Key นี้จะถูกนำไปใช้ใน URL ของหน้าเว็บ</p>
-            </div>
-            <button type="submit" id="add-province-btn" class="w-full py-3.5 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">
-              <i class="fas fa-plus-circle mr-2"></i> เพิ่มข้อมูลจังหวัด
-            </button>
-          </form>
-        </div>
-        
-        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 animate-slide-up" style="animation-delay: 0.1s">
-          <h4 class="text-lg font-bold text-slate-800 mb-6 flex items-center justify-between">
-            <span>รายการจังหวัดในระบบ</span>
-            <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-xs">${AppState.provinces.length} รายการ</span>
-          </h4>
-          <div class="overflow-y-auto max-h-[450px] custom-scrollbar">
-            ${AppState.provinces.length === 0 ? 
-              '<div class="text-center py-12"><i class="fas fa-folder-open text-4xl text-slate-200 mb-3 block"></i><p class="text-slate-400">ไม่มีข้อมูลจังหวัด</p></div>' : 
-              `<table class="min-w-full">
-                <thead class="bg-slate-50 sticky top-0 z-10">
-                  <tr>
-                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ชื่อจังหวัด</th>
-                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Key (URL)</th>
-                    <th class="px-5 py-3 text-right"></th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                  ${AppState.provinces.map(p => `
-                    <tr class="hover:bg-indigo-50/30 transition">
-                      <td class="px-5 py-4 text-sm font-bold text-slate-700">${p.nameThai}</td>
-                      <td class="px-5 py-4 text-sm font-mono text-indigo-500 bg-indigo-50/50 rounded-lg">${p.key}</td>
-                      <td class="px-5 py-4 text-right">
-                        <button data-id="${p.id}" data-name="${p.nameThai}" class="delete-province-btn text-red-400 hover:text-red-600 p-2.5 rounded-full hover:bg-red-50 transition">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>`
-            }
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.getElementById('add-province-form')?.addEventListener('submit', e => this.handleAddProvince(e));
-    
-    DOM.viewContent.querySelectorAll('.delete-province-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.handleDeleteProvince({ id: btn.dataset.id, name: btn.dataset.name });
-      });
-    });
-  },
-  
-  async handleAddProvince(e) {
-    e.preventDefault();
-    const form = e.target;
-    const nameThai = form.querySelector('#province-name-thai').value.trim();
-    const key = form.querySelector('#province-key').value.trim().toLowerCase().replace(/\s+/g, '-');
-    
-    const saveButton = form.querySelector('#add-province-btn');
-    UI.toggleButtonLoading(saveButton, true, 'กำลังบันทึก...');
-    
-    try {
-      const { error } = await supabase.from('provinces').insert([{ nameThai, key }]);
-      if (error) throw error;
-      
-      UI.showToast(`เพิ่มจังหวัด ${nameThai} เรียบร้อยแล้ว`, 'success');
-      form.reset();
-      await this.fetchData();
-      this.renderView('provinces-management-container');
-    } catch (error) {
-      UI.showToast(`บันทึกพลาด: ${error.message}`, 'error');
-    } finally {
-      UI.toggleButtonLoading(saveButton, false, 'เพิ่มข้อมูลจังหวัด');
-    }
-  },
-  
-  handleDeleteProvince({ id, name }) {
-    UI.showModal({
-      title: 'ลบข้อมูลจังหวัด',
-      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>? โปรไฟล์ที่เชื่อมกับจังหวัดนี้อาจจะไม่แสดงผลบนหน้าเว็บ`,
-      onConfirm: async () => {
-        try {
-          const { error } = await supabase.from('provinces').delete().eq('id', id);
-          if (error) throw error;
-          UI.showToast('ลบจังหวัดออกจากระบบแล้ว', 'success');
-          await this.fetchData();
-          this.renderView('provinces-management-container');
-        } catch (error) {
-          UI.showToast(`ลบไม่สำเร็จ: ${error.message}`, 'error');
-        }
-      }
-    });
-  }
+}
 };
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -2242,7 +2166,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   
   <div class="text-center">
-    <h3 class="font-bold text-gray-800" id="panel-title">Media Center</h3>
+    <h3 class="font-bold text-gray-800" id="panel-title">Media Center</h3></h3>
     <div class="back-btn" id="playlist-back-btn" onclick="AdminOS.toggleView('player')">
       <i class="fas fa-arrow-left"></i> กลับไปหน้าเล่น
     </div>
