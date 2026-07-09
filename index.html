@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -136,11 +138,42 @@
     border-radius: 50%; animation: spin 1s linear infinite;
   }
   
+  /* Cropper Modal CSS */
+  #cropper-modal {
+    position: fixed; inset: 0; z-index: 100005;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  #cropper-modal.active { display: flex; }
+  #cropper-box { max-width: 500px; width: 100%; padding: 1.5rem; text-align: center; }
+  #crop-canvas { max-width: 100%; max-height: 50vh; background: #000; margin-bottom: 1rem; border-radius: 8px; }
+
+  /* Theme Toggle CSS */
+  .toggle-wrap {
+    position: fixed; top: 15px; right: 80px; z-index: 10001;
+  }
+  .theme-toggle {
+    background: var(--color-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-main);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover {
+    transform: scale(1.05);
+  }
 </style>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
-<!-- ... code เดิม ... -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- โหลดไลบรารี Supabase ผ่าน CDN ทั่วไปเพื่อหลีกเลี่ยงปัญหา CORS บนเครื่องคอมพิวเตอร์ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Vidstack Player (สำหรับดู YouTube/Video สวยๆ) -->
 <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
@@ -320,9 +353,7 @@
       </main>
     </div>
   </div>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/+esm'
-
+<script>
 // Supabase Configuration
 const supabaseUrl = 'https://zxetzqwjaiumqhrpumln.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4ZXR6cXdqYWl1bXFocnB1bWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MTMzMTIsImV4cCI6MjA4NzE4OTMxMn0.ZNJq1fF51rlKnfvIw-AZ65R1OpCmgA3-CkE2OtxpaX4';
@@ -330,14 +361,16 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const CLOUD_NAME = "drffioary";
 const UPLOAD_PRESET = "kissmodel";
-const supabase = createClient(supabaseUrl, supabaseKey);
+
+// โค้ดที่แก้ไขแล้ว (กำหนดค่าทับตัวแปรโกลบอลเดิม เพื่อไม่ให้เกิด SyntaxError)
+window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 async function uploadToCloudinary(file) {
     const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
-    formData.append("folder", "images"); // เก็บลงโฟลเดอร์ images ตามที่คุณต้องการ
+    formData.append("folder", "images");
 
     try {
         const response = await fetch(url, { method: "POST", body: formData });
@@ -1032,10 +1065,10 @@ renderGroupedProfileCards() {
     });
 },
 
+// 1. ฟังก์ชัน Render Card (เพิ่มการแสดงผลส่วนสูง/น้ำหนัก/สัดส่วน ในรายการ ถ้าต้องการ)
 getProfileCardHTML(p) {
     let imgUrl = 'https://placehold.co/400x500?text=No+Image';
 
-    // Logic การเลือกรูปภาพแบบ Dev ขั้นสูงสุด (Cloudinary > Supabase Storage > Gallery)
     if (p.imagePath && p.imagePath.startsWith('http')) {
         imgUrl = p.imagePath;
     } 
@@ -1076,29 +1109,21 @@ getProfileCardHTML(p) {
         </div>
       </div>
     `;
-  },
+},
+
+// 2. ฟังก์ชัน Render Form (เพิ่มช่องกรอกข้อมูลให้ครบ)
 async renderProfileFormContainer(params = {}) {
     const profileId = params.profileId;
     const isEditing = !!profileId;
     let p = {};
     
-    // หากเป็นโหมดแก้ไข ให้ดึงข้อมูลล่าสุดจาก Supabase
     if (isEditing) {
       UI.showToast("กำลังดึงข้อมูล...", "info");
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', profileId)
-        .single();
-      
-      if (error) {
-        UI.showToast("ไม่พบโปรไฟล์นี้ในระบบ", "error");
-        return this.renderView('profiles-list-container');
-      }
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', profileId).single();
+      if (error) { UI.showToast("ไม่พบโปรไฟล์", "error"); return this.renderView('profiles-list-container'); }
       p = data;
     }
 
-    // เตรียมรูปสำหรับ Preview
     let previewUrl = null;
     if (p.imagePath) {
         previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
@@ -1119,32 +1144,20 @@ async renderProfileFormContainer(params = {}) {
           
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1 space-y-6">
+                <!-- Image Uploader & Status (คงเดิม) -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-image text-indigo-500"></i> รูปภาพโปรไฟล์
-                    </h3>
+                    <h3 class="font-bold text-slate-700 mb-4">รูปภาพโปรไฟล์</h3>
                     <div id="image-uploader" class="w-full"></div>
-                    <p class="text-[11px] text-slate-400 mt-3">* แนะนำขนาด 3:4 หรือ 600x800px (รองรับหลายรูป)</p>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-toggle-on text-indigo-500"></i> สถานะและการแสดงผล
-                    </h3>
-                    <div class="space-y-4">
-                        <label class="flex items-center gap-3 p-3 bg-indigo-50 rounded-xl cursor-pointer transition hover:bg-indigo-100">
-                            <input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded-md" ${p.isfeatured ? 'checked' : ''}>
-                            <span class="font-bold text-indigo-700 text-sm">ปักหมุดแนะนำ (Featured)</span>
-                        </label>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">สถานะรับงาน</label>
-                            <select id="availability" class="form-input w-full p-2.5 border-2 rounded-xl focus:border-indigo-500 outline-none">
-                                ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'รับงานบางวัน', 'ไม่ว่าง', 'พัก'].map(s => `
-                                  <option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>
-                                `).join('')}
-                            </select>
-                        </div>
-                    </div>
+                    <h3 class="font-bold text-slate-700 mb-4">สถานะ</h3>
+                    <label class="flex items-center gap-3 p-3 bg-indigo-50 rounded-xl mb-3 cursor-pointer">
+                        <input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded" ${p.isfeatured ? 'checked' : ''}>
+                        <span class="font-bold text-indigo-700 text-sm">ปักหมุดแนะนำ</span>
+                    </label>
+                    <select id="availability" class="form-input w-full p-2.5 border rounded-xl">
+                        ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}
+                    </select>
                 </div>
             </div>
 
@@ -1154,13 +1167,17 @@ async renderProfileFormContainer(params = {}) {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
                         <div><label class="label-style">อายุ</label><input type="number" id="age" class="form-input-high" value="${p.age || ''}"></div>
+                        <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" id="height" class="form-input-high" value="${p.height || ''}"></div>
+                        <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
+                        <div><label class="label-style">สัดส่วน</label><input type="text" id="stats" class="form-input-high" value="${p.stats || ''}" placeholder="34-24-35"></div>
+                        <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="ผิวขาว, ผิวแทน"></div>
                         <div><label class="label-style">จังหวัด*</label>
                             <select id="provinceKey" required class="form-input-high">
                                 ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
                             </select>
                         </div>
-                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="นิมมาน, ตัวเมือง"></div>
-                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="1500/1"></div>
+                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}"></div>
+                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}"></div>
                         <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
                     </div>
                 </div>
@@ -1168,47 +1185,40 @@ async renderProfileFormContainer(params = {}) {
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">รายละเอียดและสไตล์</h3>
                     <div class="space-y-4">
-                        <div><label class="label-style">คำโปรย (Quote)</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}" placeholder="สั้นๆ โดนๆ"></div>
-                        <div><label class="label-style">รายละเอียดเพิ่มเติม</label><textarea id="description" rows="4" class="form-input-high">${p.description || ''}</textarea></div>
+                        <div><label class="label-style">คำโปรย</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}"></div>
+                        <div><label class="label-style">รายละเอียด</label><textarea id="description" rows="3" class="form-input-high">${p.description || ''}</textarea></div>
                         <div><label class="label-style">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2 text-indigo-600">SEO & Google Settings</h3>
+                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2 text-indigo-600">SEO (สำหรับ Google)</h3>
                     <div class="space-y-4">
                         <div><label class="label-style">SEO Title</label><input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}"></div>
-                        <div><label class="label-style">Slug (URL)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="nong-name-chiangmai"></div>
+                        <div><label class="label-style">Meta Description</label><textarea id="meta-description" rows="2" class="form-input-high">${p.meta_description || ''}</textarea></div>
+                        <div><label class="label-style">Alt Text (สำหรับรูปภาพ)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}"></div>
+                        <div><label class="label-style">Slug (URL)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}"></div>
                     </div>
                 </div>
             </div>
           </div>
-
-          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white flex justify-between items-center z-50">
-            <button type="button" class="nav-button px-6 py-3 font-bold text-slate-500 hover:text-slate-800 transition" data-view="profiles-list-container">ยกเลิก</button>
-            <div class="flex gap-3">
-                <button type="button" id="preview-profile-button" class="px-6 py-3 font-bold text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition flex items-center gap-2">
-                    <i class="fas fa-eye"></i> ดูตัวอย่าง
-                </button>
-                <button type="submit" id="save-profile-button" class="px-10 py-3 font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2">
-                    <i class="fas fa-save"></i> ${isEditing ? 'อัปเดตข้อมูล' : 'บันทึกโปรไฟล์'}
-                </button>
-            </div>
+          
+          <!-- ปุ่มบันทึก (Fixed Bottom) -->
+          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl flex justify-between items-center z-50">
+             <button type="button" class="nav-button px-6 py-3 font-bold text-slate-500" data-view="profiles-list-container">ยกเลิก</button>
+             <button type="submit" id="save-profile-button" class="px-10 py-3 font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg">บันทึกข้อมูล</button>
           </div>
         </form>
       </div>
     `;
 
     DOM.viewContent.innerHTML = formHTML;
-    
-    // เรียกใช้ Component เสริม (ต้องมีฟังก์ชันเหล่านี้ใน Controller)
     this.initImageUploader(previewUrl);
     this.initTagInput(p.styleTags || []);
-    
-    // ผูก Event Submit
     document.getElementById('profile-form').addEventListener('submit', e => this.handleProfileFormSubmit(e));
-    document.getElementById('preview-profile-button').addEventListener('click', () => this.handlePreviewProfile());
-  },
+},
+
+
 // =========================================================================
 // KISSMODEL ADMIN CONTROLLER - FULL VERSION (NO SHORTENED)
 // =========================================================================
@@ -1433,8 +1443,8 @@ async renderProfileFormContainer(params = {}) {
     }
   },
   handleEditProfile(id) {
-    // 1. ค้นหาข้อมูลโปรไฟล์จาก State ด้วย ID
-    const p = AppState.profiles.find(item => item.id == id);
+    // 1. ค้นหาข้อมูลโปรไฟล์จาก State ด้วย ID (แก้ไข AppState.profiles -> AppState.allProfiles)
+    const p = AppState.allProfiles.find(item => item.id == id);
     if (!p) {
       UI.showToast('ไม่พบข้อมูลโปรไฟล์ที่ต้องการแก้ไข', 'error');
       return;
@@ -1500,23 +1510,19 @@ async renderProfileFormContainer(params = {}) {
     UI.showToast(`กำลังแก้ไขข้อมูลของ: ${p.name}`, 'info');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
+// 3. ปรับปรุงการเก็บข้อมูล (เพิ่มฟิลด์ใหม่เข้าไป)
 collectFormData(form) {
-    if (!form) return {};
-
-    // Helper: ดึงค่าจากฟอร์มปัจจุบันเท่านั้น
     const fv = (id) => form.querySelector(`#${id}`)?.value?.trim() || '';
     const fc = (id) => form.querySelector(`#${id}`)?.checked || false;
-
-    // ดึง Tags
     const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
 
     return {
         name: fv('name'),
         age: parseInt(fv('age')) || null,
-        height: fv('height'),
-        weight: fv('weight'),
-        stats: fv('stats'),
-        skinTone: fv('skinTone'),
+        height: fv('height'), // เพิ่ม
+        weight: fv('weight'), // เพิ่ม
+        stats: fv('stats'),   // เพิ่ม
+        skinTone: fv('skinTone'), // เพิ่ม
         provinceKey: fv('provinceKey'),
         location: fv('location'),
         rate: fv('rate'),
@@ -1524,15 +1530,15 @@ collectFormData(form) {
         lineId: fv('lineId'),
         quote: fv('quote'),
         description: fv('description'),
-        altText: fv('altText') || fv('name'), // ถ้าไม่มีให้ใช้ชื่อเป็น Alt Text
+        altText: fv('altText'),
         isfeatured: fc('isFeatured'),
         styleTags: styleTags,
         lastUpdated: new Date().toISOString(),
         seo_title: fv('seo-title'),
-        meta_description: fv('meta-description'),
-        slug: fv('slug').toLowerCase().replace(/\s+/g, '-') || fv('name').toLowerCase().replace(/\s+/g, '-')
+        meta_description: fv('meta-description'), // เพิ่ม
+        slug: fv('slug') || fv('name').toLowerCase().replace(/\s+/g, '-')
     };
-},
+}, // <--- แก้ไขปัญหา SyntaxError ด้วยการเติมเครื่องหมายจุลภาคคั่น ณ จุดนี้
   
   handlePreviewProfile() {
     const form = document.getElementById('profile-form');
@@ -2308,7 +2314,7 @@ const AdminOS = {
     // ถ้ามีเพลงอื่นในโฟลเดอร์ songs อีก ก็เพิ่มบรรทัดต่อได้เลย
     { 
       title: "😶", 
-      url: "./songs/😶.mp4", 
+      url: "./songs/wawai.mp4", 
       type: "video" 
     },
 
