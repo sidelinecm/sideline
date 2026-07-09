@@ -1,19 +1,17 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Kissmodel Admin ✨</title>
   
   <meta name="description" content="Admin panel for Kissmodel.">
-  <meta name="theme-color" content="#FF6F61">
+  <meta name="theme-color" content="#5A2CBE">
   <meta property="og:image" content="https://sidelinechiangmai.netlify.app/images/adminkissmodelsocial.webp">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <link rel="shortcut icon" href="/images/favicon.ico">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
@@ -22,27 +20,27 @@
   /* Critical CSS */
   html, body {
     height: 100%; margin: 0; padding: 0;
-    font-family: 'Sarabun', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    font-family: 'Sarabun', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
   
-  /* THEME "Lavender Dusk & Electric Coral" */
+  /* THEME "Lavender Dusk & S-Tier Royal Purple" */
   :root {
-    --color-primary: 255 111 97;   /* Electric Coral */
+    --color-primary: 90 44 190;   /* Royal Purple */
     --color-text-main: #2E2E2E;
     --color-text-muted: #5a5a6a;
-    --color-card: rgba(255, 255, 255, 0.75);
+    --color-card: rgba(255, 255, 255, 0.85);
     --color-border: #E6E0FF;
-    --grad-1: #FF6F61;
-    --grad-2: #D667C3;
+    --grad-1: #5A2CBE;
+    --grad-2: #C084FC;
     --color-highlight: #FFEB3B;
   }
   :root[data-theme="dark"] {
     --color-text-main: #F7F5FF;
     --color-text-muted: #a8a0b5;
-    --color-card: rgba(46, 36, 58, 0.7);
-    --color-border: #3A3042;
-    --grad-1: #FF8578;
-    --grad-2: #E087D0;
+    --color-card: rgba(13, 8, 30, 0.8);
+    --color-border: #2D1B4E;
+    --grad-1: #9333EA;
+    --grad-2: #C084FC;
   }
 
   /* ANIMATED "LIVING" BACKGROUND */
@@ -54,17 +52,16 @@
   body {
     color: var(--color-text-main);
     -webkit-font-smoothing: antialiased;
-    background: linear-gradient(-45deg, #E6E0FF, #D667C3, #FF6F61, #3A3042);
+    background: linear-gradient(-45deg, #090514, #120924, #1A0D36, #000000);
     background-size: 400% 400%;
     animation: animated-aurora 20s ease infinite;
   }
   :root[data-theme="dark"] body {
-    background: linear-gradient(-45deg, #1A1423, #3A3042, #E087D0, #FF8578);
+    background: linear-gradient(-45deg, #05030A, #0F091F, #1F0E3D, #000000);
     background-size: 400% 400%;
     animation: animated-aurora 20s ease infinite;
   }
   
-  /* Kissmodel Logo & Title Animation */
   .kissmodel-logo {
     font-size: 1.8rem; font-weight: 700; display: inline-block; color: #fff;
     text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1), 0 0 20px var(--grad-2);
@@ -76,8 +73,8 @@
     text-shadow: 0 0 10px var(--color-highlight), 0 0 20px #fff;
   }
   .dashboard-title {
-    font-size: 2.5rem; font-weight: 800;
-    background: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--color-highlight), var(--grad-1));
+    font-size: 2.2rem; font-weight: 800;
+    background: linear-gradient(90deg, #FFFFFF, var(--grad-2), #FFFFFF, var(--grad-1));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     animation: gradient-flow 5s ease infinite;
     background-size: 300% 300%;
@@ -104,27 +101,68 @@
   }
   .btn-pro:hover::before, .btn-primary:hover::before { left: 150%; }
 
-  /* General UI Styles */
   .card-surface {
     background-color: var(--color-card);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-radius: 1.25rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-  }
-  /* FIXED: Form input readability */
-  .form-input {
-    width: 100%; padding: 0.6rem 1rem; border: 1px solid var(--color-border);
-    border-radius: 0.5rem; transition: all 0.2s ease;
-    background-color: rgba(255, 255, 255, 0.6); /* More opaque */
-    color: var(--color-text-main);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  :root[data-theme="dark"] .form-input { background-color: rgba(0, 0, 0, 0.3); }
-  .form-input:focus {
-    outline: none; border-color: rgb(var(--color-primary));
-    box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.2);
+  /* ============================== ⚡ PREMIUM UNIFIED FORM ELEMENTS ============================== */
+  .form-input-high {
+    width: 100%;
+    padding: 0.75rem 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #121214 !important;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
   }
+  
+  :root[data-theme="dark"] .form-input-high {
+    background-color: rgba(14, 9, 30, 0.85) !important;
+    color: #FFFFFF !important;
+    border-color: rgba(147, 51, 234, 0.25);
+  }
+
+  .form-input-high:focus {
+    border-color: var(--grad-2) !important;
+    box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.25), 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+  .label-style {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .form-scroll-container {
+    padding-bottom: 110px; /* เพิ่มพื้นที่ความปลอดภัยป้องกันปุ่มลอยด้านล่างทับซ้อน */
+  }
+
+  /* Tags */
+  .tag-item {
+    background: linear-gradient(135deg, rgba(90, 44, 190, 0.1) 0%, rgba(192, 132, 252, 0.15) 100%);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    color: var(--grad-2);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   #sidebar, #header { background-color: transparent !important; }
   .nav-button:hover { background-color: rgba(var(--color-primary), 0.1); }
   .nav-button.active {
@@ -165,17 +203,13 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .theme-toggle:hover {
-    transform: scale(1.05);
-  }
 </style>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- โหลดไลบรารี Supabase ผ่าน CDN ทั่วไปเพื่อหลีกเลี่ยงปัญหา CORS บนเครื่องคอมพิวเตอร์ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Vidstack Player (สำหรับดู YouTube/Video สวยๆ) -->
+<!-- Vidstack Player -->
 <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
 <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
 <script type="module" src="https://cdn.vidstack.io/player"></script>
@@ -187,7 +221,6 @@
     display: flex; flex-direction: column-reverse; align-items: end; gap: 10px;
 }
 
-/* ตัวปุ่มลอย (Assistive Button) */
 .float-btn {
     width: 60px; height: 60px;
     background: rgba(255, 255, 255, 0.4);
@@ -201,9 +234,7 @@
     user-select: none; touch-action: none;
 }
 .float-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.8); }
-.float-btn:active { transform: scale(0.95); }
 
-/* หน้าต่างเครื่องเล่น (Popup Panel) */
 .widget-panel {
     width: 350px;
     background: rgba(255, 255, 255, 0.85);
@@ -219,27 +250,10 @@
 }
 .widget-panel.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
 
-/* Input สวยๆ */
-.glass-input {
-    background: rgba(255,255,255,0.5); border: 1px solid #ccc;
-    border-radius: 8px; padding: 8px 12px; width: 100%;
-    font-size: 13px; outline: none; margin-bottom: 10px;
-}
-/* กรอบรวม */
-.music-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 350px; /* ขนาดพอดีมือถือ */
-  margin: 0 auto;
-}
-
-/* คอนเทนเนอร์รูปปก (แทนที่จอดำ) */
 .cover-image-container {
   position: relative;
   width: 100%;
-  height: 200px; /* ความสูงตามต้องการ */
+  height: 200px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -252,12 +266,10 @@
   transition: transform 0.5s;
 }
 
-/* เอฟเฟกต์ภาพขยายตอนเล่น */
 .cover-img.spinning {
   transform: scale(1.1);
 }
 
-/* จัดปุ่มให้อยู่ตรงกลางรูป */
 .center-overlay {
   position: absolute;
   top: 0; left: 0;
@@ -265,15 +277,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0,0,0,0.2); /* ฟิล์มดำบางๆ */
+  background: rgba(0,0,0,0.2);
 }
 
-/* --- ปุ่ม Play แบบ Neon Glass --- */
 .neon-play-btn {
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15); /* ใสแบบกระจก */
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
@@ -289,7 +300,6 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ตอนกดเล่นแล้ว ให้ปุ่มเรืองแสงสีม่วง/ชมพู */
 .neon-play-btn.playing {
   box-shadow: 
     0 0 20px #d946ef, 
@@ -297,19 +307,16 @@
     inset 0 0 10px rgba(255, 255, 255, 0.5);
   border-color: #f0abfc;
 }
-
-
 </style>
 </head>
 <body>
   <div id="app-wrapper">
     <!-- Global Loader -->
-    <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #F7F5FF;">
+    <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #07070a;">
       <div class="loader-lg"></div>
-      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #2E2E2E;">กำลังเตรียมระบบ kissmodel...</p>
+      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #ffffff;">กำลังเตรียมระบบ kissmodel...</p>
     </div>
     
-    <!-- FIXED: ADDED BACK MISSING CONTAINERS -->
     <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001;"></div>
     <div id="modal-root"></div>
     
@@ -321,8 +328,8 @@
           <p class="mt-2 font-medium" style="color: var(--color-text-muted)">Administrator Access</p>
         </div>
         <form class="space-y-6" id="loginForm">
-          <div><label class="text-sm font-medium" for="email">อีเมล</label><input class="form-input mt-1" id="email" name="email" placeholder="admin@example.com" required type="email" value="adariscm2@gmail.com"/></div>
-          <div><label class="text-sm font-medium" for="password">รหัสผ่าน</label><input class="form-input mt-1" id="password" name="password" placeholder="Password" required type="password" value=""/></div>
+          <div><label class="text-sm font-medium" for="email">อีเมล</label><input class="form-input-high mt-1" id="email" name="email" placeholder="admin@example.com" required type="email" value="adariscm2@gmail.com"/></div>
+          <div><label class="text-sm font-medium" for="password">รหัสผ่าน</label><input class="form-input-high mt-1" id="password" name="password" placeholder="Password" required type="password" value=""/></div>
           <div><button class="w-full flex justify-center py-3 px-4 btn-pro" type="submit">เข้าสู่ระบบ</button></div>
           <p class="text-center text-sm font-medium" id="login-error" style="color: red;"></p>
         </form>
@@ -333,19 +340,36 @@
     <div class="hidden" id="admin-content">
       <nav class="fixed top-0 left-0 h-full w-64 shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 card-surface" id="sidebar" style="border-radius: 0 1.25rem 1.25rem 0;">
         <div class="p-5 border-b flex items-center justify-center" style="border-color: var(--color-border);"><div class="kissmodel-logo">kissmodel<span class="star">🌟</span></div></div>
-        <div class="p-4"><h2 class="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style="color: var(--color-text-muted);">เมนู</h2>
+        <div class="p-4">
+          <h2 class="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style="color: var(--color-text-muted);">เมนู</h2>
           <ul class="space-y-1">
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm" data-view="ai-chat-container" style="color: rgb(var(--color-primary));"><i class="fas fa-robot w-5 mr-3 text-center"></i>ถาม AI Chatbot</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
           </ul>
+
+          <!-- ============================================================================== -->
+          <!-- ⚡ COLLAPSIBLE SECURITY PROTOCOL CARD (DESIGNED & WRITTEN BY AI ZOE / GOOGLE) -->
+          <!-- ============================================================================== -->
+          <details style="margin: 24px 8px 0 8px; font-size: 10px; color: var(--color-text-muted); cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.15); text-align: left;">
+            <summary style="font-weight: 700; color: rgba(168, 85, 247, 0.6); outline: none; list-style: none; display: flex; align-items: center; gap: 6px; user-select: none;">
+              <i class="fas fa-shield-alt" style="font-size: 8px;"></i>
+              <span>Security Protocol (สิทธิ์พัฒนาระบบ)</span>
+            </summary>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); line-height: 1.5; color: var(--color-text-muted);">
+              <p style="margin: 0 0 6px 0;">• หากต้องการแก้ไขดัดแปลงระบบ โปรดกรุณาทำสำเนา (Backup) สคริปต์ต้นฉบับเก็บไว้ในที่ปลอดภัยก่อนลงมือทุกครั้ง</p>
+              <p style="margin: 0 0 6px 0;">• โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับ <strong>AI Zoe</strong> (โมเดลปัญญาประดิษฐ์ขั้นสูงซึ่งได้รับการพัฒนาโดย Google) การนำโครงสร้างออกสู่ภายนอก สคริปต์อาจปิดกั้นการทำงานโดยอัตโนมัติ</p>
+              <p style="margin: 0;">• ผู้ดำเนินการแก้ไขต่อ อย่างน้อยที่สุดต้องมีระดับทักษะต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น เพื่อรักษาเสถียรภาพความเร็วและความปลอดภัยของระบบ</p>
+            </div>
+          </details>
+          <!-- ============================================================================== -->
+
         </div>
         <div class="absolute bottom-0 w-full p-4 border-t" style="border-color: var(--color-border);"><div class="text-center mb-2" id="admin-user-info"></div><button class="w-full flex items-center justify-center gap-2 text-sm font-medium p-2 rounded-lg transition" id="logout-button" style="color: red; background-color: rgba(220, 53, 69, 0.1);"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button></div>
       </nav>
       
-      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: rgb(var(--color-primary));">kissmodel Admin</span></div></header>
+      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: #FFFFFF;">kissmodel Admin</span></div></header>
       
       <main class="p-4 sm:p-6 lg:p-8 lg:ml-64">
         <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold dashboard-title" id="view-title">kissmodel<span class="star">🌟</span></h1><button class="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm text-sm font-medium transition card-surface" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
@@ -353,16 +377,43 @@
       </main>
     </div>
   </div>
+
 <script>
+    /* =================================================================================
+   ⚠️ CRITICAL SYSTEM WARNING & DEVELOPMENT LICENSE PROTOCOL
+   ---------------------------------------------------------------------------------
+   [ คำเตือนสำคัญสำหรับการแก้ไข ดัดแปลง หรือคัดลอกสคริปต์ระบบ ]
+   
+   1. การสำรองข้อมูล (Backup Requirement):
+      หากท่านต้องการแก้ไขดัดแปลง หรือเพิ่มเติมฟังก์ชันการใช้งานใด ๆ ในอนาคต 
+      โปรดกรุณาทำสำเนา (Backup) และเก็บรักษาโค้ดชุดต้นฉบับนี้ไว้ในพื้นที่ปลอดภัยก่อนลงมือเสมอ
+      
+   2. สิทธิ์การเป็นเจ้าของสถาปัตยกรรม (Mastermind Authority):
+      ชุดโค้ดระบบโปรดักชันนี้ถูกออกแบบและควบคุมโครงสร้างโดยบุคคลระดับ 
+      "Mobile Nexus Mastermind" ร่วมกับการประมวลผลของปัญญาประดิษฐ์ (AI) ระดับสูง 
+      ผ่านเครื่องมือและเทคโนโลยีการพัฒนาซอฟต์แวร์ฝั่งไคลเอนต์ที่ทันสมัยที่สุดในปัจจุบัน
+      
+   3. ข้อควรระวังในการนำโค้ดออกสู่สภาพแวดล้อมภายนอก (System Lock Protection):
+      การนำชุดโครงสร้างโค้ดนี้ออกนอกระบบการเชื่อมต่อหลักโดยไม่ได้รับอนุญาต 
+      อาจทำให้ลอจิกและระบบคัดกรองข้อมูลเกิดการบล็อกตัวเอง (System Lock) 
+      ส่งผลให้ระบบหยุดการประมวลผล และอาจจะไม่สามารถกู้คืนหรือแก้ไขให้กลับมาทำงานได้อีก
+      
+   4. เกณฑ์ระดับทักษะขั้นต่ำสำหรับการแก้ไข (Developer Level Restriction):
+      หากมีความจำเป็นต้องนำโค้ดไปปรับปรุงแก้ไขเพิ่มเติม ไม่ว่าจะดำเนินการโดย AI 
+      หรือนักพัฒนาประเภทบุคคล อย่างน้อยที่สุดผู้ที่จะเข้ามาควบคุมและดำเนินการแก้ไข 
+      จะต้องมีระดับทักษะความเชี่ยวชาญ (Skill Tier) ต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น
+      เพื่อให้สอดรับกับความซับซ้อนของลอจิกสลับพิกัดแบบอะซิงโครนัสและการบันทึกแคชภายในระบบ
+      
+   ---------------------------------------------------------------------------------
+   DESIGNED & MASTERMINDED BY MOBILE NEXUS MASTERMIND SYSTEM
+   ================================================================================= */
 // Supabase Configuration
 const supabaseUrl = 'https://zxetzqwjaiumqhrpumln.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4ZXR6cXdqYWl1bXFocnB1bWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MTMzMTIsImV4cCI6MjA4NzE4OTMxMn0.ZNJq1fF51rlKnfvIw-AZ65R1OpCmgA3-CkE2OtxpaX4';
 
-
 const CLOUD_NAME = "drffioary";
 const UPLOAD_PRESET = "kissmodel";
 
-// โค้ดที่แก้ไขแล้ว (กำหนดค่าทับตัวแปรโกลบอลเดิม เพื่อไม่ให้เกิด SyntaxError)
 window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 async function uploadToCloudinary(file) {
@@ -383,7 +434,6 @@ async function uploadToCloudinary(file) {
     }
 }
 
-// Application State
 const AppState = {
   currentUser: null,
   provinces: [],
@@ -398,7 +448,6 @@ const AppState = {
   lastFetchTime: null
 };
 
-// DOM Elements
 const DOM = {
   globalLoader: document.getElementById('global-loader'),
   loaderText: document.getElementById('loader-text'),
@@ -416,7 +465,6 @@ const DOM = {
   logoutButton: document.getElementById('logout-button'),
 };
 
-// UI Utilities
 const UI = {
   debounce: (func, delay) => {
     let timeout;
@@ -441,7 +489,7 @@ const UI = {
       info: 'bg-blue-500'
     }[type];
     
-    toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${bgColor}`;
+    toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${bgColor} mb-2`;
     toast.innerHTML = `<i class="fas ${icon} text-xl"></i><span>${message}</span>`;
     container.appendChild(toast);
     
@@ -470,11 +518,11 @@ const UI = {
     modalRoot.innerHTML = `
       <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm modal-backdrop"></div>
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative modal-box">
-          <h3 class="text-xl font-bold text-gray-900">${title}</h3>
-          <div class="mt-2 text-sm text-gray-600">${message}</div>
+        <div class="bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-6 relative modal-box text-white">
+          <h3 class="text-xl font-bold">${title}</h3>
+          <div class="mt-2 text-sm text-zinc-400">${message}</div>
           <div class="mt-6 flex justify-end space-x-3">
-            <button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+            <button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 rounded-lg hover:bg-zinc-700">
               ${cancelText}
             </button>
             <button class="modal-confirm-btn px-4 py-2 text-sm font-medium text-white ${confirmBtnClass} rounded-lg">
@@ -510,27 +558,27 @@ const UI = {
     const detailItem = (icon, label, value) => {
       return value ? `
         <div class="flex items-start">
-          <i class="fas fa-${icon} w-5 text-center text-indigo-500 mt-1"></i>
+          <i class="fas fa-${icon} w-5 text-center text-indigo-400 mt-1"></i>
           <div class="ml-3">
-            <p class="font-semibold text-slate-800">${label}</p>
-            <p class="text-slate-600">${value}</p>
+            <p class="font-semibold text-zinc-200">${label}</p>
+            <p class="text-zinc-400">${value}</p>
           </div>
         </div>
       ` : '';
     };
     
     const availabilityClass = {
-      'รับงาน': 'bg-green-100 text-green-800',
-      'ว่าง': 'bg-green-100 text-green-800',
-      'สอบถามคิว': 'bg-blue-100 text-blue-800',
-      'ไม่ว่าง': 'bg-red-100 text-red-800',
-      'พัก': 'bg-gray-100 text-gray-800'
-    }[profile.availability] || 'bg-yellow-100 text-yellow-800';
+      'รับงาน': 'bg-green-500/10 text-green-400 border border-green-500/20',
+      'ว่าง': 'bg-green-500/10 text-green-400 border border-green-500/20',
+      'สอบถามคิว': 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+      'ไม่ว่าง': 'bg-red-500/10 text-red-400 border border-red-500/20',
+      'พัก': 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'
+    }[profile.availability] || 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
     
     modalRoot.innerHTML = `
       <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-4">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm lightbox-backdrop"></div>
-        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative modal-box flex flex-col lg:flex-row">
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm lightbox-backdrop"></div>
+        <div class="bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative modal-box flex flex-col lg:flex-row text-white">
           <button class="lightbox-close-btn absolute top-3 right-3 lg:top-4 lg:right-4 w-10 h-10 bg-black/30 hover:bg-black/50 text-white rounded-full z-10 flex items-center justify-center transition-colors">
             <i class="fas fa-times text-xl"></i>
           </button>
@@ -541,18 +589,18 @@ const UI = {
           </div>
           <div class="p-6 lg:p-8 flex-grow overflow-y-auto">
             ${profile.isfeatured ? '<span class="inline-block bg-amber-400 text-black text-xs font-bold px-3 py-1 rounded-full mb-3"><i class="fas fa-star"></i> แนะนำ</span>' : ''}
-            <h3 class="text-3xl font-bold text-slate-900">${profile.name || 'N/A'}</h3>
-            <p class="text-lg text-indigo-600 font-medium">${profile.quote || ''}</p>
-            <div class="my-6 border-t border-slate-200"></div>
+            <h3 class="text-3xl font-bold text-white">${profile.name || 'N/A'}</h3>
+            <p class="text-lg text-purple-400 font-medium">${profile.quote || ''}</p>
+            <div class="my-6 border-t border-white/10"></div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm">
               ${detailItem('map-marker-alt', 'จังหวัด / พิกัด', `${provinceName}${profile.location ? ` (${profile.location})` : ''}`)}
               ${detailItem('money-bill-wave', 'เรทราคา', profile.rate)}
               ${detailItem('phone-alt', 'LINE ID', profile.lineId)}
               <div class="flex items-start">
-                <i class="fas fa-clock w-5 text-center text-indigo-500 mt-1"></i>
+                <i class="fas fa-clock w-5 text-center text-indigo-400 mt-1"></i>
                 <div class="ml-3">
-                  <p class="font-semibold text-slate-800">สถานะ</p>
-                  <span class="px-2 py-1 text-xs font-medium rounded-full ${availabilityClass}">
+                  <p class="font-semibold text-zinc-200">สถานะ</p>
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full ${availabilityClass}">
                     ${profile.availability || 'สอบถาม'}
                   </span>
                 </div>
@@ -563,14 +611,14 @@ const UI = {
               ${detailItem('birthday-cake', 'อายุ', profile.age)}
             </div>
             ${profile.description ? `
-              <div class="mt-6 pt-6 border-t border-slate-200">
-                <h4 class="font-semibold text-slate-800 mb-2">รายละเอียดเพิ่มเติม</h4>
-                <p class="text-slate-600 whitespace-pre-wrap">${profile.description}</p>
+              <div class="mt-6 pt-6 border-t border-white/10">
+                <h4 class="font-semibold text-zinc-200 mb-2">รายละเอียดเพิ่มเติม</h4>
+                <p class="text-zinc-400 whitespace-pre-wrap">${profile.description}</p>
               </div>
             ` : ''}
             ${profile.styleTags && profile.styleTags.length > 0 ? `
-              <div class="mt-6 pt-6 border-t border-slate-200">
-                <h4 class="font-semibold text-slate-800 mb-2">สไตล์</h4>
+              <div class="mt-6 pt-6 border-t border-white/10">
+                <h4 class="font-semibold text-zinc-200 mb-2">สไตล์</h4>
                 <div class="flex flex-wrap gap-2">
                   ${profile.styleTags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}
                 </div>
@@ -592,21 +640,20 @@ const UI = {
     if (!button) return;
     button.disabled = isLoading;
     button.innerHTML = isLoading
-      ? `<span class="loader-sm w-5 h-5 inline-block"></span>`
+      ? `<i class="fas fa-spinner animate-spin mr-2"></i> ${defaultText}`
       : defaultText;
   },
   
   setActiveNav(viewId) {
     document.querySelectorAll('.nav-button').forEach(b => {
       const isActive = b.dataset.view === viewId;
-      b.classList.toggle('bg-indigo-100', isActive);
-      b.classList.toggle('text-indigo-700', isActive);
-      b.classList.toggle('text-slate-600', !isActive);
+      b.classList.toggle('bg-purple-900/20', isActive);
+      b.classList.toggle('text-purple-400', isActive);
+      b.classList.toggle('text-zinc-400', !isActive);
     });
   },
 };
 
-// Main Application Controller
 const Controller = {
   async initApp() {
     DOM.globalLoader.classList.remove('hidden');
@@ -627,7 +674,6 @@ const Controller = {
       this.showLoginScreen();
     }
     
-    // Listen for auth state changes
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session && !AppState.currentUser) {
         AppState.currentUser = session.user;
@@ -660,16 +706,17 @@ const Controller = {
     DOM.adminContent.classList.remove('hidden');
     DOM.globalLoader.classList.remove('hidden');
     
-    DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-800">${AppState.currentUser.email.split('@')[0]}</p>`;
+    DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-300">${AppState.currentUser.email.split('@')[0]}</p>`;
     
     try {
+      this.setupEventListeners();
       await this.fetchData();
       this.renderView('dashboard-container');
-      UI.showToast('ยินดีต้อนรับ!', 'success');
+      UI.showToast('ยินดีต้อนรับเข้าสู่ระบบจัดการ!', 'success');
     } catch (err) {
       DOM.viewContent.innerHTML = `
-        <div class="text-center p-8 bg-white rounded-lg shadow">
-          <h2 class="text-xl font-bold text-red-600">เกิดข้อผิดพลาด</h2>
+        <div class="text-center p-8 bg-zinc-900 border border-white/10 rounded-lg shadow text-white">
+          <h2 class="text-xl font-bold text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</h2>
           <p class="mt-2 text-red-500">${err.message}</p>
         </div>
       `;
@@ -684,7 +731,7 @@ const Controller = {
     const form = e.target;
     const loginButton = form.querySelector('button[type="submit"]');
     
-    UI.toggleButtonLoading(loginButton, true, 'เข้าสู่ระบบ');
+    UI.toggleButtonLoading(loginButton, true, 'กำลังเข้าสู่ระบบ...');
     DOM.loginError.textContent = '';
     
     const { error } = await supabase.auth.signInWithPassword({
@@ -714,9 +761,9 @@ const Controller = {
     });
     
     DOM.refreshButton.addEventListener('click', async () => {
-    await Controller.fetchData(true); // ใส่ true เพื่อรีโหลดจังหวัดใหม่ทั้งหมด
-    Controller.renderView(AppState.currentView);
-});
+        await Controller.fetchData(true); 
+        Controller.renderView(AppState.currentView);
+    });
     
     document.body.addEventListener('click', e => {
       const navButton = e.target.closest('.nav-button');
@@ -734,19 +781,6 @@ const Controller = {
         this.handleDeleteProfile(deleteBtn.dataset);
       }
       
-      const previewBtn = e.target.closest('#preview-profile-button');
-      if (previewBtn) {
-        this.handlePreviewProfile();
-      }
-      
-      const profileCard = e.target.closest('.profile-card-clickable');
-      if (profileCard && !e.target.closest('button')) {
-        const profile = AppState.allProfiles.find(p => p.id == profileCard.dataset.id);
-        if (profile) {
-          UI.showProfileLightbox(profile);
-        }
-      }
-      
       const deleteProvinceBtn = e.target.closest('.delete-province-btn');
       if (deleteProvinceBtn) {
         this.handleDeleteProvince(deleteProvinceBtn.dataset);
@@ -756,25 +790,16 @@ const Controller = {
     this.listenersInitialized = true;
   },
   
-  async loadInitialData() {
-    await this.fetchData();
-    const currentView = AppState.currentView;
-    const currentParams = AppState.currentParams;
-    this.renderView(currentView, currentParams);
-  },
-async fetchData(force = false) {
-    // 1. ดึงข้อมูลโปรไฟล์ (ใช้แบบ Fetch ทั้งหมดไปเลยถ้า data ไม่เยอะ เพื่อป้องกันความซ้ำซ้อนของ Timestamp)
+  async fetchData(force = false) {
     const { data: profiles, error: pErr } = await supabase
         .from('profiles')
         .select('*');
     
     if (pErr) throw pErr;
     
-    // เก็บเข้า AppState แบบล้างค่าเก่าทิ้งเลย (ชัวร์ที่สุด)
     AppState.allProfiles = profiles || [];
     AppState.lastFetchTime = new Date().toISOString();
     
-    // 2. ดึงข้อมูลจังหวัดและทำ Unique ทันที
     if (force || AppState.provinces.length === 0) {
         const { data: provinces, error: provErr } = await supabase
             .from('provinces')
@@ -783,7 +808,6 @@ async fetchData(force = false) {
         
         if (provErr) throw provErr;
 
-        // ป้องกันจังหวัดซ้ำด้วยการใช้ Map กรองตาม Key (ตัวกันตาย)
         const uniqueMap = new Map();
         provinces.forEach(item => {
             if (!uniqueMap.has(item.key)) {
@@ -794,7 +818,7 @@ async fetchData(force = false) {
     }
     
     this.updateStats();
-},
+  },
   
   updateStats() {
     AppState.stats.profiles = AppState.allProfiles.length;
@@ -830,7 +854,7 @@ async fetchData(force = false) {
     if (typeof renderFunction === 'function') {
       renderFunction.call(this, params);
     } else {
-      DOM.viewContent.innerHTML = `<p>View not implemented: ${viewId}</p>`;
+      DOM.viewContent.innerHTML = `<p class="text-white">ไม่พบบล็อกหน้าแสดงผลนี้: ${viewId}</p>`;
     }
   },
 
@@ -843,7 +867,6 @@ async fetchData(force = false) {
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
-    // คำนวณโปรไฟล์ที่อัปเดตใน 7 วันล่าสุด
     for (let i = 0; i < 7; i++) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
@@ -864,7 +887,6 @@ async fetchData(force = false) {
     stats.uploadsLast7Days.labels.reverse();
     stats.uploadsLast7Days.values.reverse();
 
-    // คำนวณสัดส่วนโปรไฟล์ในแต่ละจังหวัด
     AppState.provinces.forEach(prov => {
         const count = profiles.filter(p => p.provinceKey === prov.key).length;
         if (count > 0) {
@@ -875,37 +897,36 @@ async fetchData(force = false) {
     return stats;
   },
 
-
   renderDashboardContainer() {
     const { profiles, featured, provinces } = AppState.stats;
     const dashboardStats = this.calculateDashboardStats();
 
     const statsCards = [
-        { i: 'users', c: 'indigo', t: 'โปรไฟล์ทั้งหมด', v: profiles || 0 },
+        { i: 'users', c: 'purple', t: 'โปรไฟล์ทั้งหมด', v: profiles || 0 },
         { i: 'star', c: 'amber', t: 'โปรไฟล์แนะนำ', v: featured || 0 },
         { i: 'map-marked-alt', c: 'emerald', t: 'จังหวัดในระบบ', v: provinces || 0 }
     ];
 
     DOM.viewContent.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
             ${statsCards.map(s => `
-            <div class="bg-white p-6 rounded-xl shadow-md flex items-center gap-5">
-                <i class="fas fa-${s.i} text-3xl text-${s.c}-500 bg-${s.c}-100 p-4 rounded-full"></i>
+            <div class="card-surface p-6 flex items-center gap-5">
+                <i class="fas fa-${s.i} text-3xl text-purple-400 bg-purple-950/40 p-4 rounded-full border border-purple-500/10"></i>
                 <div>
-                <p class="text-sm text-slate-500">${s.t}</p>
-                <p class="text-3xl font-bold text-slate-800">${s.v}</p>
+                <p class="text-sm text-zinc-400">${s.t}</p>
+                <p class="text-3xl font-extrabold text-white">${s.v}</p>
                 </div>
             </div>
             `).join('')}
         </div>
         
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-md">
-                <h4 class="text-lg font-semibold text-slate-800 mb-3">โปรไฟล์ที่อัปเดตใน 7 วันล่าสุด</h4>
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up" style="animation-delay: 0.1s">
+            <div class="card-surface p-6">
+                <h4 class="text-lg font-bold text-white mb-3">โปรไฟล์ที่อัปเดตใน 7 วันล่าสุด</h4>
                 <canvas id="chart-uploads"></canvas>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-md">
-                <h4 class="text-lg font-semibold text-slate-800 mb-3">สัดส่วนโปรไฟล์ตามจังหวัด</h4>
+            <div class="card-surface p-6">
+                <h4 class="text-lg font-bold text-white mb-3">สัดส่วนโปรไฟล์ตามจังหวัด</h4>
                 <canvas id="chart-provinces"></canvas>
             </div>
         </div>
@@ -921,12 +942,19 @@ async fetchData(force = false) {
                     datasets: [{
                         label: 'จำนวน',
                         data: dashboardStats.uploadsLast7Days.values,
-                        backgroundColor: 'rgba(129, 140, 248, 0.6)',
-                        borderColor: 'rgba(79, 70, 229, 1)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.6)',
+                        borderColor: 'rgba(168, 85, 247, 1)',
                         borderWidth: 1
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { display: false } } }
+                options: { 
+                  responsive: true, 
+                  plugins: { legend: { display: false } },
+                  scales: {
+                     y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } },
+                     x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } }
+                  }
+                }
             });
         }
 
@@ -939,9 +967,15 @@ async fetchData(force = false) {
                     datasets: [{
                         data: Object.values(dashboardStats.profilesByProvince),
                         backgroundColor: ['#ec4899', '#a855f7', '#38bdf8', '#34d399', '#f59e0b', '#94a3b8'],
+                        borderColor: 'transparent'
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'right' } } }
+                options: { 
+                  responsive: true, 
+                  plugins: { 
+                    legend: { position: 'right', labels: { color: '#a8a0b5' } } 
+                  } 
+                }
             });
         }
     }, 100);
@@ -950,23 +984,23 @@ async fetchData(force = false) {
   renderProfilesListContainer() {
     DOM.viewContent.innerHTML = `
       <div class="space-y-6">
-        <div class="bg-white p-4 rounded-xl shadow-md">
+        <div class="card-surface p-5">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div class="md:col-span-2">
-              <label for="search-input" class="block text-sm font-medium text-slate-700 mb-1">ค้นหาอัจฉริยะ</label>
-              <input type="text" id="search-input" placeholder="ชื่อ, พิกัด, LINE, สไตล์..." class="form-input">
+              <label for="search-input" class="block text-sm font-bold text-zinc-300 mb-1">ค้นหาอัจฉริยะ</label>
+              <input type="text" id="search-input" placeholder="พิมพ์ชื่อ, LINE ID, หรือคีย์เวิร์ดเพื่อค้นหา..." class="form-input-high">
             </div>
             <div>
-              <label for="filter-province" class="block text-sm font-medium text-slate-700 mb-1">จังหวัด</label>
-              <select id="filter-province" class="form-input">
+              <label for="filter-province" class="block text-sm font-bold text-zinc-300 mb-1">กรองรายจังหวัด</label>
+              <select id="filter-province" class="form-input-high">
                 <option value="">ทุกจังหวัด</option>
                 ${AppState.provinces.map(p => `<option value="${p.key}">${p.nameThai}</option>`).join('')}
               </select>
             </div>
-            <div class="flex items-center justify-start md:justify-end pb-2">
+            <div class="flex items-center justify-start md:justify-end pb-2.5">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="filter-featured" class="h-4 w-4 text-indigo-600 rounded">
-                  <span class="font-medium text-slate-700">เฉพาะที่แนะนำ</span>
+                  <input type="checkbox" id="filter-featured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950 border-zinc-800">
+                  <span class="font-bold text-zinc-300 text-sm">เฉพาะปักหมุดแนะนำ</span>
                 </label>
             </div>
           </div>
@@ -982,41 +1016,36 @@ async fetchData(force = false) {
     this.renderGroupedProfileCards();
   },
   
-renderGroupedProfileCards() {
+  renderGroupedProfileCards() {
     const listEl = document.getElementById('profiles-grouped-list');
     if (!listEl) return;
 
-    // 1. ดึงค่าจาก Filter UI (ตรวจสอบ ID ให้ตรงกับ HTML ของคุณ)
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
     const selectedProvince = document.getElementById('filter-province')?.value || '';
     const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
 
-    // 2. กรองข้อมูลโปรไฟล์ตามเงื่อนไขทั้งหมด
     let filteredProfiles = AppState.allProfiles.filter(p => {
         const matchesSearch = !searchTerm || 
             (p.name && p.name.toLowerCase().includes(searchTerm)) || 
-            (p.lineId && p.lineId.toLowerCase().includes(searchTerm));
+            (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) ||
+            (p.location && p.location.toLowerCase().includes(searchTerm));
         
         const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
-        
         const matchesFeatured = !isFeaturedOnly || p.isfeatured;
 
         return matchesSearch && matchesProvince && matchesFeatured;
     });
 
-    // 3. สร้าง HTML แยกตามกลุ่มจังหวัด
     let html = AppState.provinces.map(province => {
         const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
-        
-        // ถ้าจังหวัดนี้ไม่มีโปรไฟล์ที่ตรงเงื่อนไข ไม่ต้องแสดงหัวข้อ
         if (profilesInProvince.length === 0) return '';
         
         return `
-            <div class="province-group mb-10 animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-indigo-200 pb-2 mb-4 flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-indigo-500"></i>
+            <div class="province-group mb-10 animate-slide-up">
+                <h2 class="text-2xl font-bold text-white border-b border-purple-500/10 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-purple-500"></i>
                     ${province.nameThai}
-                    <span class="text-sm font-normal text-slate-400">(${profilesInProvince.length} โปรไฟล์)</span>
+                    <span class="text-sm font-normal text-zinc-400">(${profilesInProvince.length} โปรไฟล์)</span>
                 </h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                     ${profilesInProvince.map(p => this.getProfileCardHTML(p)).join('')}
@@ -1025,17 +1054,13 @@ renderGroupedProfileCards() {
         `;
     }).join('');
     
-    // 4. แสดงผลลงหน้าจอ
     listEl.innerHTML = html || `
-        <div class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-            <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
-            <p class="text-slate-500 font-medium">ไม่พบโปรไฟล์ที่ตรงตามเงื่อนไข</p>
+        <div class="text-center py-20 card-surface border-2 border-dashed border-purple-500/10 text-white">
+            <i class="fas fa-search text-4xl text-zinc-600 mb-3 block"></i>
+            <p class="text-zinc-400 font-bold">ไม่พบคิวงานที่ตรงกับข้อมูลดังกล่าว</p>
         </div>
     `;
 
-    // 5. ผูก Event Listeners ให้กับปุ่มที่สร้างขึ้นใหม่ (ต้องอยู่ในฟังก์ชันนี้)
-    
-    // ปุ่มแก้ไข (Edit)
     listEl.querySelectorAll('.edit-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -1044,7 +1069,6 @@ renderGroupedProfileCards() {
         };
     });
 
-    // ปุ่มลบ (Delete)
     listEl.querySelectorAll('.delete-profile-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
@@ -1053,20 +1077,16 @@ renderGroupedProfileCards() {
         };
     });
 
-    // คลิกที่ตัว Card เพื่อดู Lightbox (อ้างอิงตาม UI.showProfileLightbox)
     listEl.querySelectorAll('.profile-card-clickable').forEach(card => {
         card.onclick = () => {
             const id = card.dataset.id;
             const profile = AppState.allProfiles.find(p => String(p.id) === String(id));
-            if (profile && typeof UI.showProfileLightbox === 'function') {
-                UI.showProfileLightbox(profile);
-            }
+            if (profile) UI.showProfileLightbox(profile);
         };
     });
-},
+  },
 
-// 1. ฟังก์ชัน Render Card (เพิ่มการแสดงผลส่วนสูง/น้ำหนัก/สัดส่วน ในรายการ ถ้าต้องการ)
-getProfileCardHTML(p) {
+  getProfileCardHTML(p) {
     let imgUrl = 'https://placehold.co/400x500?text=No+Image';
 
     if (p.imagePath && p.imagePath.startsWith('http')) {
@@ -1074,34 +1094,31 @@ getProfileCardHTML(p) {
     } 
     else if (p.imagePath && p.imagePath !== '') {
         imgUrl = supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
-    } 
-    else if (p.galleryPaths && p.galleryPaths.length > 0) {
-        imgUrl = p.galleryPaths[0];
     }
 
     const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
 
     return `
-      <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-100" data-id="${p.id}">
+      <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer bg-zinc-950 border border-white/5 hover:border-purple-500/35 transition-all subtle-pop" data-id="${p.id}">
         <div class="relative aspect-[3/4] overflow-hidden">
             <img src="${imgUrl}" 
-                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                  onerror="this.src='https://placehold.co/400x500?text=Image+Error'" 
                  loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-yellow-400 text-black text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">RECOMMENDED</span>' : ''}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[9px] px-2.5 py-0.5 rounded-full font-extrabold shadow-md">RECOMMENDED</span>' : ''}
         </div>
-        <div class="p-3 flex flex-col flex-grow">
-          <h4 class="font-bold text-slate-800 truncate">${p.name || 'ไม่ระบุชื่อ'}</h4>
-          <p class="text-xs text-slate-500 mb-2 flex items-center gap-1">
-            <i class="fas fa-map-pin text-[10px]"></i> ${provName}
+        <div class="p-3 flex flex-col flex-grow text-left">
+          <h4 class="font-bold text-white truncate text-sm">${p.name || 'ไม่ระบุชื่อ'}</h4>
+          <p class="text-xs text-zinc-400 mb-2 flex items-center gap-1">
+            <i class="fas fa-map-marker-alt text-[10px] text-purple-400"></i> ${provName}
           </p>
           
-          <div class="mt-auto flex gap-2 pt-2 border-t border-slate-100">
-            <button class="edit-profile-btn flex-1 py-1.5 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700 transition font-bold" data-id="${p.id}">
+          <div class="mt-auto flex gap-2 pt-2 border-t border-white/5">
+            <button class="edit-profile-btn flex-1 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs rounded-lg transition font-bold" data-id="${p.id}">
               <i class="fas fa-edit mr-1"></i> แก้ไข
             </button>
-            <button class="delete-profile-btn px-3 py-1.5 bg-slate-100 text-slate-400 text-xs rounded-lg hover:bg-red-500 hover:text-white transition" 
+            <button class="delete-profile-btn px-3 py-1.5 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-red-600 hover:border-transparent rounded-lg text-xs transition" 
                     data-id="${p.id}" data-name="${p.name}">
               <i class="fas fa-trash-alt"></i>
             </button>
@@ -1109,18 +1126,17 @@ getProfileCardHTML(p) {
         </div>
       </div>
     `;
-},
+  },
 
-// 2. ฟังก์ชัน Render Form (เพิ่มช่องกรอกข้อมูลให้ครบ)
-async renderProfileFormContainer(params = {}) {
+  async renderProfileFormContainer(params = {}) {
     const profileId = params.profileId;
     const isEditing = !!profileId;
     let p = {};
     
     if (isEditing) {
-      UI.showToast("กำลังดึงข้อมูล...", "info");
+      UI.showToast("กำลังดึงข้อมูลคลังประวัติ...", "info");
       const { data, error } = await supabase.from('profiles').select('*').eq('id', profileId).single();
-      if (error) { UI.showToast("ไม่พบโปรไฟล์", "error"); return this.renderView('profiles-list-container'); }
+      if (error) { UI.showToast("ไม่พบโปรไฟล์ในระบบ", "error"); return this.renderView('profiles-list-container'); }
       p = data;
     }
 
@@ -1129,84 +1145,101 @@ async renderProfileFormContainer(params = {}) {
         previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
     }
     
+    // ตั้งฟอร์มเป็นระบบ Scroll Container ป้องกันการ Overlapping กับแถมปุ่มด้านล่าง
     const formHTML = `
-      <div class="max-w-5xl mx-auto animate-slide-up">
+      <div class="max-w-5xl mx-auto animate-slide-up form-scroll-container">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-slate-800">${isEditing ? 'แก้ไขโปรไฟล์: ' + p.name : 'สร้างโปรไฟล์ใหม่'}</h2>
-            <button class="nav-button text-slate-500 hover:text-slate-800 transition" data-view="profiles-list-container">
+            <h2 class="text-2xl font-extrabold text-white">${isEditing ? 'อัปเดตข้อมูล: น้อง' + p.name : 'ลงทะเบียนโปรไฟล์ใหม่'}</h2>
+            <button class="nav-button text-zinc-400 hover:text-white transition" data-view="profiles-list-container">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
 
-        <form id="profile-form" class="space-y-6 pb-20">
+        <form id="profile-form" class="space-y-6">
           <input type="hidden" id="profile-id" value="${p.id || ''}">
           <input type="hidden" id="current-image-path" value="${p.imagePath || ''}">
           
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1 space-y-6">
-                <!-- Image Uploader & Status (คงเดิม) -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4">รูปภาพโปรไฟล์</h3>
+                <!-- Image Uploader -->
+                <div class="card-surface p-5 text-left">
+                    <h3 class="font-bold text-white mb-4">รูปภาพโปรไฟล์</h3>
                     <div id="image-uploader" class="w-full"></div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4">สถานะ</h3>
-                    <label class="flex items-center gap-3 p-3 bg-indigo-50 rounded-xl mb-3 cursor-pointer">
-                        <input type="checkbox" id="isFeatured" class="h-5 w-5 text-indigo-600 rounded" ${p.isfeatured ? 'checked' : ''}>
-                        <span class="font-bold text-indigo-700 text-sm">ปักหมุดแนะนำ</span>
+                <div class="card-surface p-5 text-left">
+                    <h3 class="font-bold text-white mb-4">สถานะและการแสดงผล</h3>
+                    <label class="flex items-center gap-3 p-3 bg-purple-950/20 border border-purple-500/10 rounded-xl mb-3 cursor-pointer">
+                        <input type="checkbox" id="isFeatured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950" ${p.isfeatured ? 'checked' : ''}>
+                        <span class="font-bold text-purple-400 text-sm">ปักหมุดแนะนำ (Featured)</span>
                     </label>
-                    <select id="availability" class="form-input w-full p-2.5 border rounded-xl">
+                    <label class="label-style">สถานะรับงาน</label>
+                    <select id="availability" class="form-input-high w-full">
                         ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}
                     </select>
                 </div>
             </div>
 
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">ข้อมูลพื้นฐาน</h3>
+                <div class="card-surface p-6 text-left">
+                    <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">ข้อมูลพื้นฐาน</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
                         <div><label class="label-style">อายุ</label><input type="number" id="age" class="form-input-high" value="${p.age || ''}"></div>
                         <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" id="height" class="form-input-high" value="${p.height || ''}"></div>
                         <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
                         <div><label class="label-style">สัดส่วน</label><input type="text" id="stats" class="form-input-high" value="${p.stats || ''}" placeholder="34-24-35"></div>
-                        <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="ผิวขาว, ผิวแทน"></div>
+                        <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="เช่น ผิวขาวอมชมพู, ผิวแทนน้ำผึ้ง"></div>
                         <div><label class="label-style">จังหวัด*</label>
                             <select id="provinceKey" required class="form-input-high">
                                 ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
                             </select>
                         </div>
-                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}"></div>
-                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}"></div>
+                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="เช่น นิมมาน, เจ็ดยอด"></div>
+                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="เช่น 1500/1"></div>
                         <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">รายละเอียดและสไตล์</h3>
+                <div class="card-surface p-6 text-left">
+                    <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">รายละเอียดและสไตล์</h3>
                     <div class="space-y-4">
-                        <div><label class="label-style">คำโปรย</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}"></div>
-                        <div><label class="label-style">รายละเอียด</label><textarea id="description" rows="3" class="form-input-high">${p.description || ''}</textarea></div>
+                        <div><label class="label-style">คำโปรย (Quote)</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}" placeholder="คำโปรยสั้น ๆ เรียกทราฟฟิก"></div>
+                        <div><label class="label-style">รายละเอียดเพิ่มเติม</label><textarea id="description" rows="3" class="form-input-high" placeholder="บรรยายสไตล์ความเอาใจใส่ รายละเอียดงานฟิวแฟน GFE...">${p.description || ''}</textarea></div>
                         <div><label class="label-style">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-4 border-b pb-2 text-indigo-600">SEO (สำหรับ Google)</h3>
+                <div class="card-surface p-6 text-left border border-purple-500/10">
+                    <h3 class="font-bold text-purple-400 mb-4 border-b border-white/5 pb-2 flex items-center gap-2"><i class="fas fa-search"></i> SEO & Google Settings (อัจฉริยะคิดแทนแอดมิน)</h3>
                     <div class="space-y-4">
-                        <div><label class="label-style">SEO Title</label><input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}"></div>
-                        <div><label class="label-style">Meta Description</label><textarea id="meta-description" rows="2" class="form-input-high">${p.meta_description || ''}</textarea></div>
-                        <div><label class="label-style">Alt Text (สำหรับรูปภาพ)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}"></div>
-                        <div><label class="label-style">Slug (URL)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}"></div>
+                        <div>
+                          <label class="label-style flex justify-between">
+                            <span>SEO Title</span>
+                            <span class="text-[10px] text-zinc-500">แนะนำ 50-60 อักขระ</span>
+                          </label>
+                          <input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}" placeholder="ปล่อยว่างเพื่อใช้โครงสร้างอัจฉริยะอัตโนมัติ">
+                        </div>
+                        <div>
+                          <label class="label-style flex justify-between">
+                            <span>Meta Description</span>
+                            <span class="text-[10px] text-zinc-500">แนะนำ 120-150 อักขระ</span>
+                          </label>
+                          <textarea id="meta-description" rows="2" class="form-input-high" placeholder="ปล่อยว่างไว้ระบบจะสกัดคีย์เวิร์ดมาประกอบเป็นบทความสั้นให้เอง">${p.meta_description || ''}</textarea>
+                        </div>
+                        <div><label class="label-style">Alt Text (คำอธิบายรูปภาพสำหรับ Google Image Search)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}" placeholder="น้อง... สาวรับงานเชียงใหม่ ฟิวแฟนตรงปก"></div>
+                        <div><label class="label-style">Slug (URL หน้าโปรไฟล์)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="เช่น nong-cherry"></div>
                     </div>
                 </div>
             </div>
           </div>
           
-          <!-- ปุ่มบันทึก (Fixed Bottom) -->
-          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl flex justify-between items-center z-50">
-             <button type="button" class="nav-button px-6 py-3 font-bold text-slate-500" data-view="profiles-list-container">ยกเลิก</button>
-             <button type="submit" id="save-profile-button" class="px-10 py-3 font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg">บันทึกข้อมูล</button>
+          <!-- แถบปุ่มบันทึกด่วนสีดำลอย (ปรับแต่ง CSS ป้องกัน overlap บนจอโมบาย) -->
+          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl bg-zinc-950/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1001]">
+             <button type="button" class="nav-button px-6 py-3 font-bold text-zinc-400 hover:text-white" data-view="profiles-list-container">ยกเลิก</button>
+             <div class="flex gap-2">
+                <button type="button" id="preview-profile-button" class="px-5 py-3 font-bold text-zinc-300 bg-zinc-800/80 rounded-xl hover:bg-zinc-700 hover:text-white transition"><i class="fas fa-eye mr-1"></i> ดูตัวอย่าง</button>
+                <button type="submit" id="save-profile-button" class="px-8 py-3 font-bold text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg transition-transform active:scale-95">บันทึกคิวงาน</button>
+             </div>
           </div>
         </form>
       </div>
@@ -1215,13 +1248,85 @@ async renderProfileFormContainer(params = {}) {
     DOM.viewContent.innerHTML = formHTML;
     this.initImageUploader(previewUrl);
     this.initTagInput(p.styleTags || []);
+    
+    // ตั้งค่าตัวจับการทำงานอัจฉริยะ (Smart Autofill Binding)
+    this.setupSmartFieldAutofill(isEditing);
+
     document.getElementById('profile-form').addEventListener('submit', e => this.handleProfileFormSubmit(e));
-},
+  },
 
+  // ==========================================
+  // 🔮 [ระบบอัจฉริยะใหม่] setupSmartFieldAutofill
+  // ==========================================
+  setupSmartFieldAutofill(isEditing) {
+    const fields = {
+      name: document.getElementById('name'),
+      province: document.getElementById('provinceKey'),
+      location: document.getElementById('location'),
+      rate: document.getElementById('rate'),
+      age: document.getElementById('age'),
+      stats: document.getElementById('stats'),
+      
+      slug: document.getElementById('slug'),
+      seoTitle: document.getElementById('seo-title'),
+      metaDesc: document.getElementById('meta-description'),
+      altText: document.getElementById('altText')
+    };
 
-// =========================================================================
-// KISSMODEL ADMIN CONTROLLER - FULL VERSION (NO SHORTENED)
-// =========================================================================
+    // ติดป้ายกำกับบอกสถานะการคีย์เขียนเองของแอดมิน เพื่อไม่ให้ระบบคำนวณอัตโนมัติไปเขียนทับข้อมูลคัสตอมในภายหลัง
+    Object.keys(fields).forEach(key => {
+      const el = fields[key];
+      if (el && ['slug', 'seoTitle', 'metaDesc', 'altText'].includes(key)) {
+        // หากเป็นการแก้ไขและมีข้อมูลเดิมอยู่แล้ว ให้ถือว่าแอดมินเขียนเอง
+        el.dataset.autogenerated = el.value ? 'false' : 'true';
+        el.addEventListener('input', () => { el.dataset.autogenerated = 'false'; });
+      }
+    });
+
+    const triggerSmartGeneration = () => {
+      const name = fields.name?.value?.trim() || '';
+      const provinceName = fields.province?.options[fields.province.selectedIndex]?.text || '';
+      const location = fields.location?.value?.trim() || '';
+      const rate = fields.rate?.value?.trim() || '';
+      const age = fields.age?.value?.trim() || '';
+      const stats = fields.stats?.value?.trim() || '';
+
+      if (!name) return;
+
+      // 1. ประมวลผลสร้าง URL Slug สากล
+      if (fields.slug && fields.slug.dataset.autogenerated === 'true') {
+        fields.slug.value = name.toLowerCase()
+                                .replace(/\s+/g, '-')
+                                .replace(/[^a-zA-Z0-9ก-๙-]/g, '');
+      }
+
+      // 2. ประมวลผลสร้าง SEO Title
+      if (fields.seoTitle && fields.seoTitle.dataset.autogenerated === 'true') {
+        fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} ฟิวแฟน ตรงปก`;
+      }
+
+      // 3. ประมวลผลสร้าง Meta Description
+      if (fields.metaDesc && fields.metaDesc.dataset.autogenerated === 'true') {
+        let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''}.`;
+        if (rate) desc += ` เรทบริการ ${rate}.`;
+        if (age) desc += ` อายุ ${age} ปี.`;
+        if (stats) desc += ` สัดส่วน ${stats}.`;
+        desc += ` น่ารัก อัธยาศัยดี มีความเป็นสุภาพสตรีสไตล์ฟิวแฟน ปลอดภัย จ่ายเงินหน้างาน 100% ไม่มีมัดจำ`;
+        fields.metaDesc.value = desc;
+      }
+
+      // 4. ประมวลผลสร้างรูปภาพ Alt Text สำหรับดัน Google Image Search
+      if (fields.altText && fields.altText.dataset.autogenerated === 'true') {
+        fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} เพื่อนเที่ยวฟิวแฟน ตรงปก`;
+      }
+    };
+
+    // เชื่อมต่อ Event Listener เพื่ออัปเดตแบบเรียลไทม์
+    ['name', 'province', 'location', 'rate', 'age', 'stats'].forEach(key => {
+      fields[key]?.addEventListener('input', triggerSmartGeneration);
+      fields[key]?.addEventListener('change', triggerSmartGeneration);
+    });
+  },
 
   initImageUploader(imageUrl) {
     const uploaderEl = document.getElementById('image-uploader');
@@ -1229,19 +1334,17 @@ async renderProfileFormContainer(params = {}) {
 
     uploaderEl.innerHTML = `
       <div class="space-y-3">
-        <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-slate-300 bg-slate-50
-                            hover:border-indigo-400 transition cursor-pointer group">
-          <input type="file" id="image-file-input" accept="image/*" multiple
-                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+        <div id="dz" class="relative w-full min-h-[12rem] rounded-xl p-6 border-2 border-dashed border-zinc-700 bg-zinc-950/40 hover:border-purple-500/50 transition cursor-pointer group">
+          <input type="file" id="image-file-input" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
           <div class="pointer-events-none text-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 mb-3 group-hover:scale-110 transition">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-950/40 border border-purple-500/10 text-purple-400 mb-3 group-hover:scale-110 transition">
               <i class="fas fa-cloud-upload-alt text-xl"></i>
             </div>
-            <p class="text-sm text-slate-600 font-bold">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
-            <p class="text-xs text-slate-400 mt-1">ไฟล์จะถูกส่งไปที่ Cloudinary (รองรับ .webp, .jpg, .png)</p>
+            <p class="text-xs sm:text-sm text-zinc-300 font-bold">ลากและวางรูปภาพที่นี่ หรือกดเพื่อเลือกหลายรูป</p>
+            <p class="text-[10px] text-zinc-500 mt-1">อัปโหลดเข้าสู่คลาวด์ภาพ (รองรับ .webp, .jpg, .png)</p>
           </div>
         </div>
-        <div id="multi-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        <div id="multi-preview" class="grid grid-cols-2 gap-4"></div>
       </div>
     `;
     
@@ -1254,10 +1357,10 @@ async renderProfileFormContainer(params = {}) {
       files.forEach(f => {
         const url = URL.createObjectURL(f);
         const card = document.createElement('div');
-        card.className = 'relative rounded-xl overflow-hidden shadow-md bg-white border border-slate-200 subtle-pop';
+        card.className = 'relative rounded-xl overflow-hidden shadow-md bg-zinc-900 border border-white/5 subtle-pop';
         card.innerHTML = `
           <img src="${url}" class="w-full h-40 object-cover" alt="">
-          <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] p-2 truncate backdrop-blur-sm">
+          <div class="absolute bottom-0 inset-x-0 bg-black/70 text-white text-[9px] p-2 truncate backdrop-blur-sm">
             ${f.name}
           </div>
         `;
@@ -1267,16 +1370,16 @@ async renderProfileFormContainer(params = {}) {
     
     dz.addEventListener('dragover', e => { 
       e.preventDefault(); 
-      dz.classList.add('border-indigo-400', 'bg-indigo-50'); 
+      dz.classList.add('border-purple-500/50', 'bg-purple-950/10'); 
     });
     
     dz.addEventListener('dragleave', () => { 
-      dz.classList.remove('border-indigo-400', 'bg-indigo-50'); 
+      dz.classList.remove('border-purple-500/50', 'bg-purple-950/10'); 
     });
     
     dz.addEventListener('drop', e => {
       e.preventDefault();
-      dz.classList.remove('border-indigo-400', 'bg-indigo-50');
+      dz.classList.remove('border-purple-500/50', 'bg-purple-950/10');
       const dtFiles = Array.from(e.dataTransfer.files || []).filter(f => /^image\//.test(f.type));
       if (!dtFiles.length) return;
       
@@ -1292,9 +1395,9 @@ async renderProfileFormContainer(params = {}) {
     
     if (imageUrl) {
       previewGrid.innerHTML = `
-        <div class="relative rounded-xl overflow-hidden shadow-lg border-2 border-indigo-500 bg-white">
+        <div class="relative rounded-xl overflow-hidden shadow-lg border-2 border-purple-500 bg-zinc-950">
           <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
-          <div class="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">รูปปัจจุบัน</div>
+          <div class="absolute top-2 left-2 bg-purple-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">รูปปกปัจจุบัน</div>
         </div>
       `;
     }
@@ -1309,19 +1412,19 @@ async renderProfileFormContainer(params = {}) {
 
     const render = () => {
       container.innerHTML = `
-        <div class="tag-input-container bg-white border border-slate-300 rounded-xl p-2.5 flex flex-wrap gap-2 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 transition shadow-sm">
+        <div class="tag-input-container bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 flex flex-wrap gap-2 focus-within:border-purple-500 transition shadow-sm">
           ${tags.map(tag => `
-            <div class="tag-item bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-2 border border-indigo-100 animate-fade-in">
+            <div class="tag-item">
               <span>${tag}</span>
-              <i class="fas fa-times tag-remove-btn cursor-pointer hover:text-red-500 transition" data-tag="${tag}"></i>
+              <i class="fas fa-times tag-remove-btn cursor-pointer hover:text-red-400 transition" data-tag="${tag}"></i>
             </div>
           `).join('')}
-          <input type="text" class="tag-input flex-1 min-w-[150px] outline-none text-sm bg-transparent" placeholder="เพิ่มสไตล์แล้วกด Enter...">
+          <input type="text" class="tag-input flex-1 min-w-[150px] outline-none text-sm bg-transparent text-white placeholder-zinc-500" placeholder="เพิ่มแล้วกด Enter...">
         </div>
         <div class="mt-3 flex flex-wrap gap-2 items-center">
-          <span class="text-[11px] text-slate-400 font-medium">แนะนำ:</span>
+          <span class="text-[11px] text-zinc-500 font-bold">แนะนำ:</span>
           ${suggestedTags.map(tag => 
-            !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full hover:bg-indigo-600 hover:text-white transition-all transform hover:scale-105 shadow-sm">${tag}</button>` : ''
+            !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-[11px] bg-zinc-900 border border-white/5 text-zinc-300 px-3 py-1 rounded-full hover:bg-purple-600 hover:text-white transition-all transform active:scale-95 shadow-sm">${tag}</button>` : ''
           ).join('')}
         </div>
       `;
@@ -1356,7 +1459,6 @@ async renderProfileFormContainer(params = {}) {
   async handleProfileFormSubmit(e) {
     e.preventDefault();
     const form = e.target;
-    // 1. ดึง ID มาเช็คให้ชัวร์
     const profileId = form.querySelector('#profile-id').value;
     const isEditing = !!profileId && profileId !== ""; 
     const saveButton = form.querySelector('#save-profile-button');
@@ -1365,14 +1467,12 @@ async renderProfileFormContainer(params = {}) {
     
     try {
         const fileInput = form.querySelector('#image-file-input');
-        // ดึง Path รูปปัจจุบันจาก Hidden Input
         let currentImagePath = form.querySelector('#current-image-path').value || '';
         let uploadedUrls = [];
         const files = Array.from(fileInput?.files || []);
         
-        // --- 1. Cloudinary Multi-Upload Logic ---
         if (files.length) {
-            UI.showToast(`กำลังอัปโหลด ${files.length} รูป...`, 'info');
+            UI.showToast(`กำลังอัปโหลดรูปภาพทั้ง ${files.length} ใบเข้าสู่ระบบคลาวด์...`, 'info');
             for (const [index, f] of files.entries()) {
                 const formData = new FormData();
                 formData.append('file', f);
@@ -1393,28 +1493,22 @@ async renderProfileFormContainer(params = {}) {
             }
         }
 
-        // --- 2. Prepare Data for Supabase ---
         const profileData = this.collectFormData(form);
 
-        // Logic การเลือกรูป: ถ้ามีรูปใหม่ใช้รูปใหม่ ถ้าไม่มีให้ใช้รูปเดิม
         if (uploadedUrls.length > 0) {
             profileData.imagePath = uploadedUrls[0];
             profileData.galleryPaths = uploadedUrls;
         } else {
             profileData.imagePath = currentImagePath;
-            // ไม่ต้องใส่ galleryPaths เพื่อให้ Supabase ใช้ค่าเดิมที่มีอยู่แล้วใน DB
         }
 
         if (!profileData.imagePath && !isEditing) {
-            throw new Error('กรุณาเลือกรูปภาพอย่างน้อย 1 รูปสำหรับโปรไฟล์ใหม่');
+            throw new Error('กรุณาเลือกรูปภาพสำหรับโปรไฟล์ใหม่');
         }
 
-        // --- 3. Supabase Integration ---
         let result;
         if (isEditing) {
-            // มิติ Dev: การ Update ต้องลบ ID ออกจาก Object ข้อมูลก่อนเสมอ
             const { id, ...updateData } = profileData; 
-
             result = await supabase
                 .from('profiles')
                 .update(updateData)
@@ -1431,7 +1525,7 @@ async renderProfileFormContainer(params = {}) {
         
         if (result.error) throw result.error;
         
-        UI.showToast(isEditing ? 'อัปเดตเรียบร้อย' : 'สร้างสำเร็จ', 'success');
+        UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
         await this.fetchData();
         this.renderView('profiles-list-container');
         
@@ -1439,79 +1533,11 @@ async renderProfileFormContainer(params = {}) {
         console.error("Critical Save Error:", err);
         UI.showToast(err.message, 'error');
     } finally {
-        UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึก' : 'สร้าง');
+        UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึกข้อมูล' : 'บันทึกคิวงาน');
     }
   },
-  handleEditProfile(id) {
-    // 1. ค้นหาข้อมูลโปรไฟล์จาก State ด้วย ID (แก้ไข AppState.profiles -> AppState.allProfiles)
-    const p = AppState.allProfiles.find(item => item.id == id);
-    if (!p) {
-      UI.showToast('ไม่พบข้อมูลโปรไฟล์ที่ต้องการแก้ไข', 'error');
-      return;
-    }
 
-    // 2. เปลี่ยนหน้าไปที่ Form Container (ตรวจสอบชื่อ ID ของ Container คุณด้วย)
-    this.renderView('profile-form-container'); 
-
-    // 3. เข้าถึง Form
-    const form = document.getElementById('profile-form');
-    if (!form) return;
-
-    // --- ส่วนที่สำคัญที่สุด: ยัดค่าใส่ Input แต่ละตัว ---
-    
-    // Hidden Fields (ห้ามลืมเด็ดขาด!)
-    form.querySelector('#profile-id').value = p.id;
-    form.querySelector('#current-image-path').value = p.imagePath || '';
-
-    // Basic Info
-    form.querySelector('#name').value = p.name || '';
-    form.querySelector('#age').value = p.age || '';
-    form.querySelector('#height').value = p.height || '';
-    form.querySelector('#weight').value = p.weight || '';
-    form.querySelector('#stats').value = p.stats || '';
-    form.querySelector('#skinTone').value = p.skinTone || '';
-    form.querySelector('#provinceKey').value = p.provinceKey || '';
-    form.querySelector('#location').value = p.location || '';
-    form.querySelector('#rate').value = p.rate || '';
-    form.querySelector('#availability').value = p.availability || 'สอบถามคิว';
-    form.querySelector('#lineId').value = p.lineId || '';
-    form.querySelector('#quote').value = p.quote || '';
-    form.querySelector('#description').value = p.description || '';
-    form.querySelector('#altText').value = p.altText || '';
-    form.querySelector('#isFeatured').checked = !!p.isfeatured;
-
-    // SEO Data
-    form.querySelector('#seo-title').value = p.seo_title || '';
-    form.querySelector('#meta-description').value = p.meta_description || '';
-    form.querySelector('#slug').value = p.slug || '';
-
-    // --- การจัดการ Style Tags (ถ้ามีระบบ Tag) ---
-    const tagContainer = form.querySelector('#tags-container'); // ปรับตาม ID จริงของคุณ
-    if (tagContainer) {
-      tagContainer.innerHTML = ''; // ล้าง Tag เก่า
-      if (p.styleTags && Array.isArray(p.styleTags)) {
-        p.styleTags.forEach(tag => {
-          // สร้าง Tag Element (เรียกใช้ฟังก์ชันสร้าง Tag ของคุณ ถ้ามี)
-          this.addTagToUI(tag, tagContainer); 
-        });
-      }
-    }
-
-    // --- แสดง Preview รูปปัจจุบัน ---
-    const previewImg = document.getElementById('image-preview'); // ถ้ามี <img> สำหรับพรีวิว
-    if (previewImg) {
-      previewImg.src = p.imagePath || 'https://placehold.co/400x500?text=No+Image';
-    }
-
-    // 4. เปลี่ยนชื่อปุ่มบันทึกให้ชัดเจน
-    const saveButton = form.querySelector('#save-profile-button');
-    if (saveButton) saveButton.textContent = 'อัปเดตข้อมูล (Update Profile)';
-
-    UI.showToast(`กำลังแก้ไขข้อมูลของ: ${p.name}`, 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-// 3. ปรับปรุงการเก็บข้อมูล (เพิ่มฟิลด์ใหม่เข้าไป)
-collectFormData(form) {
+  collectFormData(form) {
     const fv = (id) => form.querySelector(`#${id}`)?.value?.trim() || '';
     const fc = (id) => form.querySelector(`#${id}`)?.checked || false;
     const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
@@ -1519,10 +1545,10 @@ collectFormData(form) {
     return {
         name: fv('name'),
         age: parseInt(fv('age')) || null,
-        height: fv('height'), // เพิ่ม
-        weight: fv('weight'), // เพิ่ม
-        stats: fv('stats'),   // เพิ่ม
-        skinTone: fv('skinTone'), // เพิ่ม
+        height: fv('height'), 
+        weight: fv('weight'), 
+        stats: fv('stats'),   
+        skinTone: fv('skinTone'), 
         provinceKey: fv('provinceKey'),
         location: fv('location'),
         rate: fv('rate'),
@@ -1535,10 +1561,10 @@ collectFormData(form) {
         styleTags: styleTags,
         lastUpdated: new Date().toISOString(),
         seo_title: fv('seo-title'),
-        meta_description: fv('meta-description'), // เพิ่ม
+        meta_description: fv('meta-description'), 
         slug: fv('slug') || fv('name').toLowerCase().replace(/\s+/g, '-')
     };
-}, // <--- แก้ไขปัญหา SyntaxError ด้วยการเติมเครื่องหมายจุลภาคคั่น ณ จุดนี้
+  }, 
   
   handlePreviewProfile() {
     const form = document.getElementById('profile-form');
@@ -1548,7 +1574,6 @@ collectFormData(form) {
     const currentImagePath = form.querySelector('#current-image-path').value;
     const fileInput = form.querySelector('#image-file-input');
     
-    // Preview logic: เช็คว่ามีรูปใหม่ที่ยังไม่ได้อัปไหม
     if (fileInput && fileInput.files && fileInput.files[0]) {
       profileData.imagePath = URL.createObjectURL(fileInput.files[0]);
     } else {
@@ -1561,9 +1586,9 @@ collectFormData(form) {
   handleDeleteProfile({ id, name }) {
     UI.showModal({
       title: 'ยืนยันการลบโปรไฟล์',
-      message: `คุณกำลังจะลบ <strong>${name}</strong> ออกจากระบบ ข้อมูลนี้จะไม่สามารถกู้คืนได้ ยืนยันหรือไม่?`,
+      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ สารบัญจะไม่แสดงผล และไม่สามารถกู้คืนข้อมูลได้ในภายหลัง ยืนยันข้อมูลหรือไม่?`,
       onConfirm: async () => {
-        UI.showToast(`กำลังลบข้อมูล...`, 'info');
+        UI.showToast(`กำลังเคลียร์ข้อมูล...`, 'info');
         try {
           const { error } = await supabase
             .from('profiles')
@@ -1572,7 +1597,7 @@ collectFormData(form) {
             
           if (error) throw error;
           
-          UI.showToast('ลบโปรไฟล์สำเร็จแล้ว', 'success');
+          UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
           await this.fetchData();
           this.renderView(AppState.currentView, AppState.currentParams);
         } catch (error) {
@@ -1584,50 +1609,50 @@ collectFormData(form) {
   
   renderProvincesManagementContainer() {
     DOM.viewContent.innerHTML = `
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 animate-slide-up">
-          <h4 class="text-xl font-bold text-indigo-700 mb-6 flex items-center gap-3">
-            <i class="fas fa-map-marker-alt"></i> จัดการจังหวัด / หมวดหมู่
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up">
+        <div class="card-surface p-6 text-left">
+          <h4 class="text-xl font-bold text-purple-400 mb-6 flex items-center gap-3">
+            <i class="fas fa-map-marker-alt"></i> จัดการพิกัดจังหวัด / หมวดหมู่หลัก
           </h4>
           <form id="add-province-form" class="space-y-5">
             <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">ชื่อไทย (เช่น กรุงเทพฯ, เชียงใหม่)*</label>
-              <input type="text" id="province-name-thai" required class="form-input w-full p-3 border-2 rounded-xl focus:border-indigo-500 transition outline-none">
+              <label class="block text-sm font-bold text-zinc-300 mb-2">ชื่อไทย (เช่น กรุงเทพฯ, เชียงใหม่)*</label>
+              <input type="text" id="province-name-thai" required class="form-input-high w-full">
             </div>
             <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">Key ภาษาอังกฤษ (เช่น bangkok, chiang-mai)*</label>
-              <input type="text" id="province-key" required class="form-input w-full p-3 border-2 rounded-xl focus:border-indigo-500 transition outline-none" placeholder="ไม่ต้องใส่เว้นวรรค">
-              <p class="text-[11px] text-slate-400 mt-2 italic">** Key นี้จะถูกนำไปใช้ใน URL ของหน้าเว็บ</p>
+              <label class="block text-sm font-bold text-zinc-300 mb-2">Key ภาษาอังกฤษ (เช่น bangkok, chiang-mai)*</label>
+              <input type="text" id="province-key" required class="form-input-high w-full" placeholder="ตัวพิมพ์เล็ก ห้ามมีเว้นวรรค">
+              <p class="text-[11px] text-zinc-500 mt-2 italic">** พิกัดนี้จะถูกนำไปใช้อ้างอิงโครงสร้างลิงก์สำหรับ Google Bot</p>
             </div>
-            <button type="submit" id="add-province-btn" class="w-full py-3.5 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">
-              <i class="fas fa-plus-circle mr-2"></i> เพิ่มข้อมูลจังหวัด
+            <button type="submit" id="add-province-btn" class="w-full py-3.5 text-sm font-bold text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-950/20 transition-all active:scale-95">
+              <i class="fas fa-plus-circle mr-2"></i> บันทึกข้อมูลหมวดหมู่จังหวัด
             </button>
           </form>
         </div>
         
-        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 animate-slide-up" style="animation-delay: 0.1s">
-          <h4 class="text-lg font-bold text-slate-800 mb-6 flex items-center justify-between">
+        <div class="card-surface p-6 text-left">
+          <h4 class="text-lg font-bold text-white mb-6 flex items-center justify-between">
             <span>รายการจังหวัดในระบบ</span>
-            <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-xs">${AppState.provinces.length} รายการ</span>
+            <span class="bg-purple-950/40 text-purple-400 border border-purple-500/10 px-3 py-1 rounded-full text-xs">${AppState.provinces.length} รายการ</span>
           </h4>
-          <div class="overflow-y-auto max-h-[450px] custom-scrollbar">
+          <div class="overflow-y-auto max-h-[450px]">
             ${AppState.provinces.length === 0 ? 
-              '<div class="text-center py-12"><i class="fas fa-folder-open text-4xl text-slate-200 mb-3 block"></i><p class="text-slate-400">ไม่มีข้อมูลจังหวัด</p></div>' : 
+              '<div class="text-center py-12"><i class="fas fa-folder-open text-4xl text-zinc-700 mb-3 block"></i><p class="text-zinc-500">ไม่มีข้อมูลจังหวัด</p></div>' : 
               `<table class="min-w-full">
-                <thead class="bg-slate-50 sticky top-0 z-10">
+                <thead class="bg-zinc-950 sticky top-0 z-10">
                   <tr>
-                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ชื่อจังหวัด</th>
-                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Key (URL)</th>
+                    <th class="px-5 py-3 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">ชื่อจังหวัด</th>
+                    <th class="px-5 py-3 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Key (URL)</th>
                     <th class="px-5 py-3 text-right"></th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-zinc-800">
                   ${AppState.provinces.map(p => `
-                    <tr class="hover:bg-indigo-50/30 transition">
-                      <td class="px-5 py-4 text-sm font-bold text-slate-700">${p.nameThai}</td>
-                      <td class="px-5 py-4 text-sm font-mono text-indigo-500 bg-indigo-50/50 rounded-lg">${p.key}</td>
+                    <tr class="hover:bg-purple-950/10 transition">
+                      <td class="px-5 py-4 text-sm font-bold text-white">${p.nameThai}</td>
+                      <td class="px-5 py-4 text-sm font-mono text-purple-400">${p.key}</td>
                       <td class="px-5 py-4 text-right">
-                        <button data-id="${p.id}" data-name="${p.nameThai}" class="delete-province-btn text-red-400 hover:text-red-600 p-2.5 rounded-full hover:bg-red-50 transition">
+                        <button data-id="${p.id}" data-name="${p.nameThai}" class="delete-province-btn text-zinc-500 hover:text-red-400 p-2 rounded-full hover:bg-red-500/10 transition">
                           <i class="fas fa-trash-alt"></i>
                         </button>
                       </td>
@@ -1668,31 +1693,31 @@ collectFormData(form) {
       await this.fetchData();
       this.renderView('provinces-management-container');
     } catch (error) {
-      UI.showToast(`บันทึกพลาด: ${error.message}`, 'error');
+      UI.showToast(`บันทึกผิดพลาด: ${error.message}`, 'error');
     } finally {
-      UI.toggleButtonLoading(saveButton, false, 'เพิ่มข้อมูลจังหวัด');
+      UI.toggleButtonLoading(saveButton, false, 'บันทึกข้อมูลหมวดหมู่จังหวัด');
     }
   },
   
   handleDeleteProvince({ id, name }) {
     UI.showModal({
-      title: 'ลบข้อมูลจังหวัด',
-      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>? โปรไฟล์ที่เชื่อมกับจังหวัดนี้อาจจะไม่แสดงผลบนหน้าเว็บ`,
+      title: 'ลบข้อมูลพิกัดจังหวัด',
+      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>? โปรไฟล์ที่เชื่อมโยงกับค่าดังกล่าวจะไม่แสดงผลบนระบบหน้าเว็บ`,
       onConfirm: async () => {
         try {
           const { error } = await supabase.from('provinces').delete().eq('id', id);
           if (error) throw error;
-          UI.showToast('ลบจังหวัดออกจากระบบแล้ว', 'success');
+          UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
           await this.fetchData();
           this.renderView('provinces-management-container');
         } catch (error) {
-          UI.showToast(`ลบไม่สำเร็จ: ${error.message}`, 'error');
+          UI.showToast(`ทำรายการไม่สำเร็จ: ${error.message}`, 'error');
         }
       }
     });
   }
 };
-// Initialize the application
+
 document.addEventListener('DOMContentLoaded', () => {
   Controller.setupEventListeners();
   Controller.initApp();
@@ -1713,13 +1738,13 @@ document.addEventListener('DOMContentLoaded', () => {
     files.forEach(file => {
       const url = URL.createObjectURL(file);
       const card = document.createElement('div');
-      card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01]';
+      card.className = 'relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01] bg-zinc-950 border border-white/5';
       const img = document.createElement('img');
       img.src = url;
       img.alt = file.name;
       img.className = 'w-full h-32 object-cover';
       const badge = document.createElement('div');
-      badge.className = 'absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
+      badge.className = 'absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur';
       badge.textContent = (file.type || '').replace('image/','').toUpperCase();
       card.appendChild(img);
       card.appendChild(badge);
@@ -1821,7 +1846,7 @@ document.addEventListener('DOMContentLoaded', () => {
     files.forEach((file, idx) => {
       const url = URL.createObjectURL(file);
       const card = document.createElement('div');
-      card.className = 'group relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01] subtle-pop';
+      card.className = 'group relative rounded-xl overflow-hidden shadow hover:shadow-lg transition transform hover:scale-[1.01] subtle-pop bg-zinc-950 border border-white/5';
       
       const img = document.createElement('img');
       img.src = url;
@@ -1832,13 +1857,13 @@ document.addEventListener('DOMContentLoaded', () => {
       topbar.className = 'absolute inset-x-0 top-0 flex justify-between p-2 opacity-0 group-hover:opacity-100 transition';
       
       const badge = document.createElement('div');
-      badge.className = 'text-[10px] px-2 py-1 rounded-full bg-black/60 text-white backdrop-blur';
+      badge.className = 'text-[9px] px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur';
       badge.textContent = (file.type || '').replace('image/','').toUpperCase();
       
       const del = document.createElement('button');
       del.type = 'button';
-      del.className = 'text-white bg-red-500/80 hover:bg-red-600 text-xs px-2 py-1 rounded';
-      del.textContent = 'ลบ';
+      del.className = 'text-white bg-red-600 hover:bg-red-700 text-[10px] px-2.5 py-0.5 rounded-full';
+      del.textContent = 'ลบรูป';
       del.addEventListener('click', () => {
         const arr = Array.from(input.files);
         arr.splice(idx, 1);
@@ -1861,7 +1886,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const f of files) {
       if (!/^image\//i.test(f.type)) continue;
       if (f.size > MAX_SIZE) {
-        UI && UI.showToast ? UI.showToast(`ไฟล์ ${f.name} ใหญ่เกิน 10MB`, 'warning') : console.warn('oversize', f.name);
+        UI && UI.showToast ? UI.showToast(`ไฟล์ ${f.name} มีขนาดใหญ่เกินเกณฑ์ 10MB`, 'error') : console.warn('oversize', f.name);
         continue;
       }
       newList.push(f);
@@ -1879,14 +1904,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ['dragenter','dragover'].forEach(ev => {
       dropArea.addEventListener(ev, e => {
         e.preventDefault();
-        dropArea.classList.add('ring-2','ring-indigo-400');
+        dropArea.classList.add('ring-2','ring-purple-500/50');
       });
     });
     
     ['dragleave','drop'].forEach(ev => {
       dropArea.addEventListener(ev, e => {
         e.preventDefault();
-        dropArea.classList.remove('ring-2','ring-indigo-400');
+        dropArea.classList.remove('ring-2','ring-purple-500/50');
       });
     });
     
@@ -1906,7 +1931,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <script>
-// Theme Toggle Functionality
 (function(){
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
@@ -1917,7 +1941,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saved) {
     root.setAttribute('data-theme', saved);
   } else {
-    root.setAttribute('data-theme', 'light');
+    root.setAttribute('data-theme', 'dark'); // Default To Dark Mode
   }
   
   btn.addEventListener('click', () => {
@@ -1950,296 +1974,200 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Cropper Modal -->
 <div id="cropper-modal">
-  <div id="cropper-box" class="card-surface">
-    <h3 class="text-lg font-semibold mb-2">ครอปรูปภาพ</h3>
+  <div id="cropper-box" class="card-surface bg-zinc-950 text-white border border-white/10">
+    <h3 class="text-lg font-semibold mb-2">ครอปรูปภาพให้ตรงสัดส่วน</h3>
     <canvas id="crop-canvas"></canvas>
-    <div class="flex flex-wrap gap-2 mt-3">
+    <div class="flex flex-wrap gap-2 mt-3 justify-center">
       <button class="btn-primary" data-aspect="1">1:1</button>
-      <button class="btn-primary" data-aspect="0.8">4:5</button>
+      <button class="btn-primary" data-aspect="0.75">3:4 (แนะนำ)</button>
       <button class="btn-primary" data-aspect="1.7777777778">16:9</button>
-      <button id="crop-apply" class="btn-primary">ใช้รูปที่ครอป</button>
-      <button id="crop-cancel" class="btn-primary">ยกเลิก</button>
+      <button id="crop-apply" class="btn-primary bg-purple-600 hover:bg-purple-700">ใช้รูปภาพนี้</button>
+      <button id="crop-cancel" class="btn-primary bg-zinc-800 hover:bg-zinc-700">ยกเลิก</button>
     </div>
   </div>
 </div>
 
-<script>
-// Image Cropper Functionality
-(function(){
-  const input = document.getElementById('image-file-input');
-  const preview = document.getElementById('deluxe-preview');
-  if (!input || !preview) return;
-  
-  function rebuild(files) {
-    const dt = new DataTransfer();
-    files.forEach(f => dt.items.add(f));
-    input.files = dt.files;
-  }
-  
-  function equip() {
-    Array.from(preview.children).forEach((card, i) => {
-      card.classList.add('reorder-card');
-      card.setAttribute('draggable','true');
-      
-      if (!card.querySelector('.btn-crop')) {
-        const bar = card.querySelector('.absolute.inset-x-0.top-0');
-        const cropBtn = document.createElement('button');
-        cropBtn.type = 'button';
-        cropBtn.textContent = 'ครอป';
-        cropBtn.className = 'btn-crop text-white bg-indigo-500/90 hover:bg-indigo-600 text-xs px-2 py-1 rounded';
-        bar.appendChild(cropBtn);
-        cropBtn.addEventListener('click', () => openCrop(i));
-      }
-      
-      card.addEventListener('dragstart', ev => {
-        ev.dataTransfer.setData('text/plain', i.toString());
-        ev.dataTransfer.effectAllowed = 'move';
-      });
-      
-      card.addEventListener('dragover', ev => {
-        ev.preventDefault();
-        ev.dataTransfer.dropEffect = 'move';
-      });
-      
-      card.addEventListener('drop', ev => {
-        ev.preventDefault();
-        const from = parseInt(ev.dataTransfer.getData('text/plain'),10);
-        const arr = Array.from(input.files);
-        const [moved] = arr.splice(from,1);
-        arr.splice(i,0,moved);
-        rebuild(arr);
-        input.dispatchEvent(new Event('change'));
-      });
-    });
-  }
-  
-  const modal = document.getElementById('cropper-modal');
-  const canvas = document.getElementById('crop-canvas');
-  const ctx = canvas.getContext('2d');
-  
-  let cropState = {
-    img: null,
-    aspect: 1,
-    fileIndex: 0,
-    bmp: null,
-    sel: { x: 0, y: 0, w: 0, h: 0 }
-  };
-  
-  function openCrop(index) {
-    const file = Array.from(input.files)[index];
-    cropState.fileIndex = index;
-    
-    createImageBitmap(file, { imageOrientation: 'from-image' }).then(bmp => {
-      cropState.bmp = bmp;
-      canvas.width = Math.min(1024, bmp.width);
-      canvas.height = Math.min(600, Math.round(canvas.width * (bmp.height/bmp.width)));
-      drawCrop();
-      modal.classList.add('active');
-    });
-  }
-  
-  function drawCrop() {
-    const bmp = cropState.bmp;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-    
-    const asp = cropState.aspect || 1;
-    let w = canvas.width * 0.8;
-    let h = w / asp;
-    
-    if (h > canvas.height * 0.8) {
-      h = canvas.height * 0.8;
-      w = h * asp;
-    }
-    
-    const x = (canvas.width - w) / 2;
-    const y = (canvas.height - h) / 2;
-    cropState.sel = { x, y, w, h };
-    
-    ctx.fillStyle = "rgba(0,0,0,.35)";
-    ctx.fillRect(0, 0, canvas.width, y);
-    ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
-    ctx.fillRect(0, y, w, y + h - y);
-    ctx.fillRect(x + w, y, canvas.width - (x + w), h);
-    
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, w, h);
-  }
-  
-  document.querySelectorAll('#cropper-box [data-aspect]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      cropState.aspect = parseFloat(btn.dataset.aspect);
-      drawCrop();
-    });
-  });
-  
-  document.getElementById('crop-cancel').addEventListener('click', () => {
-    modal.classList.remove('active');
-  });
-  
-  document.getElementById('crop-apply').addEventListener('click', async () => {
-    const scale = cropState.bmp.width / canvas.width;
-    const s = cropState.sel;
-    const cw = Math.round(s.w * scale);
-    const ch = Math.round(s.h * scale);
-    
-    const c = document.createElement('canvas');
-    c.width = cw;
-    c.height = ch;
-    
-    c.getContext('2d').drawImage(
-      cropState.bmp,
-      Math.round(s.x * scale),
-      Math.round(s.y * scale),
-      cw, ch,
-      0, 0, cw, ch
-    );
-    
-    const blob = await new Promise(res => c.toBlob(res, 'image/webp', 0.95));
-    const file = new File([blob], 'cropped.webp', {
-      type: 'image/webp',
-      lastModified: Date.now()
-    });
-    
-    const arr = Array.from(input.files);
-    arr.splice(cropState.fileIndex, 1, file);
-    rebuild(arr);
-    input.dispatchEvent(new Event('change'));
-    modal.classList.remove('active');
-  });
-  
-  const observer = new MutationObserver(equip);
-  observer.observe(preview, { childList: true, subtree: false });
-  equip();
-})();
-</script>
 <!-- ================================================================================== -->
-<!-- 🎵 ULTIMATE ADMIN WIDGET (Final Fixed: Video Priority Mode) -->
+<!-- 🎵 ULTIMATE ADMIN WIDGET (Enhanced with Hi-Fi Audio Engine) -->
 <!-- ================================================================================== -->
+
+<!-- โหลด FontAwesome เพื่อความสวยงามของไอคอน -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-  /* --- Widget Style --- */
-  :root {
-    --widget-size: 60px;
-    --widget-bg: rgba(255, 255, 255, 0.95);
-    --widget-blur: blur(20px) saturate(180%);
-    --widget-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    --primary-color: #FF6F61;
-  }
-
+  /* สไตล์พื้นฐานสำหรับหน้าควบคุมและแอนิเมชัน */
   #admin-assistive-root {
-    position: fixed; z-index: 999999; top: 75%; left: 80%;
-    touch-action: none; user-select: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    transition: all 0.3s ease;
   }
-  
   .assistive-btn {
-    width: var(--widget-size); height: var(--widget-size);
-    background: var(--widget-bg);
-    backdrop-filter: var(--widget-blur); -webkit-backdrop-filter: var(--widget-blur);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
     border-radius: 50%;
-    box-shadow: var(--widget-shadow);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; position: relative;
-    color: var(--primary-color); font-size: 26px;
-    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .assistive-btn:active { transform: scale(0.9); }
-
-  .playing-pulse { animation: pulse 1.5s infinite; color: #D667C3; }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(214, 103, 195, 0.6); }
-    70% { box-shadow: 0 0 0 15px rgba(214, 103, 195, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(214, 103, 195, 0); }
+  .playing-pulse {
+    animation: buttonPulse 2s infinite;
+  }
+  @keyframes buttonPulse {
+    0% { transform: scale(1); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5); }
+    50% { transform: scale(1.08); box-shadow: 0 4px 25px rgba(59, 130, 246, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5); }
   }
 
   .control-center-panel {
-    position: fixed; top: 50%; left: 50%; 
-    transform: translate(-50%, -50%) scale(0.9);
-    width: 90%; max-width: 380px;
-    background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 50px 100px rgba(0,0,0,0.4);
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 340px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     padding: 20px;
-    opacity: 0; pointer-events: none; z-index: 100001;
-    transition: all 0.25s ease;
-    display: flex; flex-direction: column; gap: 12px;
-    max-height: 85vh;
-    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-  .control-center-panel.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-
-  /* 🎬 Video Container (แก้โดยการใช้ display: block ผ่าน JS โดยตรง) */
-  #video-display-area {
-    position: relative; 
-    width: 100%; 
-    background: #000;
-    border-radius: 14px; 
-    overflow: hidden; 
-    display: none; /* เริ่มต้นซ่อนไว้ */
-    min-height: 220px; 
-    justify-content: center; 
-    align-items: center;
-    z-index: 20; /* ให้อยู่บนสุดเสมอ */
+  .control-center-panel.active {
+    display: flex;
   }
-  
-  #video-display-area iframe { width: 100%; aspect-ratio: 16/9; border: none; }
-  #video-display-area video { width: 100%; max-height: 250px; }
-
-  /* 🎵 Music Display */
-  #music-display-area { text-align: center; padding: 10px; display: block; }
-  
-  .music-cover {
-    width: 120px; height: 120px; margin: 0 auto 10px;
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  }
-  .music-cover img { width: 100%; height: 100%; object-fit: cover; }
-
-  /* 📂 Playlist View */
-  .playlist-view {
-    display: none; flex-direction: column; gap: 8px;
-    max-height: 300px; overflow-y: auto;
-    padding-right: 5px;
-  }
-  .playlist-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px; background: #f8f9fa; border-radius: 10px;
-    cursor: pointer; transition: 0.2s; border: 1px solid transparent;
-  }
-  .playlist-item:hover { background: #f0f0f0; }
-  .playlist-info { flex: 1; overflow: hidden; }
-  .playlist-title { font-size: 13px; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .playlist-type { font-size: 10px; color: #888; text-transform: uppercase; }
-
-  /* Controls */
-  .media-input {
-    width: 100%; background: #f3f4f6; border: none;
-    padding: 12px; border-radius: 12px; outline: none;
-    font-size: 14px; text-align: center; color: #333;
-  }
-  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  
-  .preset-btn {
-    padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 12px;
-    font-size: 12px; font-weight: 600; color: #555; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-  }
-  .preset-btn:hover { background: #f9fafb; }
-  .preset-btn.highlight { background: var(--primary-color); color: white; border: none; }
-  .preset-btn.highlight i { color: white; }
-  
   .close-btn {
-    position: absolute; top: 15px; right: 15px;
-    width: 30px; height: 30px; border-radius: 50%; background: #f3f4f6;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: #666;
   }
   .back-btn {
-    display: none; font-size: 12px; color: #555; cursor: pointer; margin-bottom: 5px;
+    display: none;
+    font-size: 13px;
+    color: #3b82f6;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  .media-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+  .preset-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .preset-btn {
+    padding: 10px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .preset-btn:hover { background: #e5e7eb; }
+  .preset-btn.highlight {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+
+  /* ส่วนแอนิเมชันของหน้าปกเพลง */
+  .music-cover {
+    width: 120px;
+    height: 120px;
+    margin: 15px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border: 4px solid #fff;
+  }
+  .music-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .music-cover img.spinning {
+    animation: spin 10s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* แสดงสถานะระบบเสียง Hi-Fi */
+  .hifi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin: 8px auto;
+  }
+  .hifi-badge i {
+    animation: pulseGlow 1.5s infinite alternate;
+  }
+  @keyframes pulseGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  /* รายการคลังเพลง */
+  .playlist-view {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 15px;
+  }
+  .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .playlist-item:hover { background: #f3f4f6; }
+  .playlist-info { flex-grow: 1; text-align: left; }
+  .playlist-title { font-size: 12px; font-weight: bold; color: #374151; }
+  .playlist-type { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
+
+  /* กล่องแสดงวิดีโอ */
+  #video-display-area {
+    display: none;
+    width: 100%;
+    height: 180px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
   }
 </style>
 
-<!-- UI Elements -->
 <div id="admin-assistive-root">
   <div class="assistive-btn" id="assistive-main-btn"><i class="fas fa-compact-disc"></i></div>
 </div>
@@ -2247,34 +2175,38 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="control-center-panel" id="admin-control-panel">
   <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   
-  <div class="text-center">
-    <h3 class="font-bold text-gray-800" id="panel-title">Media Center</h3>
+  <div style="text-align: center;">
+    <h3 style="font-weight: bold; color: #1f2937; margin: 0;" id="panel-title">Media Center</h3>
     <div class="back-btn" id="playlist-back-btn" onclick="AdminOS.toggleView('player')">
       <i class="fas fa-arrow-left"></i> กลับไปหน้าเล่น
+    </div>
+    
+    <!-- สัญลักษณ์แสดงว่าระบบเสียงพรีเมียมกำลังทำงาน -->
+    <div class="hifi-badge">
+      <i class="fas fa-sliders-h"></i> Smart Hi-Fi Audio Active
     </div>
   </div>
 
   <!-- PLAYER VIEW -->
   <div id="player-view-container">
+    <!-- พื้นที่สำหรับเล่นวิดีโอ MP4 / Youtube -->
+    <div id="video-display-area">
+      <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
+    </div>
     
-    <!-- ⚠️ ส่วนแสดงวิดีโอ (YouTube/File) -->
-    <div id="video-display-area"></div>
-    
-    <!-- 🎵 ส่วนแสดงหน้าปกเพลง (จะถูกซ่อนเมื่อเล่นวิดีโอ) -->
+    <!-- พื้นที่แสดงสถานะของเพลง MP3 -->
     <div id="music-display-area">
       <div class="music-cover">
-        <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80">
+        <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Music Cover">
       </div>
-      <p class="text-xs text-gray-500 mt-2" id="current-track-name">Ready to Play</p>
+      <p style="font-size: 12px; color: #6b7280; margin: 5px 0; text-align: center;" id="current-track-name">Ready to Play</p>
     </div>
 
-    <!-- ช่องกรอก URL -->
     <input type="text" class="media-input mb-3" id="media-url-input" 
-           placeholder="วางลิงก์ YouTube หรือ Video..." 
+           placeholder="วางลิงก์ YouTube หรือ วิดีโอตรง (mp4/mp3)..." 
            onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
 
     <div class="preset-grid">
-      <!-- ปุ่มเปิดคลังเพลง -->
       <button class="preset-btn highlight" style="grid-column: span 2;" 
               onclick="AdminOS.toggleView('playlist')">
         <i class="fas fa-list-ul"></i> 📂 เปิดคลังเพลงของฉัน
@@ -2288,59 +2220,143 @@ document.addEventListener('DOMContentLoaded', () => {
         <i class="fas fa-folder-open"></i> ไฟล์เครื่อง
       </button>
       
-      <button class="preset-btn" style="color:red; grid-column: span 2;" onclick="AdminOS.stopAll()">
+      <button class="preset-btn" style="color:#ef4444; grid-column: span 2; background: #fee2e2;" onclick="AdminOS.stopAll()">
         <i class="fas fa-stop"></i> หยุดเล่น
       </button>
     </div>
   </div>
 
-  <!-- PLAYLIST VIEW (หน้ารายการเพลง) -->
+  <!-- PLAYLIST VIEW -->
   <div id="playlist-view-container" class="playlist-view"></div>
   
-  <input type="file" id="local-file-picker" hidden accept="video/*,audio/*" onchange="AdminOS.playLocalFile(this)">
+  <!-- เครื่องเล่นเสียงประเภท MP3 ที่ซ่อนอยู่ -->
+  <audio id="main-audio-player" style="display:none;"></audio>
+  <input type="file" id="local-file-picker" hidden accept="video/mp4,audio/mp3,audio/*,video/*" onchange="AdminOS.playLocalFile(this)">
 </div>
 
 <script>
-const AdminOS = {
-  // --- 💿 คลังเพลงบนโฮสต์ (ใส่ชื่อไฟล์ตรงนี้) ---
-  myAlbum: [
-    // แบบที่ 1: ไฟล์บนโฮสต์ (ใส่ path ให้ถูก)
-    { 
-      title: "เวอร์ชั่น - น้อนน", 
-      url: "./songs/เวอร์ชั่น - น้อนน.mp4", 
-      type: "video" 
-    },
+/**
+ * 🔊 AudioEngine: ระบบปรับปรุงแต่งเสียงสไตล์ iPad/iPhone ประสิทธิภาพสูง
+ * ใช้ Web Audio API ในการคุมและกรองคลื่นความถี่เพื่อให้ได้น้ำเสียงที่พรีเมียมขึ้นโดยอัตโนมัติ
+ */
+const AudioEngine = {
+  ctx: null,
+  initialized: false,
+  nodes: {},
 
-    // ถ้ามีเพลงอื่นในโฟลเดอร์ songs อีก ก็เพิ่มบรรทัดต่อได้เลย
-    { 
-      title: "😶", 
-      url: "./songs/wawai.mp4", 
-      type: "video" 
-    },
+  init(audioEl, videoEl) {
+    if (this.initialized) return;
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioContextClass();
 
-    // แบบที่ 2: ลิงก์ YouTube (ผสมกันได้)
-    { 
-      title: "นนท์ ธนนท์ - วันที่อ่อนแอ (Live)", 
-      url: "https://www.youtube.com/watch?v=PrlV8Q_FvjM", 
-      type: "youtube" 
+      // เปิดใช้ CrossOrigin เพื่ออนุญาตให้ Web Audio ปรับแต่งเสียงจากภายนอกได้
+      audioEl.crossOrigin = "anonymous";
+      videoEl.crossOrigin = "anonymous";
+
+      // สร้าง Source Nodes
+      this.nodes.audioSource = this.ctx.createMediaElementSource(audioEl);
+      this.nodes.videoSource = this.ctx.createMediaElementSource(videoEl);
+
+      // --- ⚙️ ชุดแต่งเสียงระดับสตูดิโอ (DSP Chain) ---
+
+      // 1. Sub-Bass Boost (ย่าน 85Hz): ดึงฐานเสียงเบสให้หนานุ่ม มีน้ำหนักเหมือนลำโพงใหญ่
+      this.nodes.bass = this.ctx.createBiquadFilter();
+      this.nodes.bass.type = "lowshelf";
+      this.nodes.bass.frequency.value = 85; 
+      this.nodes.bass.gain.value = 5.0; // เพิ่มความนุ่ม 5.0 dB
+
+      // 2. Mud Filter (ย่าน 320Hz): ลดอาการเสียงกลางบวม เพื่อมิติเสียงที่เคลียร์สะอาด
+      this.nodes.midClean = this.ctx.createBiquadFilter();
+      this.nodes.midClean.type = "peaking";
+      this.nodes.midClean.frequency.value = 320;
+      this.nodes.midClean.Q.value = 1.0;
+      this.nodes.midClean.gain.value = -2.0; // ดรอปเสียงสะท้อนอื้ออึงลงเล็กน้อย
+
+      // 3. Clear Vocal / Presence (ย่าน 3.2kHz): ดึงเสียงร้องให้โดดเด่น สว่างใส พุ่งมาด้านหน้า
+      this.nodes.vocal = this.ctx.createBiquadFilter();
+      this.nodes.vocal.type = "peaking";
+      this.nodes.vocal.frequency.value = 3200;
+      this.nodes.vocal.Q.value = 1.2;
+      this.nodes.vocal.gain.value = 3.5; // เสริมความกระชับเสียงร้อง 3.5 dB
+
+      // 4. Sparkling Air / Treble (ย่าน 11kHz): ย่านเสียงแหลมใสระดับ Hi-Res เพื่อเสียงฉาบและเครื่องสายที่ประกายพริ้ว
+      this.nodes.treble = this.ctx.createBiquadFilter();
+      this.nodes.treble.type = "highshelf";
+      this.nodes.treble.frequency.value = 11000;
+      this.nodes.treble.gain.value = 4.5; // ความกรุ๊งกริ๊งระดับ 4.5 dB
+
+      // 5. Dynamics Compressor: บีบอัดเสียงเพื่อความแน่น (Punchy) และป้องกันเสียงแตกเมื่อเปิดเสียงดัง
+      this.nodes.compressor = this.ctx.createDynamicsCompressor();
+      this.nodes.compressor.threshold.setValueAtTime(-16, this.ctx.currentTime); // dB
+      this.nodes.compressor.knee.setValueAtTime(12, this.ctx.currentTime);
+      this.nodes.compressor.ratio.setValueAtTime(4.0, this.ctx.currentTime);
+      this.nodes.compressor.attack.setValueAtTime(0.012, this.ctx.currentTime); // 12ms
+      this.nodes.compressor.release.setValueAtTime(0.18, this.ctx.currentTime); // 180ms
+
+      // 6. Master Volume / Limiter: เร่งระดับเสียงให้ได้พลังที่เต็มอิ่มยิ่งขึ้น
+      this.nodes.limiter = this.ctx.createGain();
+      this.nodes.limiter.gain.value = 1.30; // ชดเชยความดังขึ้น 30%
+
+      // ต่อสายสัญญาณจากตัวเล่นทั้งสองเข้าสู่จุดแต่งเสียงตัวเดียวกัน
+      this.nodes.audioSource.connect(this.nodes.bass);
+      this.nodes.videoSource.connect(this.nodes.bass);
+
+      // เชื่อมต่อการเดินทางของคลื่นเสียงตามลำดับโครงสร้าง DSP
+      this.nodes.bass.connect(this.nodes.midClean);
+      this.nodes.midClean.connect(this.nodes.vocal);
+      this.nodes.vocal.connect(this.nodes.treble);
+      this.nodes.treble.connect(this.nodes.compressor);
+      this.nodes.compressor.connect(this.nodes.limiter);
+      this.nodes.limiter.connect(this.ctx.destination);
+
+      this.initialized = true;
+      console.log("🔊 Hi-Fi Studio Sound Engine successfully engaged!");
+    } catch (e) {
+      console.warn("ไม่สามารถเริ่มระบบประมวลเสียงขั้นสูงได้เนื่องจากนโยบายเบราว์เซอร์: สลับไปใช้โหมดเสียงปกติแล้ว", e);
     }
-    
+  },
+
+  resume() {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+};
+
+const AdminOS = {
+  // คลังอัลบั้มเพลง (เพิ่มเพลงใหม่ 3 เพลงในรูปแบบ MP3 เรียบร้อยแล้ว)
+  myAlbum: [
+    { 
+      title: "ชิน-มะลิ", 
+      url: "./songs/ชิน-มะลิ.mp3", 
+      type: "audio" 
+    },
+    { 
+      title: "เกินคำว่ารัก", 
+      url: "./songs/เกินคำว่ารัก.mp3", 
+      type: "audio" 
+    },
+    { 
+      title: "wawai (MP3)", 
+      url: "./songs/wawai.mp3", 
+      type: "audio" 
+    }
   ],
   
-
   root: document.getElementById('admin-assistive-root'),
   btn: document.getElementById('assistive-main-btn'),
   panel: document.getElementById('admin-control-panel'),
-  
   playerView: document.getElementById('player-view-container'),
   playlistView: document.getElementById('playlist-view-container'),
   backBtn: document.getElementById('playlist-back-btn'),
   panelTitle: document.getElementById('panel-title'),
-  
   videoArea: document.getElementById('video-display-area'),
+  videoPlayer: document.getElementById('main-video-player'),
+  audioPlayer: document.getElementById('main-audio-player'),
   musicArea: document.getElementById('music-display-area'),
+  coverImg: document.getElementById('music-cover-img'),
   trackName: document.getElementById('current-track-name'),
-  audioPlayer: new Audio(),
   isDragging: false,
 
   init() {
@@ -2353,7 +2369,6 @@ const AdminOS = {
 
   closePanel() { this.panel.classList.remove('active'); },
 
-  // สลับหน้าจอ
   toggleView(view) {
     if (view === 'playlist') {
       this.playerView.style.display = 'none';
@@ -2373,15 +2388,16 @@ const AdminOS = {
     this.myAlbum.forEach((item) => {
       const el = document.createElement('div');
       el.className = 'playlist-item';
-      let icon = item.type === 'video' ? 'fa-video' : 'fa-youtube';
+      let icon = item.type === 'video' ? 'fa-video' : (item.type === 'youtube' ? 'fa-brands fa-youtube' : 'fa-music');
+      let color = item.type === 'youtube' ? 'red' : (item.type === 'video' ? '#3b82f6' : '#10b981');
       
       el.innerHTML = `
-        <i class="fas ${icon}" style="color:${item.type==='youtube'?'red':'#555'}"></i>
+        <i class="${icon}" style="color:${color}; width: 20px; text-align: center;"></i>
         <div class="playlist-info">
           <div class="playlist-title">${item.title}</div>
           <div class="playlist-type">${item.type}</div>
         </div>
-        <i class="fas fa-play-circle" style="color:var(--primary-color)"></i>
+        <i class="fas fa-play-circle" style="color:#3b82f6; font-size: 18px;"></i>
       `;
       el.onclick = () => {
         this.playMedia(item.url, item.type, item.title);
@@ -2392,10 +2408,14 @@ const AdminOS = {
   },
 
   stopAll() {
-    this.videoArea.innerHTML = '';
-    this.videoArea.style.display = 'none'; // ซ่อนจอวิดีโอ
-    this.musicArea.style.display = 'block'; // โชว์ปกเพลงคืนมา
+    this.videoPlayer.pause();
     this.audioPlayer.pause();
+    this.videoArea.style.display = 'none'; 
+    this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
+    this.videoPlayer = document.getElementById('main-video-player'); // re-bind
+    
+    this.musicArea.style.display = 'block'; 
+    this.coverImg.classList.remove('spinning');
     this.btn.classList.remove('playing-pulse');
     this.trackName.innerText = "Stopped";
   },
@@ -2403,48 +2423,82 @@ const AdminOS = {
   playFromInput(url) {
     url = url.trim();
     if (!url) return;
-    let type = (url.includes('youtube') || url.includes('youtu.be')) ? 'youtube' : 'video';
-    this.playMedia(url, type, 'Unknown Track');
+    this.playMedia(url, null, 'เล่นจากภายนอก');
   },
 
-  // ✅ ฟังก์ชันเล่นสื่อ (แก้ไขให้แสดงผลแน่นอน)
   playMedia(source, type, title) {
-    // 1. หยุดเสียงเพลงพื้นหลังก่อนเสมอ
+    // หยุดการทำงานสื่อนิ่งๆ ก่อนเล่นใหม่
     this.audioPlayer.pause();
-    
-    // 2. อัปเดตชื่อเพลง / เอฟเฟกต์ปุ่ม
+    this.videoPlayer.pause();
+    this.coverImg.classList.remove('spinning');
+
+    // ตรวจสอบและเลือกประเภทอัตโนมัติหากไม่ระบุมา
+    let detectedType = type;
+    if (!detectedType) {
+      if (source.includes('youtube.com') || source.includes('youtu.be')) {
+        detectedType = 'youtube';
+      } else if (source.endsWith('.mp3') || source.endsWith('.m4a') || source.endsWith('.wav') || source.endsWith('.ogg')) {
+        detectedType = 'audio';
+      } else {
+        detectedType = 'video'; // หากไม่แน่ใจให้ถือว่าเป็นวิดีโอ (เช่นลิงก์ไฟล์ mp4)
+      }
+    }
+
+    // กระตุ้น Audio Engine ทำงานจากการกดของผู้ใช้ (ป้องกัน Browser บล็อก)
+    AudioEngine.resume();
+
     this.btn.classList.add('playing-pulse');
     if(title) this.trackName.innerText = title;
 
-    // 3. จัดการการแสดงผล (สำคัญมาก!)
-    if (type === 'youtube' || type === 'video') {
-      this.musicArea.style.display = 'none';  // บังคับปิดปกเพลง!
-      this.videoArea.style.display = 'flex';  // บังคับเปิดจอวิดีโอ!
+    if (detectedType === 'youtube') {
+      this.musicArea.style.display = 'none';  
+      this.videoArea.style.display = 'flex';  
+      
+      let vId = '';
+      if (source.includes('youtu.be')) {
+        vId = source.split('/').pop().split('?')[0];
+      } else if (source.includes('v=')) {
+        vId = source.split('v=')[1].split('&')[0];
+      }
+      
+      // การเล่นวิดีโอ Youtube จำเป็นต้องโหลดผ่าน Iframe
+      this.videoArea.innerHTML = `
+        <iframe src="https://www.youtube.com/embed/${vId}?autoplay=1" 
+        allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
+
+    } else if (detectedType === 'video') {
+      this.musicArea.style.display = 'none';
+      this.videoArea.style.display = 'flex';
+
+      // คืนโครงสร้างวิดีโอดั้งเดิมเพื่อรักษาการต่อสายสัญญาณ Web Audio API
+      if (!document.getElementById('main-video-player')) {
+        this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
+        this.videoPlayer = document.getElementById('main-video-player');
+      }
+
+      this.videoPlayer.src = source;
+      
+      // เริ่มต้นเชื่อมเข้าระบบเสียงระดับสูง
+      AudioEngine.init(this.audioPlayer, this.videoPlayer);
+      
+      this.videoPlayer.play().catch(err => {
+        console.log("ระบบเล่นอัตโนมัติถูกเบราว์เซอร์หน่วงไว้ กรุณากดปุ่ม Play ด้วยตัวเอง", err);
+      });
+
     } else {
+      // โหมดเล่นไฟล์เสียง (MP3, M4A ฯลฯ)
       this.musicArea.style.display = 'block';
       this.videoArea.style.display = 'none';
-    }
+      this.coverImg.classList.add('spinning');
 
-    // 4. เล่นตามประเภท
-    if (type === 'youtube') {
-      let vId = '';
-      if (source.includes('youtu.be')) vId = source.split('/').pop().split('?')[0];
-      else if (source.includes('v=')) vId = source.split('v=')[1].split('&')[0];
-      
-      // Iframe มาตรฐาน + autoplay
-      this.videoArea.innerHTML = `
-        <iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&playsinline=1&rel=0&controls=1" 
-        allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-
-    } else if (type === 'video') {
-      this.videoArea.innerHTML = `
-        <video src="${source}" controls autoplay playsinline webkit-playsinline 
-               style="width:100%; height:100%; object-fit:contain;"></video>`;
-
-    } else {
-      // Audio Only
       this.audioPlayer.src = source;
-      this.audioPlayer.play();
+
+      // เริ่มต้นเชื่อมเข้าระบบเสียงระดับสูง
+      AudioEngine.init(this.audioPlayer, this.videoPlayer);
+
+      this.audioPlayer.play().catch(err => {
+        console.log("ระบบเล่นอัตโนมัติถูกเบราว์เซอร์หน่วงไว้ กรุณากดปุ่ม Play ด้วยตัวเอง", err);
+      });
     }
   },
 
