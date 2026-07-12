@@ -1723,6 +1723,8 @@ document.addEventListener('DOMContentLoaded', () => {
   Controller.initApp();
 });
 </script>
+<!-- START OF FILE text/plain -->
+
 <script>
 // Multi-image Preview Enhancer
 (function(){
@@ -1988,260 +1990,568 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <!-- ================================================================================== -->
-<!-- 🎵 ULTIMATE ADMIN WIDGET (Enhanced with Hi-Fi Audio Engine) -->
+<!-- 🎵 ULTIMATE ADMIN WIDGET (Enhanced with Hi-Fi Audio Engine V2) -->
 <!-- ================================================================================== -->
 
-<!-- โหลด FontAwesome เพื่อความสวยงามของไอคอน -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-  /* สไตล์พื้นฐานสำหรับหน้าควบคุมและแอนิเมชัน */
+  /* Base Floating Trigger */
   #admin-assistive-root {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 24px;
+    right: 24px;
     z-index: 9999;
-    transition: all 0.3s ease;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #admin-assistive-root:hover {
+    transform: scale(1.05);
   }
   .assistive-btn {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #4f46e5, #9333ea, #db2777);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 24px;
+    font-size: 26px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 32px rgba(147, 51, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  .assistive-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+    pointer-events: none;
   }
   .playing-pulse {
-    animation: buttonPulse 2s infinite;
+    animation: glowPulse 1.8s infinite alternate;
   }
-  @keyframes buttonPulse {
-    0% { transform: scale(1); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5); }
-    50% { transform: scale(1.08); box-shadow: 0 4px 25px rgba(59, 130, 246, 0.8); }
-    100% { transform: scale(1); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5); }
+  @keyframes glowPulse {
+    0% { box-shadow: 0 0 10px rgba(147, 51, 234, 0.4), 0 8px 32px rgba(147, 51, 234, 0.2); }
+    100% { box-shadow: 0 0 25px rgba(219, 39, 119, 0.8), 0 8px 32px rgba(147, 51, 234, 0.5); }
   }
 
+  /* Control Panel Redesign (Premium Dark Glassmorphism) */
   .control-center-panel {
     position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 340px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    padding: 20px;
+    bottom: 100px;
+    right: 24px;
+    width: 350px;
+    background: rgba(10, 10, 18, 0.82);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1);
+    padding: 22px;
     display: none;
     flex-direction: column;
     z-index: 9999;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #f3f4f6;
   }
   .control-center-panel.active {
     display: flex;
   }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
   .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
     cursor: pointer;
-    color: #666;
+    color: #9ca3af;
+    transition: color 0.2s, transform 0.2s;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
   }
-  .back-btn {
-    display: none;
-    font-size: 13px;
-    color: #3b82f6;
-    cursor: pointer;
-    margin-top: 5px;
-  }
-  .media-input {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 13px;
-    box-sizing: border-box;
-  }
-  .preset-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .preset-btn {
-    padding: 10px;
-    background: #f3f4f6;
-    border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .preset-btn:hover { background: #e5e7eb; }
-  .preset-btn.highlight {
-    background: #e0f2fe;
-    color: #0369a1;
+  .close-btn:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+    transform: rotate(90deg);
   }
 
-  /* ส่วนแอนิเมชันของหน้าปกเพลง */
+  /* Obsidian Tabs Layout */
+  .tab-bar {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 12px;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  /* Elegant CD cover visualizer styling */
   .music-cover {
-    width: 120px;
-    height: 120px;
-    margin: 15px auto;
+    width: 110px;
+    height: 110px;
+    margin: 10px auto;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    border: 4px solid #fff;
+    position: relative;
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
   }
   .music-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .music-cover img.spinning {
-    animation: spin 10s linear infinite;
+  .music-cover.spinning img {
+    animation: spinCD 12s linear infinite;
   }
-  @keyframes spin {
+  @keyframes spinCD {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
+  /* Center Spindle Hole for CD look */
+  .music-cover::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px; height: 20px;
+    background: rgba(10, 10, 18, 0.9);
+    border: 3px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    z-index: 2;
+  }
 
-  /* แสดงสถานะระบบเสียง Hi-Fi */
-  .hifi-badge {
-    display: inline-flex;
+  /* Audio Spectrum Canvas */
+  .visualizer-container {
+    width: 100%;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  #audio-visualizer {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Hi-Fi Badge Styling */
+  .hifi-status {
+    display: flex;
     align-items: center;
-    gap: 5px;
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 3px 8px;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #c084fc;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 4px 10px;
     border-radius: 20px;
-    margin: 8px auto;
+    width: max-content;
+    margin: 8px auto 12px;
   }
-  .hifi-badge i {
-    animation: pulseGlow 1.5s infinite alternate;
+  .hifi-status i {
+    animation: hifiPulse 1.2s infinite alternate;
   }
-  @keyframes pulseGlow {
-    0% { opacity: 0.5; }
-    100% { opacity: 1; }
+  @keyframes hifiPulse {
+    from { opacity: 0.4; }
+    to { opacity: 1; text-shadow: 0 0 8px #c084fc; }
   }
 
-  /* รายการคลังเพลง */
+  /* Interactive EQ & Parameters Sliders */
+  .slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .eq-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .eq-label {
+    font-size: 11px;
+    color: #9ca3af;
+    width: 65px;
+    font-weight: 600;
+  }
+  .eq-slider-wrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .eq-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    transition: background 0.3s;
+  }
+  .eq-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #a855f7;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+    transition: transform 0.1s, background-color 0.2s;
+  }
+  .eq-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #c084fc;
+  }
+  .eq-val {
+    font-size: 11px;
+    font-family: monospace;
+    color: #a855f7;
+    width: 32px;
+    text-align: right;
+  }
+
+  /* Media Input & Buttons */
+  .media-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s;
+  }
+  .media-input:focus {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+    background: rgba(255,255,255,0.08);
+  }
+  .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .action-btn {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: #e5e7eb;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+  .action-btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    border: none;
+  }
+  .action-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .action-btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+  .action-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #fff;
+  }
+
+  /* Preset EQ Chips container */
+  .preset-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    justify-content: space-between;
+  }
+  .preset-chip {
+    flex: 1;
+    padding: 6px 2px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #9ca3af;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .preset-chip:hover {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: #c084fc;
+  }
+
+  /* Playlist Layout design */
   .playlist-view {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 250px;
+    max-height: 240px;
     overflow-y: auto;
-    margin-top: 15px;
+    padding-right: 4px;
+  }
+  .playlist-view::-webkit-scrollbar {
+    width: 4px;
+  }
+  .playlist-view::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
   }
   .playlist-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px;
-    background: #f9fafb;
-    border-radius: 8px;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255,255,255,0.02);
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
   }
-  .playlist-item:hover { background: #f3f4f6; }
-  .playlist-info { flex-grow: 1; text-align: left; }
-  .playlist-title { font-size: 12px; font-weight: bold; color: #374151; }
-  .playlist-type { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
+  .playlist-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .playlist-info {
+    flex-grow: 1;
+    text-align: left;
+  }
+  .playlist-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #f3f4f6;
+  }
+  .playlist-type {
+    font-size: 9px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
 
-  /* กล่องแสดงวิดีโอ */
+  /* Embedded Video Area layout */
   #video-display-area {
     display: none;
     width: 100%;
     height: 180px;
     background: #000;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Utility CSS */
+  .tab-pane {
+    display: none;
+  }
+  .tab-pane.active {
+    display: block;
   }
 </style>
 
+<!-- Assistive Floating Button -->
 <div id="admin-assistive-root">
-  <div class="assistive-btn" id="assistive-main-btn"><i class="fas fa-compact-disc"></i></div>
+  <div class="assistive-btn" id="assistive-main-btn">
+    <i class="fas fa-compact-disc"></i>
+  </div>
 </div>
 
+<!-- Control Panel -->
 <div class="control-center-panel" id="admin-control-panel">
-  <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
-  
-  <div style="text-align: center;">
-    <h3 style="font-weight: bold; color: #1f2937; margin: 0;" id="panel-title">Media Center</h3>
-    <div class="back-btn" id="playlist-back-btn" onclick="AdminOS.toggleView('player')">
-      <i class="fas fa-arrow-left"></i> กลับไปหน้าเล่น
-    </div>
-    
-    <!-- สัญลักษณ์แสดงว่าระบบเสียงพรีเมียมกำลังทำงาน -->
-    <div class="hifi-badge">
-      <i class="fas fa-sliders-h"></i> Smart Hi-Fi Audio Active
-    </div>
+  <!-- Header -->
+  <div class="panel-header">
+    <span style="font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: #fff;">Media Center</span>
+    <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   </div>
 
-  <!-- PLAYER VIEW -->
-  <div id="player-view-container">
-    <!-- พื้นที่สำหรับเล่นวิดีโอ MP4 / Youtube -->
+  <!-- Unified Navigation Tab-Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="AdminOS.switchTab('player')">สตรีมเพลง</button>
+    <button class="tab-btn" onclick="AdminOS.switchTab('eq')">ห้องเสียง EQ</button>
+    <button class="tab-btn" onclick="AdminOS.switchTab('playlist')">คลังอัลบั้ม</button>
+  </div>
+
+  <!-- TAB 1: PLAYER VIEW -->
+  <div id="tab-player" class="tab-pane active">
+    <!-- Area for MP4 / Youtube streaming -->
     <div id="video-display-area">
       <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
     </div>
     
-    <!-- พื้นที่แสดงสถานะของเพลง MP3 -->
+    <!-- Audio visual/CD Area -->
     <div id="music-display-area">
-      <div class="music-cover">
+      <div class="music-cover" id="music-cover-container">
         <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Music Cover">
       </div>
-      <p style="font-size: 12px; color: #6b7280; margin: 5px 0; text-align: center;" id="current-track-name">Ready to Play</p>
+      <p style="font-size: 13px; font-weight: 600; color: #fff; margin: 8px 0 2px; text-align: center;" id="current-track-name">พร้อมสำหรับการเล่น</p>
+      <p style="font-size: 10px; color: #9ca3af; margin: 0 0 10px; text-align: center;">Master Audio Engine V2</p>
     </div>
 
-    <input type="text" class="media-input mb-3" id="media-url-input" 
-           placeholder="วางลิงก์ YouTube หรือ วิดีโอตรง (mp4/mp3)..." 
+    <!-- Live Spectrum Canvas -->
+    <div class="visualizer-container">
+      <canvas id="audio-visualizer" width="306" height="48"></canvas>
+    </div>
+
+    <!-- Audio Active Badge -->
+    <div class="hifi-status">
+      <i class="fas fa-circle-notch fa-spin"></i> Smart DSP Hi-Fi Mode Active
+    </div>
+
+    <!-- URL Input -->
+    <input type="text" class="media-input" id="media-url-input" 
+           placeholder="วางลิงก์ YouTube หรือลิงก์ตรง (mp4/mp3) ที่นี่..." 
            onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
 
-    <div class="preset-grid">
-      <button class="preset-btn highlight" style="grid-column: span 2;" 
-              onclick="AdminOS.toggleView('playlist')">
-        <i class="fas fa-list-ul"></i> 📂 เปิดคลังเพลงของฉัน
+    <div class="action-grid">
+      <button class="action-btn action-btn-primary" onclick="document.getElementById('local-file-picker').click()">
+        <i class="fas fa-folder-open"></i> เปิดไฟล์เครื่อง
       </button>
-
-      <button class="preset-btn" onclick="AdminOS.playMedia('https://www.youtube.com/watch?v=jfKfPfyJRdk', 'youtube', 'Lofi Girl')">
-        <i class="fas fa-coffee"></i> Lofi Girl
-      </button>
-      
-      <button class="preset-btn" onclick="document.getElementById('local-file-picker').click()">
-        <i class="fas fa-folder-open"></i> ไฟล์เครื่อง
-      </button>
-      
-      <button class="preset-btn" style="color:#ef4444; grid-column: span 2; background: #fee2e2;" onclick="AdminOS.stopAll()">
+      <button class="action-btn action-btn-danger" onclick="AdminOS.stopAll()">
         <i class="fas fa-stop"></i> หยุดเล่น
       </button>
     </div>
   </div>
 
-  <!-- PLAYLIST VIEW -->
-  <div id="playlist-view-container" class="playlist-view"></div>
-  
-  <!-- เครื่องเล่นเสียงประเภท MP3 ที่ซ่อนอยู่ -->
+  <!-- TAB 2: EQ STUDIO (Advanced Digital Signal Processing) -->
+  <div id="tab-eq" class="tab-pane">
+    <div class="hifi-status" style="margin-top:0;">
+      <i class="fas fa-sliders-h"></i> 3D Haas Filter & Peak Limiter
+    </div>
+
+    <!-- Sliders list -->
+    <div class="slider-group">
+      <!-- BASS BOOST (80Hz) -->
+      <div class="eq-row">
+        <span class="eq-label">Bass (80Hz)</span>
+        <div class="eq-slider-wrapper">
+          <input type="range" class="eq-slider" id="eq-bass-slider" min="-12" max="12" step="1" value="4" 
+                 oninput="AudioEngine.setEQ('bass', this.value); document.getElementById('eq-bass-val').innerText = this.value + ' dB'">
+        </div>
+        <span class="eq-val" id="eq-bass-val">4 dB</span>
+      </div>
+
+      <!-- MID CLEAN (320Hz) -->
+      <div class="eq-row">
+        <span class="eq-label">Mid-Clean</span>
+        <div class="eq-slider-wrapper">
+          <input type="range" class="eq-slider" id="eq-mid-slider" min="-12" max="12" step="1" value="-2" 
+                 oninput="AudioEngine.setEQ('midClean', this.value); document.getElementById('eq-mid-val').innerText = this.value + ' dB'">
+        </div>
+        <span class="eq-val" id="eq-mid-val">-2 dB</span>
+      </div>
+
+      <!-- VOCALS (3kHz) -->
+      <div class="eq-row">
+        <span class="eq-label">Vocal Focus</span>
+        <div class="eq-slider-wrapper">
+          <input type="range" class="eq-slider" id="eq-vocal-slider" min="-12" max="12" step="1" value="3" 
+                 oninput="AudioEngine.setEQ('vocals', this.value); document.getElementById('eq-vocal-val').innerText = this.value + ' dB'">
+        </div>
+        <span class="eq-val" id="eq-vocal-val">3 dB</span>
+      </div>
+
+      <!-- TREBLE (11kHz) -->
+      <div class="eq-row">
+        <span class="eq-label">Treble</span>
+        <div class="eq-slider-wrapper">
+          <input type="range" class="eq-slider" id="eq-treble-slider" min="-12" max="12" step="1" value="4" 
+                 oninput="AudioEngine.setEQ('treble', this.value); document.getElementById('eq-treble-val').innerText = this.value + ' dB'">
+        </div>
+        <span class="eq-val" id="eq-treble-val">4 dB</span>
+      </div>
+
+      <!-- HAAS SPATIAL WIDTH -->
+      <div class="eq-row">
+        <span class="eq-label">3D Surround</span>
+        <div class="eq-slider-wrapper">
+          <input type="range" class="eq-slider" id="eq-spatial-slider" min="0" max="30" step="1" value="15" 
+                 oninput="AudioEngine.setHaasDelay(this.value); document.getElementById('eq-spatial-val').innerText = this.value + ' ms'">
+        </div>
+        <span class="eq-val" id="eq-spatial-val" style="width:42px;">15 ms</span>
+      </div>
+    </div>
+
+    <!-- Equalizer presets -->
+    <p style="font-size: 11px; color:#9ca3af; margin:0 0 6px 0; text-align:left; font-weight:600;">แนวเสียงสำเร็จรูป (Presets):</p>
+    <div class="preset-row">
+      <button class="preset-chip" onclick="AudioEngine.setPreset('bass')">Deep Bass</button>
+      <button class="preset-chip" onclick="AudioEngine.setPreset('vocal')">Studio Vocal</button>
+      <button class="preset-chip" onclick="AudioEngine.setPreset('surround')">3D Wide</button>
+      <button class="preset-chip" onclick="AudioEngine.setPreset('flat')">Standard</button>
+    </div>
+  </div>
+
+  <!-- TAB 3: PLAYLIST (My Album) -->
+  <div id="tab-playlist" class="tab-pane">
+    <div class="playlist-view" id="playlist-view-container"></div>
+  </div>
+
+  <!-- Hidden elements to handle sound input -->
   <audio id="main-audio-player" style="display:none;"></audio>
   <input type="file" id="local-file-picker" hidden accept="video/mp4,audio/mp3,audio/*,video/*" onchange="AdminOS.playLocalFile(this)">
 </div>
 
 <script>
 /**
- * 🔊 AudioEngine: ระบบปรับปรุงแต่งเสียงสไตล์ iPad/iPhone ประสิทธิภาพสูง
- * ใช้ Web Audio API ในการคุมและกรองคลื่นความถี่เพื่อให้ได้น้ำเสียงที่พรีเมียมขึ้นโดยอัตโนมัติ
+ * 🔊 AudioEngine V2: ระบบจัดการและปรุงแต่งระดับ High-Fidelity Audio DSP Engine
  */
 const AudioEngine = {
   ctx: null,
   initialized: false,
+  analyser: null,
   nodes: {},
 
   init(audioEl, videoEl) {
@@ -2250,71 +2560,197 @@ const AudioEngine = {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioContextClass();
 
-      // เปิดใช้ CrossOrigin เพื่ออนุญาตให้ Web Audio ปรับแต่งเสียงจากภายนอกได้
+      // ป้องกัน CORS จากไฟล์ภายนอก
       audioEl.crossOrigin = "anonymous";
       videoEl.crossOrigin = "anonymous";
 
-      // สร้าง Source Nodes
+      // สร้าง Source Nodes (สร้างครั้งเดียวต่ออายุ MediaElement)
       this.nodes.audioSource = this.ctx.createMediaElementSource(audioEl);
       this.nodes.videoSource = this.ctx.createMediaElementSource(videoEl);
 
-      // --- ⚙️ ชุดแต่งเสียงระดับสตูดิโอ (DSP Chain) ---
+      // สร้างตัววิเคราะห์ความถี่เสียงเพื่อป้อนการเต้นแผ่น CD และ Visualizer Canvas
+      this.analyser = this.ctx.createAnalyser();
+      this.analyser.fftSize = 128; // ความไวการตอบสนอง
 
-      // 1. Sub-Bass Boost (ย่าน 85Hz): ดึงฐานเสียงเบสให้หนานุ่ม มีน้ำหนักเหมือนลำโพงใหญ่
+      // --- ⚙️ สัญญาณระบบ 3D Haas Spatializer ---
+      this.nodes.splitter = this.ctx.createChannelSplitter(2);
+      this.nodes.merger = this.ctx.createChannelMerger(2);
+      
+      this.nodes.delayLeft = this.ctx.createDelay();
+      this.nodes.delayRight = this.ctx.createDelay();
+      this.nodes.delayLeft.delayTime.value = 0.0;    // ซ้ายส่งตรงไร้ดีเลย์
+      this.nodes.delayRight.delayTime.value = 0.015; // ขวาหน่วงสัญญาณ 15ms (เพื่อมิติ Haas Effect)
+
+      // นำสัญญาณจากตัวเล่นหลักทั้ง 2 ตัวส่งเข้าตัววิเคราะห์ความถี่เสียง
+      this.nodes.audioSource.connect(this.analyser);
+      this.nodes.videoSource.connect(this.analyser);
+
+      // ต่อตัววิเคราะห์ความถี่เสียงเข้ากับระบบแยกแชนเนลเสียง (Splitter)
+      this.analyser.connect(this.nodes.splitter);
+
+      // แยกเส้นทาง ซ้าย และ ขวา
+      this.nodes.splitter.connect(this.nodes.delayLeft, 0);
+      this.nodes.splitter.connect(this.nodes.delayRight, 1);
+
+      // นำสัญญาณที่แปลงมิติแล้วมารวมแชนเนลกลับเข้าตัวรวม (Merger)
+      this.nodes.delayLeft.connect(this.nodes.merger, 0, 0);
+      this.nodes.delayRight.connect(this.nodes.merger, 0, 1);
+
+      // --- 🎛️ ระบบปรับตั้ง 4-Band Parametric Equalizer ---
+      // 1. Sub-Bass Boost (80Hz): เพิ่มฐานย่านเสียงต่ำให้นุ่ม ลึก
       this.nodes.bass = this.ctx.createBiquadFilter();
       this.nodes.bass.type = "lowshelf";
-      this.nodes.bass.frequency.value = 85; 
-      this.nodes.bass.gain.value = 5.0; // เพิ่มความนุ่ม 5.0 dB
+      this.nodes.bass.frequency.value = 80; 
+      this.nodes.bass.gain.value = 4.0; 
 
-      // 2. Mud Filter (ย่าน 320Hz): ลดอาการเสียงกลางบวม เพื่อมิติเสียงที่เคลียร์สะอาด
+      // 2. Mud-Clean (320Hz): ปรับลดย่านเสียงบวมอื้ออึง เพื่อความเคลียร์สะอาด
       this.nodes.midClean = this.ctx.createBiquadFilter();
       this.nodes.midClean.type = "peaking";
       this.nodes.midClean.frequency.value = 320;
       this.nodes.midClean.Q.value = 1.0;
-      this.nodes.midClean.gain.value = -2.0; // ดรอปเสียงสะท้อนอื้ออึงลงเล็กน้อย
+      this.nodes.midClean.gain.value = -2.0; 
 
-      // 3. Clear Vocal / Presence (ย่าน 3.2kHz): ดึงเสียงร้องให้โดดเด่น สว่างใส พุ่งมาด้านหน้า
-      this.nodes.vocal = this.ctx.createBiquadFilter();
-      this.nodes.vocal.type = "peaking";
-      this.nodes.vocal.frequency.value = 3200;
-      this.nodes.vocal.Q.value = 1.2;
-      this.nodes.vocal.gain.value = 3.5; // เสริมความกระชับเสียงร้อง 3.5 dB
+      // 3. Vocals & Presence (3000Hz): ยกระดับเสียงร้องให้ใส สว่าง โดดเด่น
+      this.nodes.vocals = this.ctx.createBiquadFilter();
+      this.nodes.vocals.type = "peaking";
+      this.nodes.vocals.frequency.value = 3000;
+      this.nodes.vocals.Q.value = 1.2;
+      this.nodes.vocals.gain.value = 3.0; 
 
-      // 4. Sparkling Air / Treble (ย่าน 11kHz): ย่านเสียงแหลมใสระดับ Hi-Res เพื่อเสียงฉาบและเครื่องสายที่ประกายพริ้ว
+      // 4. Sparkling Treble (11000Hz): เสียงแหลมแบบประกายพริ้ว
       this.nodes.treble = this.ctx.createBiquadFilter();
       this.nodes.treble.type = "highshelf";
       this.nodes.treble.frequency.value = 11000;
-      this.nodes.treble.gain.value = 4.5; // ความกรุ๊งกริ๊งระดับ 4.5 dB
+      this.nodes.treble.gain.value = 4.0; 
 
-      // 5. Dynamics Compressor: บีบอัดเสียงเพื่อความแน่น (Punchy) และป้องกันเสียงแตกเมื่อเปิดเสียงดัง
+      // 5. Dynamics Compressor: คอยคุมระดับเสียงและป้องกันอาการเสียงแตกพร่า
       this.nodes.compressor = this.ctx.createDynamicsCompressor();
-      this.nodes.compressor.threshold.setValueAtTime(-16, this.ctx.currentTime); // dB
-      this.nodes.compressor.knee.setValueAtTime(12, this.ctx.currentTime);
-      this.nodes.compressor.ratio.setValueAtTime(4.0, this.ctx.currentTime);
-      this.nodes.compressor.attack.setValueAtTime(0.012, this.ctx.currentTime); // 12ms
-      this.nodes.compressor.release.setValueAtTime(0.18, this.ctx.currentTime); // 180ms
+      this.nodes.compressor.threshold.setValueAtTime(-14, this.ctx.currentTime);
+      this.nodes.compressor.knee.setValueAtTime(10, this.ctx.currentTime);
+      this.nodes.compressor.ratio.setValueAtTime(3.0, this.ctx.currentTime);
+      this.nodes.compressor.attack.setValueAtTime(0.012, this.ctx.currentTime);
+      this.nodes.compressor.release.setValueAtTime(0.15, this.ctx.currentTime);
 
-      // 6. Master Volume / Limiter: เร่งระดับเสียงให้ได้พลังที่เต็มอิ่มยิ่งขึ้น
-      this.nodes.limiter = this.ctx.createGain();
-      this.nodes.limiter.gain.value = 1.30; // ชดเชยความดังขึ้น 30%
+      // 6. Master Volume / Output Limiter
+      this.nodes.masterGain = this.ctx.createGain();
+      this.nodes.masterGain.gain.value = 1.20; // ชดเชยความดัง 20%
 
-      // ต่อสายสัญญาณจากตัวเล่นทั้งสองเข้าสู่จุดแต่งเสียงตัวเดียวกัน
-      this.nodes.audioSource.connect(this.nodes.bass);
-      this.nodes.videoSource.connect(this.nodes.bass);
-
-      // เชื่อมต่อการเดินทางของคลื่นเสียงตามลำดับโครงสร้าง DSP
+      // เชื่อมโยงระบบเสียงตามลำดับ DSP Chain
+      this.nodes.merger.connect(this.nodes.bass);
       this.nodes.bass.connect(this.nodes.midClean);
-      this.nodes.midClean.connect(this.nodes.vocal);
-      this.nodes.vocal.connect(this.nodes.treble);
+      this.nodes.midClean.connect(this.nodes.vocals);
+      this.nodes.vocals.connect(this.nodes.treble);
       this.nodes.treble.connect(this.nodes.compressor);
-      this.nodes.compressor.connect(this.nodes.limiter);
-      this.nodes.limiter.connect(this.ctx.destination);
+      this.nodes.compressor.connect(this.nodes.masterGain);
+      this.nodes.masterGain.connect(this.ctx.destination);
 
       this.initialized = true;
+      this.startVisualizerLoop();
       console.log("🔊 Hi-Fi Studio Sound Engine successfully engaged!");
     } catch (e) {
-      console.warn("ไม่สามารถเริ่มระบบประมวลเสียงขั้นสูงได้เนื่องจากนโยบายเบราว์เซอร์: สลับไปใช้โหมดเสียงปกติแล้ว", e);
+      console.warn("ไม่สามารถใช้งาน Web Audio Engine ขั้นสูงได้: ใช้โหมดเสียงปกติแบบเบราว์เซอร์", e);
     }
+  },
+
+  setEQ(band, value) {
+    if (!this.initialized) return;
+    if (this.nodes[band]) {
+      this.nodes[band].gain.setValueAtTime(parseFloat(value), this.ctx.currentTime);
+    }
+  },
+
+  setHaasDelay(ms) {
+    if (!this.initialized) return;
+    // ปรับเปลี่ยนค่าหน่วงของแชนเนลขวาเพื่อมิติความกว้าง (สูงสุด 30ms)
+    const sec = parseFloat(ms) / 1000;
+    this.nodes.delayRight.delayTime.setValueAtTime(sec, this.ctx.currentTime);
+  },
+
+  setPreset(presetName) {
+    if (!this.initialized) return;
+    const presets = {
+      bass: { bass: 8, midClean: -3, vocals: 1, treble: 2, delay: 15 },
+      vocal: { bass: 1, midClean: -1, vocals: 6, treble: 3, delay: 8 },
+      surround: { bass: 5, midClean: -2, vocals: 3, treble: 6, delay: 28 },
+      flat: { bass: 0, midClean: 0, vocals: 0, treble: 0, delay: 0 }
+    };
+    const config = presets[presetName];
+    if (config) {
+      this.setEQ('bass', config.bass);
+      this.setEQ('midClean', config.midClean);
+      this.setEQ('vocals', config.vocals);
+      this.setEQ('treble', config.treble);
+      this.setHaasDelay(config.delay);
+
+      // อัปเดต UI แถบสไลเดอร์ตามค่าพรีเซ็ต
+      document.getElementById('eq-bass-val').innerText = config.bass + ' dB';
+      document.getElementById('eq-bass-slider').value = config.bass;
+
+      document.getElementById('eq-mid-val').innerText = config.midClean + ' dB';
+      document.getElementById('eq-mid-slider').value = config.midClean;
+
+      document.getElementById('eq-vocal-val').innerText = config.vocals + ' dB';
+      document.getElementById('eq-vocal-slider').value = config.vocals;
+
+      document.getElementById('eq-treble-val').innerText = config.treble + ' dB';
+      document.getElementById('eq-treble-slider').value = config.treble;
+
+      document.getElementById('eq-spatial-val').innerText = config.delay + ' ms';
+      document.getElementById('eq-spatial-slider').value = config.delay;
+    }
+  },
+
+  startVisualizerLoop() {
+    const canvas = document.getElementById('audio-visualizer');
+    if (!canvas) return;
+    const canvasCtx = canvas.getContext('2d');
+    const bufferLength = this.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      requestAnimationFrame(draw);
+      if (!this.initialized) return;
+
+      this.analyser.getByteFrequencyData(dataArray);
+
+      // เคลียร์พื้นหลัง Canvas แบบโปร่งแสงเล็กน้อยเพื่อสร้างแสงเอฟเฟกต์หางลาก
+      canvasCtx.fillStyle = 'rgba(10, 10, 18, 0.22)';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / bufferLength) * 1.5;
+      let barHeight;
+      let x = 0;
+
+      // ค้นหาระดับค่าเฉลี่ยความดังของเสียง (เพื่อควบคุมการเต้นของแผ่น CD)
+      let totalVolume = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        totalVolume += dataArray[i];
+      }
+      const avgVolume = totalVolume / bufferLength;
+
+      // ปล่อยคลื่นแรงขับเคลื่อนเคลื่อนไหวให้กับแผ่นซีดีตามจังหวะบีท
+      const cdCover = document.getElementById('music-cover-container');
+      if (cdCover) {
+        const scale = 1 + (avgVolume / 255) * 0.12; // ขยายสูงสุดไม่เกิน 112%
+        cdCover.style.transform = `scale(${scale})`;
+      }
+
+      // วาดแท่งแสดงความถี่เสียงไล่ระดับสีนีออนลงบนแคนวาส
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = (dataArray[i] / 255) * canvas.height * 0.88;
+
+        const gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
+        gradient.addColorStop(0, '#4f46e5');
+        gradient.addColorStop(0.5, '#9333ea');
+        gradient.addColorStop(1, '#db2777');
+
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+
+        x += barWidth;
+      }
+    };
+    draw();
   },
 
   resume() {
@@ -2325,7 +2761,7 @@ const AudioEngine = {
 };
 
 const AdminOS = {
-  // คลังอัลบั้มเพลง (เพิ่มเพลงใหม่ 3 เพลงในรูปแบบ MP3 เรียบร้อยแล้ว)
+  // รายชื่อคลังเพลงในอัลบั้ม
   myAlbum: [
     { 
       title: "ชิน-มะลิ", 
@@ -2347,16 +2783,14 @@ const AdminOS = {
   root: document.getElementById('admin-assistive-root'),
   btn: document.getElementById('assistive-main-btn'),
   panel: document.getElementById('admin-control-panel'),
-  playerView: document.getElementById('player-view-container'),
-  playlistView: document.getElementById('playlist-view-container'),
-  backBtn: document.getElementById('playlist-back-btn'),
-  panelTitle: document.getElementById('panel-title'),
   videoArea: document.getElementById('video-display-area'),
   videoPlayer: document.getElementById('main-video-player'),
   audioPlayer: document.getElementById('main-audio-player'),
   musicArea: document.getElementById('music-display-area'),
   coverImg: document.getElementById('music-cover-img'),
+  coverContainer: document.getElementById('music-cover-container'),
   trackName: document.getElementById('current-track-name'),
+  playlistContainer: document.getElementById('playlist-view-container'),
   isDragging: false,
 
   init() {
@@ -2369,41 +2803,43 @@ const AdminOS = {
 
   closePanel() { this.panel.classList.remove('active'); },
 
-  toggleView(view) {
-    if (view === 'playlist') {
-      this.playerView.style.display = 'none';
-      this.playlistView.style.display = 'flex';
-      this.backBtn.style.display = 'inline-block';
-      this.panelTitle.innerText = "My Album";
-    } else {
-      this.playerView.style.display = 'block';
-      this.playlistView.style.display = 'none';
-      this.backBtn.style.display = 'none';
-      this.panelTitle.innerText = "Media Center";
+  switchTab(tabId) {
+    // ปิดการแสดงผลแถบที่ไม่เลือกทั้งหมด
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+    // เปิดการแสดงผลแผงแท็บที่คลิกเลือก
+    const activeTab = document.getElementById(`tab-${tabId}`);
+    if (activeTab) activeTab.classList.add('active');
+
+    // ไฮไลต์ปุ่มแท็บ
+    const event = window.event;
+    if (event && event.target) {
+      event.target.classList.add('active');
     }
   },
 
   renderPlaylist() {
-    this.playlistView.innerHTML = '';
+    this.playlistContainer.innerHTML = '';
     this.myAlbum.forEach((item) => {
       const el = document.createElement('div');
       el.className = 'playlist-item';
       let icon = item.type === 'video' ? 'fa-video' : (item.type === 'youtube' ? 'fa-brands fa-youtube' : 'fa-music');
-      let color = item.type === 'youtube' ? 'red' : (item.type === 'video' ? '#3b82f6' : '#10b981');
+      let color = item.type === 'youtube' ? '#ef4444' : (item.type === 'video' ? '#3b82f6' : '#a855f7');
       
       el.innerHTML = `
-        <i class="${icon}" style="color:${color}; width: 20px; text-align: center;"></i>
+        <i class="${icon}" style="color:${color}; width: 22px; text-align: center; font-size: 14px;"></i>
         <div class="playlist-info">
           <div class="playlist-title">${item.title}</div>
           <div class="playlist-type">${item.type}</div>
         </div>
-        <i class="fas fa-play-circle" style="color:#3b82f6; font-size: 18px;"></i>
+        <i class="fas fa-play-circle" style="color:#a855f7; font-size: 20px;"></i>
       `;
       el.onclick = () => {
         this.playMedia(item.url, item.type, item.title);
-        this.toggleView('player');
+        this.switchTab('player');
       };
-      this.playlistView.appendChild(el);
+      this.playlistContainer.appendChild(el);
     });
   },
 
@@ -2412,27 +2848,28 @@ const AdminOS = {
     this.audioPlayer.pause();
     this.videoArea.style.display = 'none'; 
     this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
-    this.videoPlayer = document.getElementById('main-video-player'); // re-bind
+    this.videoPlayer = document.getElementById('main-video-player'); // เชื่อมต่อออบเจกต์วิดีโอใหม่
     
     this.musicArea.style.display = 'block'; 
-    this.coverImg.classList.remove('spinning');
+    this.coverContainer.classList.remove('spinning');
     this.btn.classList.remove('playing-pulse');
-    this.trackName.innerText = "Stopped";
+    this.trackName.innerText = "หยุดเล่นแล้ว";
+    if (this.coverContainer) this.coverContainer.style.transform = 'scale(1)';
   },
 
   playFromInput(url) {
     url = url.trim();
     if (!url) return;
-    this.playMedia(url, null, 'เล่นจากภายนอก');
+    this.playMedia(url, null, 'ลิงก์เล่นจากภายนอก');
   },
 
   playMedia(source, type, title) {
-    // หยุดการทำงานสื่อนิ่งๆ ก่อนเล่นใหม่
+    // รีเซ็ตการทำงานของเครื่องเล่นหลักทั้งสองเครื่อง
     this.audioPlayer.pause();
     this.videoPlayer.pause();
-    this.coverImg.classList.remove('spinning');
+    this.coverContainer.classList.remove('spinning');
 
-    // ตรวจสอบและเลือกประเภทอัตโนมัติหากไม่ระบุมา
+    // ตรวจสอบและเลือกประเภทไฟล์สื่ออัตโนมัติหากไม่ได้ระบุไว้
     let detectedType = type;
     if (!detectedType) {
       if (source.includes('youtube.com') || source.includes('youtu.be')) {
@@ -2440,15 +2877,15 @@ const AdminOS = {
       } else if (source.endsWith('.mp3') || source.endsWith('.m4a') || source.endsWith('.wav') || source.endsWith('.ogg')) {
         detectedType = 'audio';
       } else {
-        detectedType = 'video'; // หากไม่แน่ใจให้ถือว่าเป็นวิดีโอ (เช่นลิงก์ไฟล์ mp4)
+        detectedType = 'video';
       }
     }
 
-    // กระตุ้น Audio Engine ทำงานจากการกดของผู้ใช้ (ป้องกัน Browser บล็อก)
+    // กระตุ้น Audio Engine ทำงานทันทีที่คลิกเล่นเพื่อแก้ปัญหาเบราว์เซอร์บล็อกการทำงานเสียง
     AudioEngine.resume();
 
     this.btn.classList.add('playing-pulse');
-    if(title) this.trackName.innerText = title;
+    if (title) this.trackName.innerText = title;
 
     if (detectedType === 'youtube') {
       this.musicArea.style.display = 'none';  
@@ -2461,7 +2898,6 @@ const AdminOS = {
         vId = source.split('v=')[1].split('&')[0];
       }
       
-      // การเล่นวิดีโอ Youtube จำเป็นต้องโหลดผ่าน Iframe
       this.videoArea.innerHTML = `
         <iframe src="https://www.youtube.com/embed/${vId}?autoplay=1" 
         allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
@@ -2470,7 +2906,7 @@ const AdminOS = {
       this.musicArea.style.display = 'none';
       this.videoArea.style.display = 'flex';
 
-      // คืนโครงสร้างวิดีโอดั้งเดิมเพื่อรักษาการต่อสายสัญญาณ Web Audio API
+      // คืนค่าโครงสร้างผู้เล่นเพื่อรักษาสายสัญญาณประมวลผล Web Audio API
       if (!document.getElementById('main-video-player')) {
         this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
         this.videoPlayer = document.getElementById('main-video-player');
@@ -2478,26 +2914,26 @@ const AdminOS = {
 
       this.videoPlayer.src = source;
       
-      // เริ่มต้นเชื่อมเข้าระบบเสียงระดับสูง
+      // ผูกเชื่อมเข้าสู่ตัววิเคราะห์และระบบประมวลผลสัญญาณ
       AudioEngine.init(this.audioPlayer, this.videoPlayer);
       
       this.videoPlayer.play().catch(err => {
-        console.log("ระบบเล่นอัตโนมัติถูกเบราว์เซอร์หน่วงไว้ กรุณากดปุ่ม Play ด้วยตัวเอง", err);
+        console.log("การเล่นอัตโนมัติล่าช้าจากนโยบายเบราว์เซอร์: กรุณากดปุ่ม Play", err);
       });
 
     } else {
-      // โหมดเล่นไฟล์เสียง (MP3, M4A ฯลฯ)
+      // โหมดเล่นไฟล์เสียงหลัก (MP3, Audio-Format)
       this.musicArea.style.display = 'block';
       this.videoArea.style.display = 'none';
-      this.coverImg.classList.add('spinning');
+      this.coverContainer.classList.add('spinning');
 
       this.audioPlayer.src = source;
 
-      // เริ่มต้นเชื่อมเข้าระบบเสียงระดับสูง
+      // ผูกเชื่อมเข้าสู่ตัววิเคราะห์และระบบประมวลผลสัญญาณ
       AudioEngine.init(this.audioPlayer, this.videoPlayer);
 
       this.audioPlayer.play().catch(err => {
-        console.log("ระบบเล่นอัตโนมัติถูกเบราว์เซอร์หน่วงไว้ กรุณากดปุ่ม Play ด้วยตัวเอง", err);
+        console.log("การเล่นอัตโนมัติล่าช้าจากนโยบายเบราว์เซอร์: กรุณากดปุ่ม Play", err);
       });
     }
   },
@@ -2545,8 +2981,8 @@ const AdminOS = {
         el.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         const w = window.innerWidth;
         const rect = el.getBoundingClientRect();
-        if (rect.left + rect.width/2 > w/2) el.style.left = (w - 70) + 'px';
-        else el.style.left = '10px';
+        if (rect.left + rect.width/2 > w/2) el.style.left = (w - 74) + 'px';
+        else el.style.left = '24px';
         setTimeout(() => this.isDragging = false, 100);
       }
     };
