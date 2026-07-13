@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Kissmodel Mucin ✨</title>
+  <title>Kissmodel Music ✨</title>
   
   <meta name="description" content="Music panel for Kissmodel.">
   <meta name="theme-color" content="#5A2CBE">
@@ -350,21 +350,340 @@
           </ul>
 
           <!-- ============================================================================== -->
-          <!-- ⚡ COLLAPSIBLE SECURITY PROTOCOL CARD (DESIGNED & WRITTEN BY AI ZOE / GOOGLE) -->
+          <!-- ⚡ PREMIUM MINI INDICATOR & MASTER STATUS SYSTEM MONITOR MODAL -->
           <!-- ============================================================================== -->
-          <details style="margin: 24px 8px 0 8px; font-size: 10px; color: var(--color-text-muted); cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.15); text-align: left;">
-            <summary style="font-weight: 700; color: rgba(168, 85, 247, 0.6); outline: none; list-style: none; display: flex; align-items: center; gap: 6px; user-select: none;">
-              <i class="fas fa-shield-alt" style="font-size: 8px;"></i>
-              <span>Security Protocol (สิทธิ์พัฒนาระบบ)</span>
-            </summary>
-            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); line-height: 1.5; color: var(--color-text-muted);">
-              <p style="margin: 0 0 6px 0;">• หากต้องการแก้ไขดัดแปลงระบบ โปรดกรุณาทำสำเนา (Backup) สคริปต์ต้นฉบับเก็บไว้ในที่ปลอดภัยก่อนลงมือทุกครั้ง</p>
-              <p style="margin: 0 0 6px 0;">• โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับ <strong>AI Zoe</strong> (โมเดลปัญญาประดิษฐ์ขั้นสูงซึ่งได้รับการพัฒนาโดย Google) การนำโครงสร้างออกสู่ภายนอก สคริปต์อาจปิดกั้นการทำงานโดยอัตโนมัติ</p>
-              <p style="margin: 0;">• ผู้ดำเนินการแก้ไขต่อ อย่างน้อยที่สุดต้องมีระดับทักษะต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น เพื่อรักษาเสถียรภาพความเร็วและความปลอดภัยของระบบ</p>
+          <div onclick="showSystemStatusModal()" class="mt-4 mx-2 p-3 rounded-xl bg-black/45 dark:bg-zinc-950/60 border border-white/5 hover:border-purple-500/35 cursor-pointer transition-all duration-300 select-none active:scale-95 shadow-inner">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="font-extrabold text-emerald-400 tracking-wider text-[10px]">SYSTEM ONLINE</span>
+              </div>
+              <span class="text-[9px] bg-purple-500/10 text-purple-400 px-2.5 py-0.5 rounded-full font-bold border border-purple-500/20 flex items-center gap-1">
+                <i class="fas fa-file-alt text-[8px]"></i> เปิดดูบันทึกระบบ
+              </span>
             </div>
-          </details>
-          <!-- ============================================================================== -->
+          </div>
 
+          <script>
+          window.showSystemStatusModal = function() {
+            const modalRoot = document.getElementById('modal-root');
+            if (!modalRoot) return;
+            
+            const modalId = 'system-status-modal';
+            
+            modalRoot.innerHTML = `
+              <!-- โมดอลมุมมองบอร์ดมอนิเตอร์ระดับพรีเมียมเต็มหน้าจอ (Full Screen Diagnostic Dashboard) -->
+              <div id="${modalId}" class="fixed inset-0 z-[100005] bg-[#070410] flex flex-col w-full h-full text-white text-left overflow-y-auto p-6 md:p-12">
+                
+                <!-- แสงเอฟเฟกต์สะท้อนสีนีออนมุมจอด้านหลังเพื่อเพิ่มมิติความสวยงาม -->
+                <div class="absolute top-0 right-0 w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+                <!-- ส่วนหัวเมนูบอร์ดวิเคราะห์ (Sticky Header Row) -->
+                <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/10 z-10 relative">
+                  <div class="flex items-center gap-3">
+                    <span class="relative flex h-3.5 w-3.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                    </span>
+                    <div>
+                      <h3 class="text-lg md:text-xl font-extrabold tracking-wide uppercase">Kissmodel Master System Monitor</h3>
+                      <p class="text-[10px] md:text-[11px] text-emerald-400 font-extrabold tracking-widest uppercase">Live Audit Data & Security Protocol v2.5</p>
+                    </div>
+                  </div>
+                  <!-- ปุ่มกดย้อนกลับ -->
+                  <button onclick="closeSystemStatusModal()" class="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white rounded-xl border border-white/10 transition duration-200">
+                    <i class="fas fa-arrow-left"></i> ย้อนกลับไปหน้าจัดการ
+                  </button>
+                </div>
+
+                <!-- การจัดแสดงผล Responsive Grid: ซ้ายแสดงมาตรการความปลอดภัยและกลยุทธ์, ขวาแสดงรายละเอียดเชิงลึกเว็บไซด์และตารางคะแนน -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 z-10 relative">
+                  
+                  <!-- ========================================== -->
+                  <!-- 🛡️ คอลัมน์ซ้าย (สัดส่วน 4/12): มาตรการความปลอดภัยและโอกาสทางการตลาด -->
+                  <!-- ========================================== -->
+                  <div class="lg:col-span-4 space-y-6">
+                    
+                    <!-- การ์ด Security Protocol -->
+                    <div class="bg-gradient-to-br from-purple-950/20 to-zinc-900/40 p-5 rounded-2xl border border-purple-500/20 shadow-xl">
+                      <h4 class="font-extrabold text-purple-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
+                        <i class="fas fa-shield-alt text-purple-400 text-[12px]"></i> Security Protocol
+                      </h4>
+                      <p class="text-[11px] text-zinc-400 mb-4 leading-relaxed">
+                        ข้อกำหนดการใช้งานรหัสสิทธิ์และเสถียรภาพความปลอดภัยฐานข้อมูล:
+                      </p>
+                      <div class="space-y-3.5">
+                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
+                          <i class="fas fa-save text-purple-400 text-sm mt-0.5"></i>
+                          <div class="space-y-1">
+                            <p class="font-bold text-zinc-100 text-xs">ระบบสำรองข้อมูล (Backup Required)</p>
+                            <p class="text-[11px] text-zinc-400 leading-normal">หากต้องการแก้ไขดัดแปลงระบบ โปรดกรุณาทำสำเนา (Backup) สคริปต์ต้นฉบับเก็บไว้ในที่ปลอดภัยก่อนลงมือทุกครั้ง</p>
+                          </div>
+                        </div>
+                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
+                          <i class="fas fa-brain text-purple-400 text-sm mt-0.5"></i>
+                          <div class="space-y-1">
+                            <p class="font-bold text-zinc-100 text-xs">สิทธิ์การเป็นเจ้าของสถาปัตยกรรม</p>
+                            <p class="text-[11px] text-zinc-400 leading-normal">โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับ <strong>AI Zoe</strong> (โมเดลปัญญาประดิษฐ์ขั้นสูงซึ่งได้รับการพัฒนาโดย Google) การนำโครงสร้างออกสู่ภายนอก สคริปต์อาจปิดกั้นการทำงานโดยอัตโนมัติ</p>
+                          </div>
+                        </div>
+                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
+                          <i class="fas fa-user-shield text-purple-400 text-sm mt-0.5"></i>
+                          <div class="space-y-1">
+                            <p class="font-bold text-zinc-100 text-xs">เกณฑ์ระดับทักษะขั้นต่ำสำหรับการแก้ไข</p>
+                            <p class="text-[11px] text-zinc-400 leading-normal">ผู้ดำเนินการแก้ไขต่อ อย่างน้อยที่สุดต้องมีระดับทักษะต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น เพื่อรักษาเสถียรภาพความเร็วและความปลอดภัยของระบบ</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- การ์ดวิเคราะห์โอกาสทองทางการตลาดสำหรับ Kissmodel -->
+                    <div class="bg-gradient-to-br from-amber-950/20 to-zinc-900/40 p-5 rounded-2xl border border-amber-500/20 shadow-xl">
+                      <h4 class="font-extrabold text-amber-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
+                        <i class="fas fa-lightbulb text-amber-400 text-[12px]"></i> โอกาสทองสำหรับ Kissmodel
+                      </h4>
+                      <p class="text-[11px] text-zinc-400 mb-4 leading-relaxed">
+                        กลยุทธ์สำคัญที่จะขยับให้ Kissmodel แย่งชิงทราฟฟิกในตลาดเชียงใหม่ได้อย่างรวดเร็ว:
+                      </p>
+                      <div class="space-y-4">
+                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
+                          <p class="font-bold text-zinc-100 text-xs mb-1 flex items-center gap-1.5">
+                            <i class="fas fa-shield-heart text-amber-400"></i> ชูจุดเด่นระบบไม่เก็บมัดจำ
+                          </p>
+                          <p class="text-[11px] text-zinc-400 leading-relaxed">
+                            แบรนด์ไซด์ไลน์เชียงใหม่ที่ได้ความนิยมสูงสุดคือการระบุชัดเจนว่า <strong>"ไม่มัดจำ จ่ายเงินสดหน้างานตัวจริงตรงปกเท่านั้น"</strong> หากเราชูจุดขายนี้อย่างเด่นชัด จะสามารถดึงทราฟฟิกกลุ่มผู้ใช้งานที่เคยถูกโกงเงินจากที่อื่นมาได้ทันที
+                          </p>
+                        </div>
+                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
+                          <p class="font-bold text-zinc-100 text-xs mb-1 flex items-center gap-1.5">
+                            <i class="fas fa-map-marked-alt text-amber-400"></i> วางโครงสร้างเจาะคำค้นรายย่าน
+                          </p>
+                          <p class="text-[11px] text-zinc-400 leading-relaxed">
+                            เจ้าตลาดส่วนใหญ่เน้นจับคำค้นกว้าง ๆ แต่เราสามารถสร้างความได้เปรียบด้วยคำค้นเฉพาะทำเลทอง (Hyper-Local Keywords) เช่น <strong>"ไซด์ไลน์นิมมาน"</strong>, <strong>"สาวรับงานเจ็ดยอด"</strong> หรือ <strong>"เด็กรับงานสันติธรรม"</strong> เพื่อจับใจกลุ่มที่พิกัดใกล้ตัวที่สุด
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- ========================================== -->
+                  <!-- 📊 คอลัมน์ขวา (สัดส่วน 8/12): ข้อมูลและผลวิเคราะห์ละเอียดรายเว็บไซต์ -->
+                  <!-- ========================================== -->
+                  <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- ส่วนสรุปผลภาพรวมและเหตุผลความน่าเชื่อถือ -->
+                    <div class="bg-gradient-to-br from-emerald-950/20 to-zinc-900/40 p-6 rounded-2xl border border-emerald-500/20 shadow-xl">
+                      <h4 class="font-extrabold text-emerald-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
+                        <i class="fas fa-chart-line text-emerald-400 text-[12px]"></i> รายงานวิเคราะห์คีย์เวิร์ดพื้นที่เชียงใหม่ (ล่าสุด)
+                      </h4>
+                      
+                      <div class="space-y-4 text-xs text-zinc-300 leading-relaxed">
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5 mb-2">
+                          <p class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5"><i class="fas fa-trophy"></i> สรุปบทวิเคราะห์อันดับหนึ่งในเชียงใหม่ตอนนี้</p>
+                          <p class="text-zinc-200">
+                            ณ ตอนนี้ <strong>"เบอร์ 1 ที่ดูดีหรือภาพรวมดีที่สุด"</strong> สำหรับพื้นที่เชียงใหม่ตอนนี้ ผมให้ <a href="https://sidelinechiangmai.netlify.app" target="_blank" class="text-purple-400 font-bold hover:underline">sidelinechiangmai.netlify.app</a> ครับ เพราะหน้าโฮมและหน้าเกี่ยวข้องผูกกับเชียงใหม่ชัดมาก, โครงสร้างไซต์เป็นระบบ, และมีการแตกหน้าเฉพาะพื้นที่/โปรไฟล์หลายหน้า ทำให้ความตรงกับ intent ของคำค้นเชียงใหม่ดูแข็งที่สุด
+                          </p>
+                        </div>
+
+                        <!-- คำอธิบายเพิ่มเติมว่าทำไม sidelinechiangmai ถึงดีที่สุด -->
+                        <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-zinc-100 mb-2 flex items-center gap-2"><i class="fas fa-question-circle text-emerald-400"></i> ทำไม sidelinechiangmai.netlify.app ถึงเหมาะสมเป็นอันดับหนึ่ง</p>
+                          <ul class="space-y-2 text-zinc-400 text-[11px] list-disc list-inside">
+                            <li>Title และข้อความหน้าโฮมระบุความเชื่อมโยงกับเชียงใหม่เด่นชัดมาก</li>
+                            <li>มีโครงสร้างหน้ารายละเอียดที่ยอดเยี่ยม เช่นหน้า about, profiles, locations และหน้า location แยกจังหวัด ทำให้โครงสร้างหัวข้อ (Topical Structure) แข็งแรงมาก</li>
+                            <li>พยายามวางตัวเป็นแหล่งรวมสารบัญข้อมูลสำหรับเชียงใหม่โดยตรงชัดเจน ไม่ใช่แค่การเขียนคำว่าเชียงใหม่ผ่าน ๆ หน้าเว็บ</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- ตารางแสดงผลลัพธ์คะแนนเปรียบเทียบครบถ้วน 5 ลำดับแบบสมบูรณ์ -->
+                    <div class="bg-gradient-to-br from-zinc-900/40 to-zinc-950/40 p-6 rounded-2xl border border-white/5 shadow-xl">
+                      <h4 class="font-extrabold text-zinc-200 text-sm mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
+                        <i class="fas fa-table text-purple-400 text-[12px]"></i> ตารางคะแนนรวมเปรียบเทียบอันดับ 1-5 (ตัวเลขและข้อมูลตามบันทึกระบบ)
+                      </h4>
+                      <div class="overflow-x-auto w-full rounded-xl border border-white/5 bg-black/40">
+                        <table class="min-w-full text-left text-xs text-zinc-300 divide-y divide-white/5">
+                          <thead class="bg-white/5 font-extrabold text-zinc-400 text-[10px] tracking-wider">
+                            <tr>
+                              <th class="p-3">เว็บไซต์</th>
+                              <th class="p-3 text-center">ตรงเชียงใหม่</th>
+                              <th class="p-3 text-center">ความตรง intent</th>
+                              <th class="p-3 text-center">ความชัดของ title/หน้า</th>
+                              <th class="p-3 text-center">โครงสร้างเนื้อหา</th>
+                              <th class="p-3 text-center">สัญญาณความน่าเชื่อถือ</th>
+                              <th class="p-3">ภาพรวมโอกาสในเชียงใหม่</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-white/5 text-[11px]">
+                            <!-- อันดับ 1 -->
+                            <tr class="hover:bg-emerald-500/5 bg-emerald-500/5">
+                              <td class="p-3 font-bold text-emerald-300">
+                                <a href="https://sidelinechiangmai.netlify.app" target="_blank" class="hover:underline inline-flex items-center gap-1.5">
+                                  sidelinechiangmai.netlify.app <i class="fas fa-external-link-alt text-[8px]"></i>
+                                </a>
+                              </td>
+                              <td class="p-3 text-center font-extrabold text-emerald-400 text-sm">10</td>
+                              <td class="p-3 text-center font-bold text-sm">10</td>
+                              <td class="p-3 text-center text-sm">9</td>
+                              <td class="p-3 text-center text-sm">9</td>
+                              <td class="p-3 text-center text-sm">4</td>
+                              <td class="p-3 font-bold text-emerald-400 leading-normal">สูงมากใน on-page แต่ยังต้องเสริม trust</td>
+                            </tr>
+                            <!-- อันดับ 2 -->
+                            <tr class="hover:bg-white/[0.02]">
+                              <td class="p-3 font-semibold text-zinc-200">tsgsideline.com/cities/chiang-mai</td>
+                              <td class="p-3 text-center font-bold text-purple-400 text-sm">9</td>
+                              <td class="p-3 text-center font-bold text-sm">9</td>
+                              <td class="p-3 text-center text-sm">8</td>
+                              <td class="p-3 text-center text-sm">8</td>
+                              <td class="p-3 text-center text-sm">6</td>
+                              <td class="p-3 font-bold text-purple-400">สูงมาก</td>
+                            </tr>
+                            <!-- อันดับ 3 -->
+                            <tr class="hover:bg-white/[0.02]">
+                              <td class="p-3 font-semibold text-zinc-300">fiwfan.app/location/เชียงใหม่</td>
+                              <td class="p-3 text-center font-bold text-blue-400 text-sm">8</td>
+                              <td class="p-3 text-center font-bold text-sm">8</td>
+                              <td class="p-3 text-center text-sm">7</td>
+                              <td class="p-3 text-center text-sm">7</td>
+                              <td class="p-3 text-center text-sm">6</td>
+                              <td class="p-3 font-bold text-blue-400">สูง</td>
+                            </tr>
+                            <!-- อันดับ 4 -->
+                            <tr class="hover:bg-white/[0.02]">
+                              <td class="p-3 font-semibold text-zinc-300">fanschao.com/sideline/chiangmai</td>
+                              <td class="p-3 text-center font-bold text-sm text-zinc-400">8</td>
+                              <td class="p-3 text-center font-bold text-sm text-zinc-400">8</td>
+                              <td class="p-3 text-center text-sm">7</td>
+                              <td class="p-3 text-center text-sm">6</td>
+                              <td class="p-3 text-center text-sm">5</td>
+                              <td class="p-3 font-bold text-zinc-400">ปานกลาง-สูง</td>
+                            </tr>
+                            <!-- อันดับ 5 -->
+                            <tr class="hover:bg-white/[0.02]">
+                              <td class="p-3 font-semibold text-zinc-400">sideline-hub.com</td>
+                              <td class="p-3 text-center font-bold text-sm text-zinc-500">6</td>
+                              <td class="p-3 text-center font-bold text-sm text-zinc-500">6</td>
+                              <td class="p-3 text-center text-sm">8</td>
+                              <td class="p-3 text-center text-sm">8</td>
+                              <td class="p-3 text-center text-sm">6</td>
+                              <td class="p-3 font-bold text-zinc-500">ปานกลาง</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- ส่วนตรวจสอบและวิเคราะห์เชิงลึกรายผู้ผลิต (Vulnerabilities, Pros & Cons) -->
+                    <div class="bg-gradient-to-br from-zinc-900/40 to-zinc-950/40 p-6 rounded-2xl border border-white/5 shadow-xl space-y-4">
+                      <h4 class="font-extrabold text-zinc-200 text-sm mb-2 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
+                        <i class="fas fa-microscope text-purple-400 text-[12px]"></i> รายงานวิเคราะห์อย่างละเอียด (Pros & Cons)
+                      </h4>
+                      
+                      <div class="space-y-4 text-[11px] leading-relaxed text-zinc-300">
+                        <!-- โดเมนที่ 1 -->
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-emerald-400 mb-2">1. sidelinechiangmai.netlify.app</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
+                              <p class="mt-0.5">Topical Authority สูงสุดในกลุ่มเนื่องจากจับทำเลเชียงใหม่โดยตรง, วางคีย์เวิร์ดหน้าย่อยชัดเจน, E-E-A-T แข็งแกร่งผ่านหน้า About และ Location</p>
+                            </div>
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
+                              <p class="mt-0.5">ทำงานบนโดเมนฟรีของ Netlify ซึ่งส่งผลต่อความเชื่อมั่นด้านความเสถียรของแบรนด์และการสะสมทราฟฟิกระยะยาวในสายตา Google บอต</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- โดเมนที่ 2 -->
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-purple-400 mb-2">2. tsgsideline.com/cities/chiang-mai</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
+                              <p class="mt-0.5">โดเมนเนมหลักมีความน่าเชื่อถือสูงเนื่องจากจัดตั้งมานาน, มีทราฟฟิกรวมจากเครือข่ายจังหวัดอื่น ๆ ทั่วประเทศมาช่วยเสริมสัญญาณจัดอันดับ</p>
+                            </div>
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
+                              <p class="mt-0.5">โครงสร้างเป็นสารบัญภาพกว้าง ขาดความยืดหยุ่นเจาะจงเฉพาะพื้นที่ (Generic Layout) ทำให้นักท่องเที่ยวไม่รู้สึกถึงความเป็นส่วนตัวเท่าเว็บเชียงใหม่เฉพาะทาง</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- โดเมนที่ 3 -->
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-blue-400 mb-2">3. fiwfan.app/location/เชียงใหม่</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
+                              <p class="mt-0.5">ระบบพัฒนามาดีมาก มีระบบแผนที่ระบุพิกัดน้อง ๆ แบบ Real-Time, ได้สัญญาณความสดใหม่ของรีวิวจากผู้ใช้งานจริง (User-Generated Content)</p>
+                            </div>
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
+                              <p class="mt-0.5">ข้อมูลในระบบปะปนสูงมากเนื่องจากเป็นระบบเปิดสาธารณะ ทำให้คัดกรองความน่าเชื่อถือได้ยากและพบเจอกลลวงของมิจฉาชีพปะปนค่อนข้างบ่อย</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- โดเมนที่ 4 -->
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-zinc-300 mb-2">4. fanschao.com/sideline/chiangmai</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
+                              <p class="mt-0.5">แบรนด์เพื่อนเที่ยวแฟนเช่ากำลังเริ่มเป็นที่นิยม มีความแข็งแกร่งในการค้นหากลุ่มเช่าเพื่อนเที่ยวชั่วคราว, ระบบรีวิว/ส่งงานค่อนข้างคล่องตัว</p>
+                            </div>
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
+                              <p class="mt-0.5">ฐานข้อมูลโปรไฟล์ในเขตเชียงใหม่ยังน้อยมาก (ฐานงานหลักยังคงกระจุกตัวในเขตกรุงเทพฯ), สัดส่วนของโปรไฟล์ที่ผ่านการตรวจสอบยังเบาบาง</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- โดเมนที่ 5 -->
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                          <p class="font-bold text-zinc-500 mb-2">5. sideline-hub.com</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
+                              <p class="mt-0.5">เป็นเว็บสารบัญแนวคิดใหม่ที่มีฟังก์ชันการแสดงแผนที่ละเอียด และระบบเว็บบอร์ดสนทนาเฉพาะกลุ่มให้ผู้ใช้งานเข้าสอบถามพิกัดโดยตรง</p>
+                            </div>
+                            <div>
+                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
+                              <p class="mt-0.5">การรับรู้ในตัวแบรนด์ค่อนข้างเบาบางมากในกลุ่มพื้นที่เชียงใหม่ ทำให้ทราฟฟิกตรงจากคีย์เวิร์ดออร์แกนิกในหัวเมืองหลักยังสู้เจ้าอื่นไม่ได้</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- ปล่อยขอบล่างให้มีช่องไฟเว้นว่างสวยงามเพื่อให้อ่านข้อมูลสมบูรณ์ที่สุด -->
+                <div class="mt-12 mb-6 text-center border-t border-white/5 pt-6 relative z-10">
+                  <button onclick="closeSystemStatusModal()" class="px-8 py-3 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition duration-150 active:scale-95 shadow-md">
+                    <i class="fas fa-check mr-1.5"></i> ตรวจสอบบันทึกระบบเสร็จสิ้น
+                  </button>
+                </div>
+
+              </div>
+            `;
+          };
+
+          window.closeSystemStatusModal = function() {
+            const modal = document.getElementById('system-status-modal');
+            if (modal) modal.remove();
+          };
+          </script>
+          <!-- ============================================================================== -->
         </div>
         <div class="absolute bottom-0 w-full p-4 border-t" style="border-color: var(--color-border);"><div class="text-center mb-2" id="admin-user-info"></div><button class="w-full flex items-center justify-center gap-2 text-sm font-medium p-2 rounded-lg transition" id="logout-button" style="color: red; background-color: rgba(220, 53, 69, 0.1);"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button></div>
       </nav>
@@ -403,6 +722,48 @@
       หรือนักพัฒนาประเภทบุคคล อย่างน้อยที่สุดผู้ที่จะเข้ามาควบคุมและดำเนินการแก้ไข 
       จะต้องมีระดับทักษะความเชี่ยวชาญ (Skill Tier) ต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น
       เพื่อให้สอดรับกับความซับซ้อนของลอจิกสลับพิกัดแบบอะซิงโครนัสและการบันทึกแคชภายในระบบ
+      
+      ผลตรวจสอบ
+      
+     ถ้าดูจากข้อมูลที่ตรวได้ตอนนี้ 10.7.26
+ุ  **ตัวที่ภาพรวมดีที่สุดคือ
+`sidelinechiangmai.netlify.app`** ครับ เพราะหน้าโฮมและหน้าเกี่ยวข้องผูกกับเชียงใหม่ชัดมาก, โครงสร้างไซต์เป็นระบบ, และมีการแตกหน้าเฉพาะพื้นที่/โปรไฟล์หลายหน้า ทำให้ความตรงกับ intent ของคำค้นเชียงใหม่ดูแข็งที่สุด [sidelinechiangmai.netlify](https://sidelinechiangmai.netlify.app/)
+
+## ทำไมตัวนี้ดูดีที่สุด
+- Title และข้อความหน้าโฮมระบุเชียงใหม่ชัดเจนมาก [sidelinechiangmai.netlify](https://sidelinechiangmai.netlify.app/)
+- มีหน้า about, profiles, locations และหน้า location แยกจังหวัด ทำให้ topical structure ดี [sidelinechiangmai.netlify](https://sidelinechiangmai.netlify.app/about)
+- จากข้อมูลที่เห็น เว็บพยายามวางตัวเป็นศูนย์รวมสำหรับเชียงใหม่โดยตรง ไม่ใช่แค่หน้าที่มีคำว่าเชียงใหม่ผ่านๆ [sidelinechiangmai.netlify](https://sidelinechiangmai.netlify.app/profiles.html?province=lampang)
+
+## ถ้าเทียบกับตัวอื่น
+- **tsgsideline.com/cities/chiang-mai** แข็งมากและน่าจะเป็นตัวตามติดอันดับ 1 ได้สูสีที่สุด โดยเฉพาะความตรงของหน้าเชียงใหม่และจำนวนโปรไฟล์ [tsgsideline](https://tsgsideline.com/cities/chiang-mai)
+
+- **fiwfan.app/location/เชียงใหม่** ก็แรง แต่จากข้อมูลที่เห็นยังไม่ครบเท่าตัวบนในด้านโครงสร้างไซต์ [fiwfan](https://fiwfan.app/location/%E0%B9%80%E0%B8%8A%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88)
+
+- **fanschao.com/sideline/chiangmai** ตรงคีย์เวิร์ดและใช้งานได้ แต่ภาพรวมความลึกของหน้าและโครงสร้างยังดูน้อยกว่า 2 ตัวแรก [fanschao](https://fanschao.com/sideline/chiangmai)
+
+- **sideline-hub.com** เด่นกว่าในเชิงเว็บรวม แต่ไม่เฉพาะเชียงใหม่เท่าตัวที่ทำหน้า local เฉพาะทาง [tectony.co](https://tectony.co.th/blog/want-to-know-if-your-website-is-growing-heres-how-to-use-google-search-console-to-check-your-search-queries-and-website-rankings)
+
+## สรุปสั้นที่สุด
+นะตอนนี้ “**เบอร์ 1ที่ดูดีหรือภาพรวมดีที่สุด**” สำหรับพื้นที่เชียงใหม่ตอนนี้ ผมให้ **sidelinechiangmai.netlify.app** ครับ [sidelinechiangmai.netlify](https://sidelinechiangmai.netlify.app/profiles.html?province=lampang)
+
+ถ้าต้องการ ผมสรุปต่อให้เป็น **อันดับ 1-5 แบบให้คะแนนรวมจริง** อีกครั้งในรูปตารางสั้นๆ ได้ครับ
+
+"เว็บ","ตรงเชียงใหม่","ความตรง intent","ความชัดของ title/หน้า","โครงสร้างเนื้อหา","สัญญาณความน่าเชื่อถือ","ภาพรวมโอกาสในเชียงใหม่"
+
+"fiwfan.app/location/เชียงใหม่
+","8","8","7","7","6","สูง"
+
+"tsgsideline.com/cities/chiang-mai
+","9","9","8","8","6","สูงมาก"
+
+"fanschao.com/sideline/chiangmai
+","8","8","7","6","5","ปานกลาง-สูง"
+
+"sideline-hub.com
+","6","6","8","8","6","ปานกลาง"
+
+"sidelinechiangmai.netlify.app
+","10","10","9","9","4","สูงมากใน on-page แต่ยังต้องเสริม trust"
       
    ---------------------------------------------------------------------------------
    DESIGNED & MASTERMINDED BY MOBILE NEXUS MASTERMIND SYSTEM
