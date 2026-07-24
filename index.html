@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Kissmodel Music ✨</title>
+  <title>First Model Hub Admin ✨</title>
   
-  <meta name="description" content="Music panel for Kissmodel.">
+  <meta name="description" content="Admin Control Panel for First Model Hub.">
   <meta name="theme-color" content="#5A2CBE">
-  <meta property="og:image" content="https://sidelinechiangmai.netlify.app/images/adminkissmodelsocial.webp">
+  <meta property="og:image" content="https://firstmodelhub.com/images/adminkissmodelsocial.webp">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,7 +147,7 @@
   }
 
   .form-scroll-container {
-    padding-bottom: 110px; /* เพิ่มพื้นที่ความปลอดภัยป้องกันปุ่มลอยด้านล่างทับซ้อน */
+    padding-bottom: 110px;
   }
 
   /* Tags */
@@ -315,7 +315,7 @@
     <!-- Global Loader -->
     <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #07070a;">
       <div class="loader-lg"></div>
-      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #ffffff;">กำลังเตรียมระบบ kissmodel...</p>
+      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #ffffff;">กำลังเตรียมระบบ First Model Hub...</p>
     </div>
     
     <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001;"></div>
@@ -325,7 +325,7 @@
     <div class="hidden min-h-screen flex items-center justify-center p-4" id="login-container">
       <div class="max-w-md w-full p-8 card-surface">
         <div class="text-center mb-8">
-          <div class="kissmodel-logo inline-block mb-2">kissmodel<span class="star">🌟</span></div>
+          <div class="kissmodel-logo inline-block mb-2">First Model Hub<span class="star">🌟</span></div>
           <p class="mt-2 font-medium" style="color: var(--color-text-muted)">Administrator Access</p>
         </div>
         <form class="space-y-6" id="loginForm">
@@ -340,7 +340,7 @@
     <!-- Admin Content -->
     <div class="hidden" id="admin-content">
       <nav class="fixed top-0 left-0 h-full w-64 shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 card-surface" id="sidebar" style="border-radius: 0 1.25rem 1.25rem 0;">
-        <div class="p-5 border-b flex items-center justify-center" style="border-color: var(--color-border);"><div class="kissmodel-logo">kissmodel<span class="star">🌟</span></div></div>
+        <div class="p-5 border-b flex items-center justify-center" style="border-color: var(--color-border);"><div class="kissmodel-logo">First Model Hub<span class="star">🌟</span></div></div>
         <div class="p-4">
           <h2 class="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style="color: var(--color-text-muted);">เมนู</h2>
           <ul class="space-y-1">
@@ -376,14 +376,11 @@
             const modalId = 'system-status-modal';
             
             modalRoot.innerHTML = `
-              <!-- โมดอลมุมมองบอร์ดมอนิเตอร์ระดับพรีเมียมเต็มหน้าจอ (Full Screen Diagnostic Dashboard) -->
               <div id="${modalId}" class="fixed inset-0 z-[100005] bg-[#070410] flex flex-col w-full h-full text-white text-left overflow-y-auto p-6 md:p-12">
                 
-                <!-- แสงเอฟเฟกต์สะท้อนสีนีออนมุมจอด้านหลังเพื่อเพิ่มมิติความสวยงาม -->
                 <div class="absolute top-0 right-0 w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div class="absolute bottom-0 left-0 w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-                <!-- ส่วนหัวเมนูบอร์ดวิเคราะห์ (Sticky Header Row) -->
                 <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/10 z-10 relative">
                   <div class="flex items-center gap-3">
                     <span class="relative flex h-3.5 w-3.5">
@@ -391,25 +388,17 @@
                       <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
                     </span>
                     <div>
-                      <h3 class="text-lg md:text-xl font-extrabold tracking-wide uppercase">Kissmodel Master System Monitor</h3>
+                      <h3 class="text-lg md:text-xl font-extrabold tracking-wide uppercase">First Model Hub Master System Monitor</h3>
                       <p class="text-[10px] md:text-[11px] text-emerald-400 font-extrabold tracking-widest uppercase">Live Audit Data & Security Protocol v2.5</p>
                     </div>
                   </div>
-                  <!-- ปุ่มกดย้อนกลับ -->
                   <button onclick="closeSystemStatusModal()" class="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white rounded-xl border border-white/10 transition duration-200">
                     <i class="fas fa-arrow-left"></i> ย้อนกลับไปหน้าจัดการ
                   </button>
                 </div>
 
-                <!-- การจัดแสดงผล Responsive Grid: ซ้ายแสดงมาตรการความปลอดภัยและกลยุทธ์, ขวาแสดงรายละเอียดเชิงลึกเว็บไซด์และตารางคะแนน -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 z-10 relative">
-                  
-                  <!-- ========================================== -->
-                  <!-- 🛡️ คอลัมน์ซ้าย (สัดส่วน 4/12): มาตรการความปลอดภัยและโอกาสทางการตลาด -->
-                  <!-- ========================================== -->
                   <div class="lg:col-span-4 space-y-6">
-                    
-                    <!-- การ์ด Security Protocol -->
                     <div class="bg-gradient-to-br from-purple-950/20 to-zinc-900/40 p-5 rounded-2xl border border-purple-500/20 shadow-xl">
                       <h4 class="font-extrabold text-purple-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
                         <i class="fas fa-shield-alt text-purple-400 text-[12px]"></i> Security Protocol
@@ -429,247 +418,44 @@
                           <i class="fas fa-brain text-purple-400 text-sm mt-0.5"></i>
                           <div class="space-y-1">
                             <p class="font-bold text-zinc-100 text-xs">สิทธิ์การเป็นเจ้าของสถาปัตยกรรม</p>
-                            <p class="text-[11px] text-zinc-400 leading-normal">โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับการประมวลผลของปัญญาประดิษฐ์ (AI) ระดับสูง 
-      ผ่านเครื่องมือและเทคโนโลยีการพัฒนาซอฟต์แวร์ฝั่งไคลเอนต์ที่ทันสมัยที่สุดในปัจจุบัน</p>
-                          </div>
-                        </div>
-                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
-                          <i class="fas fa-user-shield text-purple-400 text-sm mt-0.5"></i>
-                          <div class="space-y-1">
-                            <p class="font-bold text-zinc-100 text-xs">เกณฑ์ระดับทักษะขั้นต่ำสำหรับการแก้ไข</p>
-                            <p class="text-[11px] text-zinc-400 leading-normal">ผู้ดำเนินการแก้ไขต่อ อย่างน้อยที่สุดต้องมีระดับทักษะต่ำกว่าระดับ S-Tier ไม่เกิน 2 ระดับเท่านั้น เพื่อรักษาเสถียรภาพความเร็วและความปลอดภัยของระบบ</p>
+                            <p class="text-[11px] text-zinc-400 leading-normal">โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับการประมวลผลของปัญญาประดิษฐ์ (AI) ระดับสูง</p>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <!-- การ์ดวิเคราะห์โอกาสทองทางการตลาดสำหรับ Kissmodel -->
                     <div class="bg-gradient-to-br from-amber-950/20 to-zinc-900/40 p-5 rounded-2xl border border-amber-500/20 shadow-xl">
                       <h4 class="font-extrabold text-amber-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-lightbulb text-amber-400 text-[12px]"></i> โอกาสทองสำหรับ Kissmodel
+                        <i class="fas fa-lightbulb text-amber-400 text-[12px]"></i> โอกาสทองสำหรับ First Model Hub
                       </h4>
-                      <p class="text-[11px] text-zinc-400 mb-4 leading-relaxed">
-                        กลยุทธ์สำคัญที่จะขยับให้ Kissmodel แย่งชิงทราฟฟิกในตลาดเชียงใหม่ได้อย่างรวดเร็ว:
-                      </p>
                       <div class="space-y-4">
                         <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
                           <p class="font-bold text-zinc-100 text-xs mb-1 flex items-center gap-1.5">
                             <i class="fas fa-shield-heart text-amber-400"></i> ชูจุดเด่นระบบไม่เก็บมัดจำ
                           </p>
                           <p class="text-[11px] text-zinc-400 leading-relaxed">
-                            แบรนด์ไซด์ไลน์เชียงใหม่ที่ได้ความนิยมสูงสุดคือการระบุชัดเจนว่า <strong>"ไม่มัดจำ จ่ายเงินสดหน้างานตัวจริงตรงปกเท่านั้น"</strong> หากเราชูจุดขายนี้อย่างเด่นชัด จะสามารถดึงทราฟฟิกกลุ่มผู้ใช้งานที่เคยถูกโกงเงินจากที่อื่นมาได้ทันที
-                          </p>
-                        </div>
-                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
-                          <p class="font-bold text-zinc-100 text-xs mb-1 flex items-center gap-1.5">
-                            <i class="fas fa-map-marked-alt text-amber-400"></i> วางโครงสร้างเจาะคำค้นรายย่าน
-                          </p>
-                          <p class="text-[11px] text-zinc-400 leading-relaxed">
-                            เจ้าตลาดส่วนใหญ่เน้นจับคำค้นกว้าง ๆ แต่เราสามารถสร้างความได้เปรียบด้วยคำค้นเฉพาะทำเลทอง (Hyper-Local Keywords) เช่น <strong>"ไซด์ไลน์นิมมาน"</strong>, <strong>"สาวรับงานเจ็ดยอด"</strong> หรือ <strong>"เด็กรับงานสันติธรรม"</strong> เพื่อจับใจกลุ่มที่พิกัดใกล้ตัวที่สุด
+                            แบรนด์เพื่อนเที่ยวที่ได้ความนิยมสูงสุดคือการระบุชัดเจนว่า <strong>"ไม่มัดจำ จ่ายเงินสดหน้างานตัวจริงตรงปกเท่านั้น"</strong>
                           </p>
                         </div>
                       </div>
                     </div>
-
                   </div>
 
-                  <!-- ========================================== -->
-                  <!-- 📊 คอลัมน์ขวา (สัดส่วน 8/12): ข้อมูลและผลวิเคราะห์ละเอียดรายเว็บไซต์ -->
-                  <!-- ========================================== -->
                   <div class="lg:col-span-8 space-y-6">
-                    
-                    <!-- ส่วนสรุปผลภาพรวมและเหตุผลความน่าเชื่อถือ -->
                     <div class="bg-gradient-to-br from-emerald-950/20 to-zinc-900/40 p-6 rounded-2xl border border-emerald-500/20 shadow-xl">
                       <h4 class="font-extrabold text-emerald-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-chart-line text-emerald-400 text-[12px]"></i> รายงานวิเคราะห์คีย์เวิร์ดพื้นที่เชียงใหม่ (ล่าสุด)
+                        <i class="fas fa-chart-line text-emerald-400 text-[12px]"></i> รายงานวิเคราะห์โดเมนหลักการจัดอันดับ (ล่าสุด)
                       </h4>
-                      
-                      <div class="space-y-4 text-xs text-zinc-300 leading-relaxed">
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5 mb-2">
-                          <p class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5"><i class="fas fa-trophy"></i> สรุปบทวิเคราะห์อันดับหนึ่งในเชียงใหม่ตอนนี้</p>
-                          <p class="text-zinc-200">
-                            ณ ตอนนี้ <strong>"เบอร์ 1 ที่ดูดีหรือภาพรวมดีที่สุด"</strong> สำหรับพื้นที่เชียงใหม่ตอนนี้ ผมให้ <a href="https://sidelinechiangmai.netlify.app" target="_blank" class="text-purple-400 font-bold hover:underline">sidelinechiangmai.netlify.app</a> ครับ เพราะหน้าโฮมและหน้าเกี่ยวข้องผูกกับเชียงใหม่ชัดมาก, โครงสร้างไซต์เป็นระบบ, และมีการแตกหน้าเฉพาะพื้นที่/โปรไฟล์หลายหน้า ทำให้ความตรงกับ intent ของคำค้นเชียงใหม่ดูแข็งที่สุด
-                          </p>
-                        </div>
-
-                        <!-- คำอธิบายเพิ่มเติมว่าทำไม sidelinechiangmai ถึงดีที่สุด -->
-                        <div class="bg-black/20 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-zinc-100 mb-2 flex items-center gap-2"><i class="fas fa-question-circle text-emerald-400"></i> ทำไม sidelinechiangmai.netlify.app ถึงเหมาะสมเป็นอันดับหนึ่ง</p>
-                          <ul class="space-y-2 text-zinc-400 text-[11px] list-disc list-inside">
-                            <li>Title และข้อความหน้าโฮมระบุเชียงใหม่ชัดเจนมาก</li>
-                            <li>มีโครงสร้างหน้ารายละเอียดที่ยอดเยี่ยม เช่นหน้า about, profiles, locations และหน้า location แยกจังหวัด ทำให้โครงสร้างหัวข้อ (Topical Structure) แข็งแรงมาก</li>
-                            <li>พยายามวางตัวเป็นแหล่งรวมสารบัญข้อมูลสำหรับเชียงใหม่โดยตรงชัดเจน ไม่ใช่แค่หน้าที่มีคำว่าเชียงใหม่ผ่านๆ</li>
-                          </ul>
-                        </div>
+                      <div class="bg-black/30 p-4 rounded-xl border border-white/5 mb-2 text-xs text-zinc-300">
+                        <p class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5"><i class="fas fa-trophy"></i> สรุปการย้ายโอนย้ายโดเมนหลัก</p>
+                        <p class="text-zinc-200">
+                          โดเมนหลักปัจจุบันถูกอัปเกรดเรียบร้อยแล้วเป็น <a href="https://firstmodelhub.com" target="_blank" class="text-purple-400 font-bold hover:underline">firstmodelhub.com</a> พร้อมทำระบบ 301 Permanent Redirect เรียบร้อยแล้ว
+                        </p>
                       </div>
                     </div>
-
-                    <!-- ตารางแสดงผลลัพธ์คะแนนเปรียบเทียบครบถ้วน 5 ลำดับแบบสมบูรณ์ -->
-                    <div class="bg-gradient-to-br from-zinc-900/40 to-zinc-950/40 p-6 rounded-2xl border border-white/5 shadow-xl">
-                      <h4 class="font-extrabold text-zinc-200 text-sm mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-table text-purple-400 text-[12px]"></i> ตารางคะแนนรวมเปรียบเทียบอันดับ 1-5 (ตัวเลขและข้อมูลตามบันทึกระบบ)
-                      </h4>
-                      <div class="overflow-x-auto w-full rounded-xl border border-white/5 bg-black/40">
-                        <table class="min-w-full text-left text-xs text-zinc-300 divide-y divide-white/5">
-                          <thead class="bg-white/5 font-extrabold text-zinc-400 text-[10px] tracking-wider">
-                            <tr>
-                              <th class="p-3">เว็บไซต์</th>
-                              <th class="p-3 text-center">ตรงเชียงใหม่</th>
-                              <th class="p-3 text-center">ความตรง intent</th>
-                              <th class="p-3 text-center">ความชัดของ title/หน้า</th>
-                              <th class="p-3 text-center">โครงสร้างเนื้อหา</th>
-                              <th class="p-3 text-center">สัญญาณความน่าเชื่อถือ</th>
-                              <th class="p-3">ภาพรวมโอกาสในเชียงใหม่</th>
-                            </tr>
-                          </thead>
-                          <tbody class="divide-y divide-white/5 text-[11px]">
-                            <!-- อันดับ 1 -->
-                            <tr class="hover:bg-emerald-500/5 bg-emerald-500/5">
-                              <td class="p-3 font-bold text-emerald-300">
-                                <a href="https://sidelinechiangmai.netlify.app" target="_blank" class="hover:underline inline-flex items-center gap-1.5">
-                                  sidelinechiangmai.netlify.app <i class="fas fa-external-link-alt text-[8px]"></i>
-                                </a>
-                              </td>
-                              <td class="p-3 text-center font-extrabold text-emerald-400 text-sm">10</td>
-                              <td class="p-3 text-center font-bold text-sm">10</td>
-                              <td class="p-3 text-center text-sm">9</td>
-                              <td class="p-3 text-center text-sm">9</td>
-                              <td class="p-3 text-center text-sm">4</td>
-                              <td class="p-3 font-bold text-emerald-400 leading-normal">สูงมากใน on-page แต่ยังต้องเสริม trust</td>
-                            </tr>
-                            <!-- อันดับ 2 -->
-                            <tr class="hover:bg-white/[0.02]">
-                              <td class="p-3 font-semibold text-zinc-200">tsgsideline.com/cities/chiang-mai</td>
-                              <td class="p-3 text-center font-bold text-purple-400 text-sm">9</td>
-                              <td class="p-3 text-center font-bold text-sm">9</td>
-                              <td class="p-3 text-center text-sm">8</td>
-                              <td class="p-3 text-center text-sm">8</td>
-                              <td class="p-3 text-center text-sm">6</td>
-                              <td class="p-3 font-bold text-purple-400">สูงมาก</td>
-                            </tr>
-                            <!-- อันดับ 3 -->
-                            <tr class="hover:bg-white/[0.02]">
-                              <td class="p-3 font-semibold text-zinc-300">fiwfan.app/location/เชียงใหม่</td>
-                              <td class="p-3 text-center font-bold text-blue-400 text-sm">8</td>
-                              <td class="p-3 text-center font-bold text-sm">8</td>
-                              <td class="p-3 text-center text-sm">7</td>
-                              <td class="p-3 text-center text-sm">7</td>
-                              <td class="p-3 text-center text-sm">6</td>
-                              <td class="p-3 font-bold text-blue-400">สูง</td>
-                            </tr>
-                            <!-- อันดับ 4 -->
-                            <tr class="hover:bg-white/[0.02]">
-                              <td class="p-3 font-semibold text-zinc-300">fanschao.com/sideline/chiangmai</td>
-                              <td class="p-3 text-center font-bold text-sm text-zinc-400">8</td>
-                              <td class="p-3 text-center font-bold text-sm text-zinc-400">8</td>
-                              <td class="p-3 text-center text-sm">7</td>
-                              <td class="p-3 text-center text-sm">6</td>
-                              <td class="p-3 text-center text-sm">5</td>
-                              <td class="p-3 font-bold text-zinc-400">ปานกลาง-สูง</td>
-                            </tr>
-                            <!-- อันดับ 5 -->
-                            <tr class="hover:bg-white/[0.02]">
-                              <td class="p-3 font-semibold text-zinc-400">sideline-hub.com</td>
-                              <td class="p-3 text-center font-bold text-sm text-zinc-500">6</td>
-                              <td class="p-3 text-center font-bold text-sm text-zinc-500">6</td>
-                              <td class="p-3 text-center text-sm">8</td>
-                              <td class="p-3 text-center text-sm">8</td>
-                              <td class="p-3 text-center text-sm">6</td>
-                              <td class="p-3 font-bold text-zinc-500">ปานกลาง</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                    <!-- ส่วนตรวจสอบและวิเคราะห์เชิงลึกรายผู้ผลิต (Vulnerabilities, Pros & Cons) -->
-                    <div class="bg-gradient-to-br from-zinc-900/40 to-zinc-950/40 p-6 rounded-2xl border border-white/5 shadow-xl space-y-4">
-                      <h4 class="font-extrabold text-zinc-200 text-sm mb-2 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-microscope text-purple-400 text-[12px]"></i> รายงานวิเคราะห์อย่างละเอียด (Pros & Cons)
-                      </h4>
-                      
-                      <div class="space-y-4 text-[11px] leading-relaxed text-zinc-300">
-                        <!-- โดเมนที่ 1 -->
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-emerald-400 mb-2">1. sidelinechiangmai.netlify.app</p>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
-                              <p class="mt-0.5">Topical Authority สูงสุดในกลุ่มเนื่องจากจับทำเลเชียงใหม่โดยตรง, วางคีย์เวิร์ดหน้าย่อยชัดเจน, E-E-A-T แข็งแกร่งผ่านหน้า About และ Location</p>
-                            </div>
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
-                              <p class="mt-0.5">ทำงานบนโดเมนฟรีของ Netlify ซึ่งส่งผลต่อความเชื่อมั่นด้านความเสถียรของแบรนด์และการสะสมทราฟฟิกระยะยาวในสายตา Google บอต</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- โดเมนที่ 2 -->
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-purple-400 mb-2">2. tsgsideline.com/cities/chiang-mai</p>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
-                              <p class="mt-0.5">โดเมนเนมหลักมีความน่าเชื่อถือสูงเนื่องจากจัดตั้งมานาน, มีทราฟฟิกรวมจากเครือข่ายจังหวัดอื่น ๆ ทั่วประเทศมาช่วยเสริมสัญญาณจัดอันดับ</p>
-                            </div>
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
-                              <p class="mt-0.5">โครงสร้างเป็นสารบัญภาพกว้าง ขาดความยืดหยุ่นเจาะจงเฉพาะพื้นที่ (Generic Layout) ทำให้นักท่องเที่ยวไม่รู้สึกถึงความเป็นส่วนตัวเท่าเว็บเชียงใหม่เฉพาะทาง</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- โดเมนที่ 3 -->
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-blue-400 mb-2">3. fiwfan.app/location/เชียงใหม่</p>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
-                              <p class="mt-0.5">ระบบพัฒนามาดีมาก มีระบบแผนที่ระบุพิกัดน้อง ๆ แบบ Real-Time, ได้สัญญาณความสดใหม่ของรีวิวจากผู้ใช้งานจริง (User-Generated Content)</p>
-                            </div>
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
-                              <p class="mt-0.5">ข้อมูลในระบบปะปนสูงมากเนื่องจากเป็นระบบเปิดสาธารณะ ทำให้คัดกรองความน่าเชื่อถือได้ยากและพบเจอกลลวงของมิจฉาชีพปะปนค่อนข้างบ่อย</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- โดเมนที่ 4 -->
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-zinc-300 mb-2">4. fanschao.com/sideline/chiangmai</p>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
-                              <p class="mt-0.5">แบรนด์เพื่อนเที่ยวแฟนเช่ากำลังเริ่มเป็นที่นิยม มีความแข็งแกร่งในการค้นหากลุ่มเช่าเพื่อนเที่ยวชั่วคราว, ระบบรีวิว/ส่งงานค่อนข้างคล่องตัว</p>
-                            </div>
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
-                              <p class="mt-0.5">ฐานข้อมูลโปรไฟล์ในเขตเชียงใหม่ยังน้อยมาก (ฐานงานหลักยังคงกระจุกตัวในเขตกรุงเทพฯ), สัดส่วนของโปรไฟล์ที่ผ่านการตรวจสอบยังเบาบาง</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- โดเมนที่ 5 -->
-                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                          <p class="font-bold text-zinc-500 mb-2">5. sideline-hub.com</p>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 text-zinc-400 text-[10px]">
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-plus text-[8px] text-emerald-400"></i> ข้อดีเชิงกลยุทธ์:</p>
-                              <p class="mt-0.5">เป็นเว็บสารบัญแนวคิดใหม่ที่มีฟังก์ชันการแสดงแผนที่ละเอียด และระบบเว็บบอร์ดสนทนาเฉพาะกลุ่มให้ผู้ใช้งานเข้าสอบถามพิกัดโดยตรง</p>
-                            </div>
-                            <div>
-                              <p class="font-bold text-zinc-200"><i class="fas fa-minus text-[8px] text-red-400"></i> ข้อเสีย/จุดอ่อน:</p>
-                              <p class="mt-0.5">การรับรู้ในตัวแบรนด์ค่อนข้างเบาบางมากในกลุ่มพื้นที่เชียงใหม่ ทำให้ทราฟฟิกตรงจากคีย์เวิร์ดออร์แกนิกในหัวเมืองหลักยังสู้เจ้าอื่นไม่ได้</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
 
-                <!-- ปล่อยขอบล่างให้มีช่องไฟเว้นว่างสวยงามเพื่อให้อ่านข้อมูลสมบูรณ์ที่สุด -->
                 <div class="mt-12 mb-6 text-center border-t border-white/5 pt-6 relative z-10">
                   <button onclick="closeSystemStatusModal()" class="px-8 py-3 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition duration-150 active:scale-95 shadow-md">
                     <i class="fas fa-check mr-1.5"></i> ตรวจสอบบันทึกระบบเสร็จสิ้น
@@ -685,15 +471,14 @@
             if (modal) modal.remove();
           };
           </script>
-          <!-- ============================================================================== -->
         </div>
         <div class="absolute bottom-0 w-full p-4 border-t" style="border-color: var(--color-border);"><div class="text-center mb-2" id="admin-user-info"></div><button class="w-full flex items-center justify-center gap-2 text-sm font-medium p-2 rounded-lg transition" id="logout-button" style="color: red; background-color: rgba(220, 53, 69, 0.1);"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button></div>
       </nav>
       
-      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: #FFFFFF;">kissmodel Admin</span></div></header>
+      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: #FFFFFF;">First Model Hub Admin</span></div></header>
       
       <main class="p-4 sm:p-6 lg:p-8 lg:ml-64">
-        <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold dashboard-title" id="view-title">kissmodel<span class="star">🌟</span></h1><button class="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm text-sm font-medium transition card-surface" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
+        <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold dashboard-title" id="view-title">First Model Hub<span class="star">🌟</span></h1><button class="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm text-sm font-medium transition card-surface" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
         <div id="view-content"><div class="container-pro section-gap"></div></div>
       </main>
     </div>
@@ -708,8 +493,6 @@ const CLOUD_NAME = "drffioary";
 const UPLOAD_PRESET = "kissmodel";
 
 window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-
 
 async function uploadToCloudinary(file) {
     const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -797,7 +580,6 @@ const UI = {
   },
   
   showModal(config) {
-    // 🟢 เล่นเสียงฟองสบู่เป๊าะแป๊ะเมื่อแสดงหน้าต่างเตือน
     AdminSoundEffects.playPop();
     
     const {
@@ -838,7 +620,7 @@ const UI = {
     };
     
     modalEl.querySelector('.modal-confirm-btn').onclick = () => {
-      AdminSoundEffects.init(); // 🟢 เพิ่มบรรทัดนี้เพื่อดักสิทธิ์กดจากภายใน Modal ก่อนเริ่มทำ Asynchronous
+      AdminSoundEffects.init();
       onConfirm();
       modalEl.remove();
     };
@@ -848,7 +630,6 @@ const UI = {
   },
   
   showProfileLightbox(profile) {
-    // 🟢 เล่นเสียงฟองสบู่เป๊าะแป๊ะเมื่อเปิด Lightbox รายละเอียดโปรไฟล์
     AdminSoundEffects.playPop();
     
     const modalRoot = document.getElementById('modal-root');
@@ -1020,7 +801,7 @@ const Controller = {
       Controller.setupEventListeners();
       await Controller.fetchData();
       Controller.renderView('dashboard-container');
-      UI.showToast('ยินดีต้อนรับเข้าสู่ระบบจัดการ!', 'success');
+      UI.showToast('ยินดีต้อนรับเข้าสู่ระบบจัดการ First Model Hub!', 'success');
     } catch (err) {
       DOM.viewContent.innerHTML = `
         <div class="text-center p-8 bg-zinc-900 border border-white/10 rounded-lg shadow text-white">
@@ -1055,7 +836,6 @@ const Controller = {
   },
   
   async handleLogout() {
-    // 🌀 เล่นเสียงยกเลิก/ล้มเหลวเมื่อแอดมินออกจากระบบ
     AdminSoundEffects.playCancel();
     UI.showToast('กำลังออกจากระบบ...', 'info');
     await supabase.auth.signOut();
@@ -1067,13 +847,11 @@ const Controller = {
     DOM.loginForm.addEventListener('submit', e => Controller.handleLogin(e));
     DOM.logoutButton.addEventListener('click', () => Controller.handleLogout());
     DOM.menuToggle.addEventListener('click', () => {
-      // 🟢 เล่นเสียงเมื่อเปิดปิดแถบเมนูด้านซ้ายบนหน้าจอมือถือ
       AdminSoundEffects.playPop();
       DOM.sidebar.classList.toggle('-translate-x-full');
     });
     
     DOM.refreshButton.addEventListener('click', async () => {
-        // 🟢 เล่นเสียงเป๊าะแป๊ะเมื่อคลิกปุ่มรีเฟรชข้อมูลหลัก
         AdminSoundEffects.playPop();
         await Controller.fetchData(true); 
         Controller.renderView(AppState.currentView);
@@ -1144,7 +922,6 @@ const Controller = {
     AppState.currentView = viewId;
     AppState.currentParams = params;
     
-    // 🟢 เล่นเสียงฟองสบู่เป๊าะแป๊ะเมื่อสลับแผงควบคุมหน้าต่าง ๆ หลังบ้าน
     AdminSoundEffects.playPop();
     
     DOM.viewContent.innerHTML = `
@@ -1462,7 +1239,6 @@ const Controller = {
         previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
     }
     
-    // ตั้งฟอร์มเป็นระบบ Scroll Container ป้องกันการ Overlapping กับแถมปุ่มด้านล่าง
     const formHTML = `
       <div class="max-w-5xl mx-auto animate-slide-up form-scroll-container">
         <div class="flex items-center justify-between mb-6">
@@ -1543,14 +1319,13 @@ const Controller = {
                           </label>
                           <textarea id="meta-description" rows="2" class="form-input-high" placeholder="ปล่อยว่างไว้ระบบจะสกัดคีย์เวิร์ดมาประกอบเป็นบทความสั้นให้เอง">${p.meta_description || ''}</textarea>
                         </div>
-                        <div><label class="label-style">Alt Text (คำอธิบายรูปภาพสำหรับ Google Image Search)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}" placeholder="น้อง... สาวรับงานเชียงใหม่ ฟิวแฟนตรงปก"></div>
+                        <div><label class="label-style">Alt Text (คำอธิบายรูปภาพสำหรับ Google Image Search)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}" placeholder="น้อง... สาวรับงานเชียงใหม่ ฟิวแฟนตรงปก First Model Hub"></div>
                         <div><label class="label-style">Slug (URL หน้าโปรไฟล์)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="เช่น nong-cherry"></div>
                     </div>
                 </div>
             </div>
           </div>
           
-          <!-- แถบปุ่มบันทึกด่วนสีดำลอย (ปรับแต่ง CSS ป้องกัน overlap บนจอโมบาย) -->
           <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl bg-zinc-950/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1001]">
              <button type="button" class="nav-button px-6 py-3 font-bold text-zinc-400 hover:text-white" data-view="profiles-list-container">ยกเลิก</button>
              <div class="flex gap-2">
@@ -1564,20 +1339,15 @@ const Controller = {
 
     DOM.viewContent.innerHTML = formHTML;
     
-    // 🟢 รวมโมดูล Drag & Drop พรีเมียม และ Image Uploader ไว้ด้วยกันเพื่อไม่ให้เกิดการหลุดพรากอีเวนต์
     Controller.initImageUploader(previewUrl);
     Controller.initTagInput(p.styleTags || []);
     
-    // ตั้งค่าตัวจับการทำงานอัจฉริยะ (Smart Autofill Binding)
     Controller.setupSmartFieldAutofill(isEditing);
 
     document.getElementById('profile-form').addEventListener('submit', e => Controller.handleProfileFormSubmit(e));
     document.getElementById('preview-profile-button').addEventListener('click', () => Controller.handlePreviewProfile());
   },
 
-  // ==========================================
-  // 🔮 [ระบบอัจฉริยะใหม่] setupSmartFieldAutofill
-  // ==========================================
   setupSmartFieldAutofill(isEditing) {
     const fields = {
       name: document.getElementById('name'),
@@ -1593,11 +1363,9 @@ const Controller = {
       altText: document.getElementById('altText')
     };
 
-    // ติดป้ายกำกับบอกสถานะการคีย์เขียนเองของแอดมิน เพื่อไม่ให้ระบบคำนวณอัตโนมัติไปเขียนทับข้อมูลคัสตอมในภายหลัง
     Object.keys(fields).forEach(key => {
       const el = fields[key];
       if (el && ['slug', 'seoTitle', 'metaDesc', 'altText'].includes(key)) {
-        // หากเป็นการแก้ไขและมีข้อมูลเดิมอยู่แล้ว ให้ถือว่าแอดมินเขียนเอง
         el.dataset.autogenerated = el.value ? 'false' : 'true';
         el.addEventListener('input', () => { el.dataset.autogenerated = 'false'; });
       }
@@ -1613,21 +1381,18 @@ const Controller = {
 
       if (!name) return;
 
-      // 1. ประมวลผลสร้าง URL Slug สากล
       if (fields.slug && fields.slug.dataset.autogenerated === 'true') {
         fields.slug.value = name.toLowerCase()
                                 .replace(/\s+/g, '-')
                                 .replace(/[^a-zA-Z0-9ก-๙-]/g, '');
       }
 
-      // 2. ประมวลผลสร้าง SEO Title
       if (fields.seoTitle && fields.seoTitle.dataset.autogenerated === 'true') {
-        fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} ฟิวแฟน ตรงปก`;
+        fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} ฟิวแฟน | First Model Hub`;
       }
 
-      // 3. ประมวลผลสร้าง Meta Description
       if (fields.metaDesc && fields.metaDesc.dataset.autogenerated === 'true') {
-        let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''}.`;
+        let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''} บน First Model Hub.`;
         if (rate) desc += ` เรทบริการ ${rate}.`;
         if (age) desc += ` อายุ ${age} ปี.`;
         if (stats) desc += ` สัดส่วน ${stats}.`;
@@ -1635,20 +1400,17 @@ const Controller = {
         fields.metaDesc.value = desc;
       }
 
-      // 4. ประมวลผลสร้างรูปภาพ Alt Text สำหรับดัน Google Image Search
       if (fields.altText && fields.altText.dataset.autogenerated === 'true') {
-        fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} เพื่อนเที่ยวฟิวแฟน ตรงปก`;
+        fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} เพื่อนเที่ยวฟิวแฟน ตรงปก First Model Hub`;
       }
     };
 
-    // เชื่อมต่อ Event Listener เพื่ออัปเดตแบบเรียลไทม์
     ['name', 'province', 'location', 'rate', 'age', 'stats'].forEach(key => {
       fields[key]?.addEventListener('input', triggerSmartGeneration);
       fields[key]?.addEventListener('change', triggerSmartGeneration);
     });
   },
 
-  // 🟢 ย้ายระบบจำลองและประมวลพรีวิวดั้งเดิมเข้ามาจัดสัดส่วนที่นี่ เพื่อให้ใช้งาน Drag & Drop และควบคุมคลังรูปภาพได้ในทุกครั้งที่เปลี่ยนหน้าเพจ
   initImageUploader(imageUrl) {
     const uploaderEl = document.getElementById('image-uploader');
     if (!uploaderEl) return;
@@ -1675,7 +1437,7 @@ const Controller = {
     if (!fileInput || !previewGrid) return;
     
     const MAX_FILES = 20;
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_SIZE = 10 * 1024 * 1024;
     
     const dedup = (files) => {
       const seen = new Set();
@@ -1723,7 +1485,6 @@ const Controller = {
         del.textContent = 'ลบรูป';
         del.addEventListener('click', (e) => {
           e.stopPropagation();
-          // 🌀 เล่นเสียงเพื่อแจ้งแอดมินเมื่อมีการลบภาพพรีวิวออก
           AdminSoundEffects.playCancel();
           const arr = Array.from(fileInput.files);
           arr.splice(idx, 1);
@@ -1759,7 +1520,6 @@ const Controller = {
     };
     
     fileInput.addEventListener('change', () => {
-      // 🟢 เล่นเสียงเมื่อแอดมินเลือกรูปภาพผ่านเครื่อง
       AdminSoundEffects.playPop();
       accept(Array.from(fileInput.files || []));
     });
@@ -1780,7 +1540,6 @@ const Controller = {
       });
       
       dz.addEventListener('drop', (e) => {
-        // 🟢 เล่นเสียงฟองสบู่เป๊าะแป๊ะเมื่อแอดมินลากรูปมาวางเพื่ออัปโหลด
         AdminSoundEffects.playPop();
         const files = Array.from(e.dataTransfer.files || []);
         accept(files);
@@ -1835,7 +1594,6 @@ const Controller = {
       
       container.querySelectorAll('.tag-remove-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          // 🌀 เล่นเสียงเพื่อแจ้งเตือนเมื่อลบแท็กสไตล์ออก
           AdminSoundEffects.playCancel();
           tags = tags.filter(t => t !== btn.dataset.tag);
           render();
@@ -1844,7 +1602,6 @@ const Controller = {
 
       container.querySelectorAll('.suggest-tag-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          // 🟢 เล่นเสียงเป๊าะแป๊ะเมื่อคลิกเลือกแท็กแนะนำของระบบ
           AdminSoundEffects.playPop();
           tags = [...new Set([...tags, btn.textContent])];
           render();
@@ -1902,7 +1659,7 @@ const Controller = {
 
   async handleProfileFormSubmit(e) {
     e.preventDefault();
-    AdminSoundEffects.init(); // 🟢 เพิ่มคำสั่งนี้เพื่อเปิดสิทธิ์และจองช่องสัญญาณเสียงของเบราว์เซอร์ทันทีที่คลิกปุ่ม
+    AdminSoundEffects.init();
     
     const form = e.target;
     const profileId = form.querySelector('#profile-id').value;
@@ -1955,6 +1712,13 @@ const Controller = {
             profileData.galleryPaths = uploadedUrls;
         } else {
             profileData.imagePath = currentImagePath;
+            // 🟢 ปรับปรุงรักษาคลังรูปภาพเดิมไว้ในกรณีที่มีการแก้ไขข้อมูลโดยไม่เลือกอัปโหลดรูปใหม่
+            if (isEditing) {
+              const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
+              if (existingProfile && existingProfile.galleryPaths) {
+                profileData.galleryPaths = existingProfile.galleryPaths;
+              }
+            }
         }
 
         if (!profileData.imagePath && !isEditing) {
@@ -1980,7 +1744,6 @@ const Controller = {
         
         if (result.error) throw result.error;
         
-        // 🟢 เมื่อสิทธิ์ถูกจองไว้แล้วตั้งแต่ตอนคลิก บรรทัดด้านล่างนี้จะเล่นเสียงได้อย่างถูกต้องหลังจากที่ระบบทำงานแบบ async เสร็จสิ้น
         AdminSoundEffects.playSuccessBoom();
         
         UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
@@ -1989,7 +1752,6 @@ const Controller = {
         
     } catch (err) {
         console.error("Critical Save Error:", err);
-        // 🌀 เล่นเสียงแจ้งเตือนล้มเหลว
         AdminSoundEffects.playCancel();
         UI.showToast(err.message, 'error');
     } finally {
@@ -2030,7 +1792,6 @@ const Controller = {
     const form = document.getElementById('profile-form');
     if (!form) return;
     
-    // 🟢 เล่นเสียงเป๊าะแป๊ะเมื่อคลิกปุ่มดูตัวอย่างไลฟ์บ็อกซ์ของโปรไฟล์
     AdminSoundEffects.playPop();
     
     const profileData = Controller.collectFormData(form);
@@ -2060,14 +1821,12 @@ const Controller = {
             
           if (error) throw error;
           
-          // 🟢 เล่นเสียงแจ้งความสำเร็จบาร์บี้บูมเมื่อลบโปรไฟล์เสร็จเรียบร้อย
           AdminSoundEffects.playSuccessBoom();
           
           UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
           await Controller.fetchData();
           Controller.renderView(AppState.currentView, AppState.currentParams);
         } catch (error) {
-          // 🌀 เล่นเสียงการ์ตูนยกเลิกงอแงกรณีลบรายการผิดพลาด
           AdminSoundEffects.playCancel();
           UI.showToast(`ลบข้อมูลล้มเหลว: ${error.message}`, "error");
         }
@@ -2157,7 +1916,6 @@ const Controller = {
       const { error } = await supabase.from('provinces').insert([{ nameThai, key }]);
       if (error) throw error;
       
-      // 🟢 เล่นเสียงกระทำสำเร็จบาร์บี้บูมเมื่อเพิ่มสัญญานจังหวัดใหม่เสร็จเรียบร้อย
       AdminSoundEffects.playSuccessBoom();
       
       UI.showToast(`เพิ่มจังหวัด ${nameThai} เรียบร้อยแล้ว`, 'success');
@@ -2165,7 +1923,6 @@ const Controller = {
       await Controller.fetchData();
       Controller.renderView('provinces-management-container');
     } catch (error) {
-      // 🌀 เล่นเสียงยกเลิกล้มเหลว
       AdminSoundEffects.playCancel();
       UI.showToast(`บันทึกผิดพลาด: ${error.message}`, 'error');
     } finally {
@@ -2182,14 +1939,12 @@ const Controller = {
           const { error } = await supabase.from('provinces').delete().eq('id', id);
           if (error) throw error;
           
-          // 🟢 เล่นเสียงบาร์บี้บูมสำเร็จรูปเมื่อลบจังหวัดสำเร็จ
           AdminSoundEffects.playSuccessBoom();
           
           UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
           await Controller.fetchData();
           Controller.renderView('provinces-management-container');
         } catch (error) {
-          // 🌀 เล่นเสียงยกเลิกล้มเหลว
           AdminSoundEffects.playCancel();
           UI.showToast(`ทำรายการไม่สำเร็จ: ${error.message}`, 'error');
         }
@@ -2204,7 +1959,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-// 🟢 ตัวประกาศระบบสังเคราะห์คลื่นเสียงแอดมิน (Web Audio API) ป้องกันข้อผิดพลาด ReferenceError
 const AdminSoundEffects = {
     ctx: null,
     init() {
@@ -2235,7 +1989,6 @@ const AdminSoundEffects = {
         osc.start(now);
         osc.stop(now + 0.18);
     },
-    // 💥 เสียงบาร์บี้บาร์บี้บูมสำเร็จรูป (เล่นเสียงวิ้งประสานเสียงทุ้มล่างต่ำทำเสียงตูม)
     playSuccessBoom() {
         this.init();
         if (!this.ctx) return;
@@ -2286,7 +2039,6 @@ const AdminSoundEffects = {
     }
 };
 
-// Theme Toggle
 (function(){
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
@@ -2297,11 +2049,10 @@ const AdminSoundEffects = {
   if (saved) {
     root.setAttribute('data-theme', saved);
   } else {
-    root.setAttribute('data-theme', 'dark'); // Default To Dark Mode
+    root.setAttribute('data-theme', 'dark');
   }
   
   btn.addEventListener('click', () => {
-    // 🟢 เรียกเล่นเสียงเป๊าะแป๊ะเมื่อคลิกสลับธีมหน้าจอหลังบ้าน
     AdminSoundEffects.playPop();
     const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', cur);
@@ -2309,7 +2060,6 @@ const AdminSoundEffects = {
   });
 })();
 
-// Lazy Load Images
 (function(){
   function onLoad(e) {
     e.target.classList.add('lazyloaded');
@@ -2329,58 +2079,10 @@ const AdminSoundEffects = {
   });
 })();
 </script>
-<!-- ================================================================================== -->
-<!-- 🟢 ส่วนปรับแต่งระบบสลับธีมหลัก (ย้ายตัวแปร HTML ไว้เหนือสคริปต์เสมอเพื่อให้ระบบค้นเจอปุ่ม) -->
-<!-- ================================================================================== -->
-<!-- โครงสร้างปุ่มสลับธีม HTML -->
+
 <div class="toggle-wrap">
   <button id="theme-toggle" class="theme-toggle">สลับธีม</button>
 </div>
-
-<script>
-// สคริปต์ระบบควบคุมสลับธีมหลัก
-(function(){
-  const btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  
-  const root = document.documentElement;
-  const saved = localStorage.getItem('theme');
-  
-  if (saved) {
-    root.setAttribute('data-theme', saved);
-  } else {
-    root.setAttribute('data-theme', 'dark'); // ตั้งค่า Dark Mode เป็นค่าเริ่มต้น
-  }
-  
-  btn.addEventListener('click', () => {
-    // 🟢 เล่นเสียงฟองสบู่เป๊าะแป๊ะน่ารักเมื่อมีการคลิกเพื่อสลับธีมหน้าจอ
-    AdminSoundEffects.playPop();
-    const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', cur);
-    localStorage.setItem('theme', cur);
-  });
-})();
-
-// Lazy Load Images
-(function(){
-  function onLoad(e) {
-    e.target.classList.add('lazyloaded');
-  }
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('img').forEach(img => {
-      img.loading = 'lazy';
-      img.classList.add('blur-up');
-      
-      if (img.complete) {
-        img.classList.add('lazyloaded');
-      } else {
-        img.addEventListener('load', onLoad, { once: true });
-      }
-    });
-  });
-})();
-</script>
 
 <!-- Cropper Modal -->
 <div id="cropper-modal">
@@ -2398,22 +2100,19 @@ const AdminSoundEffects = {
 </div>
 
 <script>
-// จัดการผูกปุ่มยกเลิกของหน้าต่างครอบรูปภาพ
 document.getElementById('crop-cancel')?.addEventListener('click', () => {
-  // 🌀 เล่นเสียงยกเลิก
   AdminSoundEffects.playCancel();
   document.getElementById('cropper-modal').classList.remove('active');
 });
 </script>
 
 <!-- ================================================================================== -->
-<!-- 🎵 AUTONOMOUS SMART AUDIO WIDGET (Enhanced with Interactive Video Screen & PiP) -->
+<!-- 🎵 AUTONOMOUS SMART AUDIO WIDGET -->
 <!-- ================================================================================== -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-  /* Base Floating Trigger */
   #admin-assistive-root {
     position: fixed;
     bottom: 24px;
@@ -2454,7 +2153,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     100% { box-shadow: 0 0 25px rgba(236, 72, 153, 0.8), 0 8px 32px rgba(168, 85, 247, 0.5); }
   }
 
-  /* Control Panel Redesign (Premium Dark Glassmorphism) */
   .control-center-panel {
     position: fixed;
     bottom: 100px;
@@ -2500,7 +2198,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     transform: rotate(90deg);
   }
 
-  /* Navigation Layout */
   .tab-bar {
     display: flex;
     background: rgba(255, 255, 255, 0.05);
@@ -2517,7 +2214,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    border-radius: 9px;
+    border-radius: 99px;
     color: #9ca3af;
     cursor: pointer;
     transition: all 0.2s;
@@ -2528,7 +2225,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
 
-  /* Smooth CD Cover visualizer */
   .music-cover {
     width: 100px;
     height: 100px;
@@ -2564,7 +2260,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     z-index: 2;
   }
 
-  /* Audio Waveform Canvas */
   .visualizer-container {
     width: 100%;
     height: 52px;
@@ -2580,7 +2275,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     display: block;
   }
 
-  /* Smart Auto-EQ Monitoring System Dashboard */
   .dsp-hud {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -2631,7 +2325,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     box-shadow: 0 0 6px #ec4899;
   }
 
-  /* Global Status Badge */
   .hifi-status {
     display: flex;
     align-items: center;
@@ -2656,7 +2349,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     to { opacity: 1; text-shadow: 0 0 8px #c084fc; }
   }
 
-  /* Inputs and Buttons */
   .media-input {
     width: 100%;
     padding: 10px 14px;
@@ -2717,7 +2409,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     color: #fff;
   }
 
-  /* Playlist & Search Results Layout */
   .playlist-view {
     display: flex;
     flex-direction: column;
@@ -2769,7 +2460,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     margin-top: 2px;
   }
 
-  /* Video View Area */
   #video-display-area {
     display: none;
     width: 100%;
@@ -2781,7 +2471,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     border: 1px solid rgba(255,255,255,0.08);
   }
 
-  /* Dynamic Media Screen Controls */
   #dynamic-media-controls {
     display: flex;
     gap: 8px;
@@ -2789,7 +2478,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     justify-content: center;
   }
 
-  /* Utility Classes */
   .tab-pane {
     display: none;
   }
@@ -2822,12 +2510,10 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 
   <!-- TAB 1: PLAYER & AUTONOMOUS DSP -->
   <div id="tab-player" class="tab-pane active">
-    <!-- Area for MP4 / Youtube streaming -->
     <div id="video-display-area">
       <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
     </div>
     
-    <!-- Audio visual/CD Area -->
     <div id="music-display-area">
       <div class="music-cover" id="music-cover-container">
         <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Music Cover">
@@ -2836,12 +2522,10 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
       <p style="font-size: 10px; color: #9ca3af; margin: 0 0 10px; text-align: center;">Autonomous Intelligent DSP V3</p>
     </div>
 
-    <!-- Live Spectrum Waveform Canvas -->
     <div class="visualizer-container">
       <canvas id="audio-visualizer" width="306" height="52"></canvas>
     </div>
 
-    <!-- Interactive Media controls (Dynamic buttons for MV and PiP) -->
     <div id="dynamic-media-controls">
       <button class="action-btn" id="btn-view-mv" style="display: none; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; flex: 1;" onclick="AdminOS.watchMV()">
         <i class="fas fa-video"></i> สลับไปดูวิดีโอ / MV
@@ -2854,7 +2538,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
       </button>
     </div>
 
-    <!-- Autonomous Smart Monitoring Status Dashboard -->
     <div class="dsp-hud">
       <div class="hud-title">
         <i class="fas fa-microchip"></i> Real-time AI Audio Tuning
@@ -2879,12 +2562,10 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
       </div>
     </div>
 
-    <!-- Active Status Badge -->
     <div class="hifi-status">
       <i class="fas fa-shield-halved"></i> Active Sound Protection Active
     </div>
 
-    <!-- Manual Streaming URL Input -->
     <input type="text" class="media-input" id="media-url-input" 
            placeholder="วางลิงก์ YouTube หรือลิงก์ตรงที่นี่..." 
            onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
@@ -2910,7 +2591,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
       </button>
     </div>
 
-    <!-- Results Display Container -->
     <div class="playlist-view" id="online-results-container">
       <div style="text-align: center; padding: 40px 10px; font-size: 11px; color: #9ca3af;">
         <i class="fas fa-globe" style="font-size: 24px; margin-bottom: 8px; display: block; color: #a855f7;"></i>
@@ -2931,7 +2611,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 
 <script>
 /**
- * 🔊 AudioEngine V3: ระบบจัดการเสียงอัจฉริยะแบบอัตโนมัติ (Autonomous Hi-Fi DSP Engine)
+ * 🔊 AudioEngine V3: Autonomous Hi-Fi DSP Engine
  */
 const AudioEngine = {
   ctx: null,
@@ -2954,7 +2634,6 @@ const AudioEngine = {
       this.analyser = this.ctx.createAnalyser();
       this.analyser.fftSize = 256; 
 
-      // --- ⚙️ มิติเสียงรอบทิศทาง 3D Haas Spatializer ---
       this.nodes.splitter = this.ctx.createChannelSplitter(2);
       this.nodes.merger = this.ctx.createChannelMerger(2);
       
@@ -2972,7 +2651,6 @@ const AudioEngine = {
       this.nodes.delayLeft.connect(this.nodes.merger, 0, 0);
       this.nodes.delayRight.connect(this.nodes.merger, 0, 1);
 
-      // --- 🎛️ บอร์ด DSP ปรับอัตโนมัติ (Autonomous Dynamic EQ) ---
       this.nodes.bass = this.ctx.createBiquadFilter();
       this.nodes.bass.type = "lowshelf";
       this.nodes.bass.frequency.value = 80; 
@@ -2991,7 +2669,6 @@ const AudioEngine = {
       this.nodes.treble.type = "highshelf";
       this.nodes.treble.frequency.value = 11000;
 
-      // --- 🛡️ ระบบป้องกันเสียงแตกขั้นสูงสุด (Look-Ahead Limit-Comp) ---
       this.nodes.compressor = this.ctx.createDynamicsCompressor();
       this.nodes.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
       this.nodes.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
@@ -3047,9 +2724,7 @@ const AudioEngine = {
       const midAvg = midFreqSum / 50;
       const highAvg = highFreqSum / 45;
 
-      // ตรวจสอบความเงียบ (เช่นกรณีเล่นวิดีโอ Iframe ซึ่ง CORS ไม่อนุญาตให้ดึงข้อมูลเสียงสด)
       if (lowAvg === 0 && midAvg === 0 && highAvg === 0) {
-        // วาดคลื่นเสียงพลังงานลมหายใจสไตล์คอสมิค (Breathing Waveform Effect) เพื่อความสวยงามต่อเนื่อง
         const time = Date.now() * 0.003;
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
         canvasCtx.fillStyle = 'rgba(10, 10, 18, 0.15)';
@@ -3181,10 +2856,9 @@ const AdminOS = {
   playlistContainer: document.getElementById('playlist-view-container'),
   isDragging: false,
   
-  // พารามิเตอร์การจัดเก็บข้อมูลออนไลน์
   currentOnlineVideoId: null,
   currentTrackTitle: "",
-  activeOnlineInstance: 'https://yewtu.be',
+  activeOnlineInstance: 'https://invidious.nerdvpn.de',
   onlineNodes: [
     'https://invidious.nerdvpn.de',
     'https://inv.nadeko.net',
@@ -3240,13 +2914,62 @@ const AdminOS = {
     });
   },
 
-  onlineNodes: [
-    'https://invidious.nerdvpn.de',
-    'https://inv.nadeko.net',
-    'https://invidious.privacydev.net',
-    'https://iv.melmac.space',
-    'https://inv.tux.pizza'
-  ],
+  // 🔮 [ฟังก์ชันที่เพิ่มแก้ไข] ระบบค้นหาเพลงสตรีมมิ่งออนไลน์
+  async searchOnline() {
+    const input = document.getElementById('online-search-input');
+    const container = document.getElementById('online-results-container');
+    if (!input || !container) return;
+
+    const query = input.value.trim();
+    if (!query) return;
+
+    container.innerHTML = `
+      <div style="text-align: center; padding: 30px; font-size: 12px; color: #a855f7;">
+        <i class="fas fa-spinner animate-spin text-2xl mb-2 block"></i>
+        กำลังค้นหาเพลง "${query}"...
+      </div>`;
+
+    try {
+      const instance = this.activeOnlineInstance || 'https://invidious.nerdvpn.de';
+      const res = await fetch(`${instance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+      
+      if (!res.ok) throw new Error("Network response was not ok");
+      const data = await res.json();
+
+      if (!data || data.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 30px; font-size: 11px; color: #9ca3af;">ไม่พบผลการค้นหา</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      data.slice(0, 10).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'playlist-item';
+        div.innerHTML = `
+          <img src="${item.videoThumbnails?.[0]?.url || `https://img.youtube.com/vi/${item.videoId}/default.jpg`}" style="width: 40px; height: 30px; object-fit: cover; border-radius: 6px;">
+          <div class="playlist-info">
+            <div class="playlist-title">${item.title}</div>
+            <div class="playlist-type">${item.author || 'YouTube Stream'}</div>
+          </div>
+          <i class="fas fa-play-circle" style="color:#a855f7; font-size: 18px;"></i>
+        `;
+        div.onclick = () => {
+          this.playOnlineStream(item.videoId, item.title, instance);
+          this.switchTab('player');
+        };
+        container.appendChild(div);
+      });
+    } catch (err) {
+      console.warn("Online search error, providing manual input option:", err);
+      container.innerHTML = `
+        <div style="text-align: center; padding: 20px; font-size: 11px; color: #fca5a5;">
+          การค้นหาแบบกระจายศูนย์ขัดข้องชั่วคราว <br>
+          <button onclick="AdminOS.playFromInput('https://www.youtube.com/results?search_query=${encodeURIComponent(query)}')" class="action-btn action-btn-primary mt-2 mx-auto">
+            วางลิงก์เพื่อเปิดเล่นโดยตรง
+          </button>
+        </div>`;
+    }
+  },
 
   playOnlineStream(videoId, title, instance) {
     this.audioPlayer.pause();
@@ -3255,12 +2978,10 @@ const AdminOS = {
     this.btn.classList.add('playing-pulse');
     this.trackName.innerText = "กำลังปรับจูนสตรีม...";
 
-    // เก็บค่าตัวแปรสำหรับปุ่ม MV/Audio Toggles
     this.currentOnlineVideoId = videoId;
     this.currentTrackTitle = title;
     this.coverImg.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-    // รีเซ็ตการแสดงผลปุ่มควบคุม
     document.getElementById('btn-view-mv').style.display = 'inline-flex';
     document.getElementById('btn-back-audio').style.display = 'none';
     document.getElementById('btn-pip').style.display = 'none';
@@ -3299,9 +3020,6 @@ const AdminOS = {
     this.audioPlayer.play().catch(e => console.log("Autoplay caught:", e));
   },
 
-  /**
-   * 📺 บังคับเปลี่ยนไปโหมดวิดีโอ (Iframe Fallback / MV Viewer)
-   */
   switchToVideoIframe(videoId, title) {
     this.audioPlayer.pause();
     this.musicArea.style.display = 'none';
@@ -3309,7 +3027,6 @@ const AdminOS = {
     this.coverContainer.classList.remove('spinning');
     this.trackName.innerText = title;
 
-    // อัปเดตการแสดงผลปุ่มสลับกลับ
     document.getElementById('btn-view-mv').style.display = 'none';
     document.getElementById('btn-back-audio').style.display = 'inline-flex';
     document.getElementById('btn-pip').style.display = 'none';
@@ -3319,18 +3036,12 @@ const AdminOS = {
       allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
   },
 
-  /**
-   * 🎬 ควบคุมปุ่มดู MV ด้วยตนเอง
-   */
   watchMV() {
     if (this.currentOnlineVideoId) {
       this.switchToVideoIframe(this.currentOnlineVideoId, this.currentTrackTitle);
     }
   },
 
-  /**
-   * 🎧 ควบคุมปุ่มสลับกลับมาโหมดฟังเพลง
-   */
   backToAudio() {
     if (this.currentOnlineVideoId) {
       document.getElementById('btn-back-audio').style.display = 'none';
@@ -3338,9 +3049,6 @@ const AdminOS = {
     }
   },
 
-  /**
-   * 🖥️ ฟังก์ชันเปิดใช้งานโหมดย่อหน้าต่างวิดีโอ (Picture-in-Picture)
-   */
   togglePiP() {
     if (document.pictureInPictureElement) {
       document.exitPictureInPicture();
@@ -3362,7 +3070,6 @@ const AdminOS = {
     this.trackName.innerText = "หยุดการเล่นแล้ว";
     if (this.coverContainer) this.coverContainer.style.transform = 'scale(1)';
 
-    // รีเซ็ตซ่อนปุ่มพิเศษทั้งหมด
     document.getElementById('btn-view-mv').style.display = 'none';
     document.getElementById('btn-back-audio').style.display = 'none';
     document.getElementById('btn-pip').style.display = 'none';
@@ -3390,7 +3097,6 @@ const AdminOS = {
       }
     }
 
-    // ซ่อนปุ่ม Toggles ของเพลงออนไลน์ แต่เช็คการแสดงผลปุ่ม PiP สำหรับไฟล์วิดีโอตรง/วิดีโอเครื่อง
     document.getElementById('btn-view-mv').style.display = 'none';
     document.getElementById('btn-back-audio').style.display = 'none';
     document.getElementById('btn-pip').style.display = (detectedType === 'video') ? 'inline-flex' : 'none';
