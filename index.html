@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>First Model Hub Admin ✨</title>
   
   <meta name="description" content="Admin Control Panel for First Model Hub.">
-  <meta name="theme-color" content="#5A2CBE">
+  <meta name="theme-color" content="#070410">
   <meta property="og:image" content="https://firstmodelhub.com/images/adminkissmodelsocial.webp">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
   :root[data-theme="dark"] {
     --color-text-main: #F7F5FF;
     --color-text-muted: #a8a0b5;
-    --color-card: rgba(13, 8, 30, 0.8);
+    --color-card: rgba(13, 8, 30, 0.85);
     --color-border: #2D1B4E;
     --grad-1: #9333EA;
     --grad-2: #C084FC;
@@ -64,25 +63,19 @@
   }
   
   .kissmodel-logo {
-    font-size: 1.8rem; font-weight: 700; display: inline-block; color: #fff;
+    font-size: 1.5rem; font-weight: 800; display: inline-block; color: #fff;
     text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1), 0 0 20px var(--grad-2);
-    animation: flicker 2s infinite alternate;
   }
   .kissmodel-logo .star {
     font-size: 1.2em; display: inline-block; color: var(--color-highlight);
     animation: star-glow 2s infinite ease-in-out;
-    text-shadow: 0 0 10px var(--color-highlight), 0 0 20px #fff;
   }
   .dashboard-title {
-    font-size: 2.2rem; font-weight: 800;
+    font-size: 1.8rem; font-weight: 800;
     background: linear-gradient(90deg, #FFFFFF, var(--grad-2), #FFFFFF, var(--grad-1));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    animation: gradient-flow 5s ease infinite;
-    background-size: 300% 300%;
   }
-  @keyframes flicker { 0%, 100% { text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1); } 50% { text-shadow: 0 0 8px var(--grad-1), 0 0 25px var(--grad-2); } }
   @keyframes star-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3) rotate(15deg); } }
-  @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
   /* Buttons with Shine Effect */
   .btn-pro, .btn-primary {
@@ -94,23 +87,16 @@
     border: none;
   }
   .btn-pro:hover, .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-  .btn-pro::before, .btn-primary::before {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.5s ease; transform: skewX(-25deg);
-  }
-  .btn-pro:hover::before, .btn-primary:hover::before { left: 150%; }
 
   .card-surface {
     background-color: var(--color-card);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-radius: 1.25rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* ============================== ⚡ PREMIUM UNIFIED FORM ELEMENTS ============================== */
+  /* FORM ELEMENTS */
   .form-input-high {
     width: 100%;
     padding: 0.75rem 1.2rem;
@@ -121,9 +107,8 @@
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s ease;
     outline: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
   }
   
   :root[data-theme="dark"] .form-input-high {
@@ -132,25 +117,18 @@
     border-color: rgba(147, 51, 234, 0.25);
   }
 
-  .form-input-high:focus {
-    border-color: var(--grad-2) !important;
-    box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.25), 0 8px 20px rgba(0,0,0,0.1);
-  }
-
   .label-style {
     display: block;
     font-size: 13px;
     font-weight: 700;
     color: var(--color-text-main);
     margin-bottom: 6px;
-    letter-spacing: 0.02em;
   }
 
   .form-scroll-container {
-    padding-bottom: 110px;
+    padding-bottom: 120px;
   }
 
-  /* Tags */
   .tag-item {
     background: linear-gradient(135deg, rgba(90, 44, 190, 0.1) 0%, rgba(192, 132, 252, 0.15) 100%);
     border: 1px solid rgba(192, 132, 252, 0.3);
@@ -164,47 +142,20 @@
     gap: 6px;
   }
 
-  #sidebar, #header { background-color: transparent !important; }
-  .nav-button:hover { background-color: rgba(var(--color-primary), 0.1); }
+  .nav-button:hover { background-color: rgba(var(--color-primary), 0.15); }
   .nav-button.active {
-    background-color: rgba(var(--color-primary), 0.15);
-    color: rgb(var(--color-primary)); font-weight: 600;
+    background-color: rgba(147, 51, 234, 0.25);
+    color: #C084FC; font-weight: 700;
+    border-left: 4px solid #C084FC;
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .loader-lg {
-    width: 60px; height: 60px; border: 5px solid var(--color-border);
+    width: 50px; height: 50px; border: 4px solid var(--color-border);
     border-top-color: rgb(var(--color-primary));
     border-radius: 50%; animation: spin 1s linear infinite;
   }
-  
-  /* Cropper Modal CSS */
-  #cropper-modal {
-    position: fixed; inset: 0; z-index: 100005;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center;
-    padding: 1rem;
-  }
-  #cropper-modal.active { display: flex; }
-  #cropper-box { max-width: 500px; width: 100%; padding: 1.5rem; text-align: center; }
-  #crop-canvas { max-width: 100%; max-height: 50vh; background: #000; margin-bottom: 1rem; border-radius: 8px; }
-
-  /* Theme Toggle CSS */
-  .toggle-wrap {
-    position: fixed; top: 15px; right: 80px; z-index: 10001;
-  }
-  .theme-toggle {
-    background: var(--color-card);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-main);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
 </style>
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -215,107 +166,13 @@
 <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
 <script type="module" src="https://cdn.vidstack.io/player"></script>
 
-<style>
-/* สไตล์ปุ่มลอย (Admin Widget) */
-#admin-widget-root {
-    position: fixed; z-index: 99999; bottom: 30px; right: 30px;
-    display: flex; flex-direction: column-reverse; align-items: end; gap: 10px;
-}
-
-.float-btn {
-    width: 60px; height: 60px;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    color: #333; font-size: 24px;
-    user-select: none; touch-action: none;
-}
-.float-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.8); }
-
-.widget-panel {
-    width: 350px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    padding: 15px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    transform-origin: bottom right;
-    transition: all 0.3s ease;
-    opacity: 0; transform: scale(0.8) translateY(20px); pointer-events: none;
-    position: absolute; bottom: 80px; right: 0;
-}
-.widget-panel.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
-
-.cover-image-container {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.cover-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s;
-}
-
-.cover-img.spinning {
-  transform: scale(1.1);
-}
-
-.center-overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0,0,0,0.2);
-}
-
-.neon-play-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-.neon-play-btn:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.neon-play-btn.playing {
-  box-shadow: 
-    0 0 20px #d946ef, 
-    0 0 40px #8b5cf6, 
-    inset 0 0 10px rgba(255, 255, 255, 0.5);
-  border-color: #f0abfc;
-}
-</style>
 </head>
 <body>
   <div id="app-wrapper">
     <!-- Global Loader -->
     <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #07070a;">
       <div class="loader-lg"></div>
-      <p class="mt-4 text-lg font-medium" id="loader-text" style="color: #ffffff;">กำลังเตรียมระบบ First Model Hub...</p>
+      <p class="mt-4 text-base font-bold text-purple-300" id="loader-text">กำลังเตรียมระบบ First Model Hub...</p>
     </div>
     
     <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001;"></div>
@@ -326,34 +183,42 @@
       <div class="max-w-md w-full p-8 card-surface">
         <div class="text-center mb-8">
           <div class="kissmodel-logo inline-block mb-2">First Model Hub<span class="star">🌟</span></div>
-          <p class="mt-2 font-medium" style="color: var(--color-text-muted)">Administrator Access</p>
+          <p class="mt-1 text-sm font-medium" style="color: var(--color-text-muted)">Administrator Access</p>
         </div>
-        <form class="space-y-6" id="loginForm">
-          <div><label class="text-sm font-medium" for="email">อีเมล</label><input class="form-input-high mt-1" id="email" name="email" placeholder="admin@example.com" required type="email" value="adariscm2@gmail.com"/></div>
-          <div><label class="text-sm font-medium" for="password">รหัสผ่าน</label><input class="form-input-high mt-1" id="password" name="password" placeholder="Password" required type="password" value=""/></div>
-          <div><button class="w-full flex justify-center py-3 px-4 btn-pro" type="submit">เข้าสู่ระบบ</button></div>
-          <p class="text-center text-sm font-medium" id="login-error" style="color: red;"></p>
+        <form class="space-y-5" id="loginForm">
+          <div><label class="text-xs font-bold uppercase tracking-wider text-zinc-400" for="email">อีเมล</label><input class="form-input-high mt-1" id="email" name="email" placeholder="admin@example.com" required type="email" value="adariscm2@gmail.com"/></div>
+          <div><label class="text-xs font-bold uppercase tracking-wider text-zinc-400" for="password">รหัสผ่าน</label><input class="form-input-high mt-1" id="password" name="password" placeholder="Password" required type="password" value=""/></div>
+          <div><button class="w-full flex justify-center py-3 px-4 btn-pro mt-2 font-bold" type="submit">เข้าสู่ระบบ</button></div>
+          <p class="text-center text-sm font-medium" id="login-error" style="color: #ef4444;"></p>
         </form>
       </div>
     </div>
     
-    <!-- Admin Content -->
+    <!-- Admin Content Wrapper -->
     <div class="hidden" id="admin-content">
-      <nav class="fixed top-0 left-0 h-full w-64 shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 card-surface" id="sidebar" style="border-radius: 0 1.25rem 1.25rem 0;">
-        <div class="p-5 border-b flex items-center justify-center" style="border-color: var(--color-border);"><div class="kissmodel-logo">First Model Hub<span class="star">🌟</span></div></div>
-        <div class="p-4">
-          <h2 class="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style="color: var(--color-text-muted);">เมนู</h2>
-          <ul class="space-y-1">
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-lg font-medium text-sm text-zinc-300" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
+      
+      <!-- 🟢 Backdrop Overlay สำหรับปิด Sidebar บนมือถือเมื่อกดแตะพื้นที่ว่าง -->
+      <div id="sidebar-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
+
+      <!-- 🟢 Sidebar Navigation -->
+      <aside class="fixed top-0 left-0 h-full w-64 shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 bg-[#0c081d] border-r border-white/10 flex flex-col" id="sidebar">
+        <div class="p-5 border-b border-white/10 flex items-center justify-between">
+          <div class="kissmodel-logo">First Model Hub<span class="star">🌟</span></div>
+          <button id="close-sidebar-mobile-btn" class="lg:hidden text-zinc-400 hover:text-white text-lg p-1">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="p-4 flex-grow overflow-y-auto">
+          <h2 class="text-[11px] font-bold uppercase tracking-wider mb-3 px-2 text-zinc-500">เมนูหลัก</h2>
+          <ul class="space-y-1.5">
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
           </ul>
 
-          <!-- ============================================================================== -->
-          <!-- ⚡ PREMIUM MINI INDICATOR & MASTER STATUS SYSTEM MONITOR MODAL -->
-          <!-- ============================================================================== -->
-          <div onclick="showSystemStatusModal()" class="mt-4 mx-2 p-3 rounded-xl bg-black/45 dark:bg-zinc-950/60 border border-white/5 hover:border-purple-500/35 cursor-pointer transition-all duration-300 select-none active:scale-95 shadow-inner">
+          <div onclick="showSystemStatusModal()" class="mt-6 p-3 rounded-xl bg-purple-950/30 border border-purple-500/20 hover:border-purple-500/40 cursor-pointer transition-all duration-300 select-none active:scale-95 shadow-inner">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="relative flex h-2 w-2">
@@ -362,127 +227,52 @@
                 </span>
                 <span class="font-extrabold text-emerald-400 tracking-wider text-[10px]">SYSTEM ONLINE</span>
               </div>
-              <span class="text-[9px] bg-purple-500/10 text-purple-400 px-2.5 py-0.5 rounded-full font-bold border border-purple-500/20 flex items-center gap-1">
-                <i class="fas fa-file-alt text-[8px]"></i> เปิดดูบันทึกระบบ
+              <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <i class="fas fa-file-alt text-[8px]"></i> บันทึกระบบ
               </span>
             </div>
           </div>
-
-          <script>
-          window.showSystemStatusModal = function() {
-            const modalRoot = document.getElementById('modal-root');
-            if (!modalRoot) return;
-            
-            const modalId = 'system-status-modal';
-            
-            modalRoot.innerHTML = `
-              <div id="${modalId}" class="fixed inset-0 z-[100005] bg-[#070410] flex flex-col w-full h-full text-white text-left overflow-y-auto p-6 md:p-12">
-                
-                <div class="absolute top-0 right-0 w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-                <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/10 z-10 relative">
-                  <div class="flex items-center gap-3">
-                    <span class="relative flex h-3.5 w-3.5">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
-                    </span>
-                    <div>
-                      <h3 class="text-lg md:text-xl font-extrabold tracking-wide uppercase">First Model Hub Master System Monitor</h3>
-                      <p class="text-[10px] md:text-[11px] text-emerald-400 font-extrabold tracking-widest uppercase">Live Audit Data & Security Protocol v2.5</p>
-                    </div>
-                  </div>
-                  <button onclick="closeSystemStatusModal()" class="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white rounded-xl border border-white/10 transition duration-200">
-                    <i class="fas fa-arrow-left"></i> ย้อนกลับไปหน้าจัดการ
-                  </button>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 z-10 relative">
-                  <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-gradient-to-br from-purple-950/20 to-zinc-900/40 p-5 rounded-2xl border border-purple-500/20 shadow-xl">
-                      <h4 class="font-extrabold text-purple-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-shield-alt text-purple-400 text-[12px]"></i> Security Protocol
-                      </h4>
-                      <p class="text-[11px] text-zinc-400 mb-4 leading-relaxed">
-                        ข้อกำหนดการใช้งานรหัสสิทธิ์และเสถียรภาพความปลอดภัยฐานข้อมูล:
-                      </p>
-                      <div class="space-y-3.5">
-                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
-                          <i class="fas fa-save text-purple-400 text-sm mt-0.5"></i>
-                          <div class="space-y-1">
-                            <p class="font-bold text-zinc-100 text-xs">ระบบสำรองข้อมูล (Backup Required)</p>
-                            <p class="text-[11px] text-zinc-400 leading-normal">หากต้องการแก้ไขดัดแปลงระบบ โปรดกรุณาทำสำเนา (Backup) สคริปต์ต้นฉบับเก็บไว้ในที่ปลอดภัยก่อนลงมือทุกครั้ง</p>
-                          </div>
-                        </div>
-                        <div class="flex gap-4.5 items-start bg-black/30 p-3.5 rounded-xl border border-white/5">
-                          <i class="fas fa-brain text-purple-400 text-sm mt-0.5"></i>
-                          <div class="space-y-1">
-                            <p class="font-bold text-zinc-100 text-xs">สิทธิ์การเป็นเจ้าของสถาปัตยกรรม</p>
-                            <p class="text-[11px] text-zinc-400 leading-normal">โค้ดนี้ถูกสรรค์สร้างขึ้นภายใต้การกำกับของบุคคลระดับ <strong>Mobile Nexus Mastermind</strong> ร่วมกับการประมวลผลของปัญญาประดิษฐ์ (AI) ระดับสูง</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-amber-950/20 to-zinc-900/40 p-5 rounded-2xl border border-amber-500/20 shadow-xl">
-                      <h4 class="font-extrabold text-amber-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-lightbulb text-amber-400 text-[12px]"></i> โอกาสทองสำหรับ First Model Hub
-                      </h4>
-                      <div class="space-y-4">
-                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
-                          <p class="font-bold text-zinc-100 text-xs mb-1 flex items-center gap-1.5">
-                            <i class="fas fa-shield-heart text-amber-400"></i> ชูจุดเด่นระบบไม่เก็บมัดจำ
-                          </p>
-                          <p class="text-[11px] text-zinc-400 leading-relaxed">
-                            แบรนด์เพื่อนเที่ยวที่ได้ความนิยมสูงสุดคือการระบุชัดเจนว่า <strong>"ไม่มัดจำ จ่ายเงินสดหน้างานตัวจริงตรงปกเท่านั้น"</strong>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="lg:col-span-8 space-y-6">
-                    <div class="bg-gradient-to-br from-emerald-950/20 to-zinc-900/40 p-6 rounded-2xl border border-emerald-500/20 shadow-xl">
-                      <h4 class="font-extrabold text-emerald-400 text-xs mb-4 flex items-center gap-2 tracking-wide uppercase border-b border-white/5 pb-2">
-                        <i class="fas fa-chart-line text-emerald-400 text-[12px]"></i> รายงานวิเคราะห์โดเมนหลักการจัดอันดับ (ล่าสุด)
-                      </h4>
-                      <div class="bg-black/30 p-4 rounded-xl border border-white/5 mb-2 text-xs text-zinc-300">
-                        <p class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5"><i class="fas fa-trophy"></i> สรุปการย้ายโอนย้ายโดเมนหลัก</p>
-                        <p class="text-zinc-200">
-                          โดเมนหลักปัจจุบันถูกอัปเกรดเรียบร้อยแล้วเป็น <a href="https://firstmodelhub.com" target="_blank" class="text-purple-400 font-bold hover:underline">firstmodelhub.com</a> พร้อมทำระบบ 301 Permanent Redirect เรียบร้อยแล้ว
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mt-12 mb-6 text-center border-t border-white/5 pt-6 relative z-10">
-                  <button onclick="closeSystemStatusModal()" class="px-8 py-3 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition duration-150 active:scale-95 shadow-md">
-                    <i class="fas fa-check mr-1.5"></i> ตรวจสอบบันทึกระบบเสร็จสิ้น
-                  </button>
-                </div>
-
-              </div>
-            `;
-          };
-
-          window.closeSystemStatusModal = function() {
-            const modal = document.getElementById('system-status-modal');
-            if (modal) modal.remove();
-          };
-          </script>
         </div>
-        <div class="absolute bottom-0 w-full p-4 border-t" style="border-color: var(--color-border);"><div class="text-center mb-2" id="admin-user-info"></div><button class="w-full flex items-center justify-center gap-2 text-sm font-medium p-2 rounded-lg transition" id="logout-button" style="color: red; background-color: rgba(220, 53, 69, 0.1);"><i class="fas fa-sign-out-alt"></i>ออกจากระบบ</button></div>
-      </nav>
+
+        <div class="p-4 border-t border-white/10 bg-black/40">
+          <div class="text-center mb-2" id="admin-user-info"></div>
+          <button class="w-full flex items-center justify-center gap-2 text-xs font-bold p-2.5 rounded-xl transition" id="logout-button" style="color: #ef4444; background-color: rgba(239, 68, 68, 0.12);">
+            <i class="fas fa-sign-out-alt"></i>ออกจากระบบ
+          </button>
+        </div>
+      </aside>
       
-      <header class="lg:pl-64" id="header"><div class="p-4 flex justify-between items-center"><button class="text-xl w-8 h-8 flex items-center justify-center" id="menu-toggle"><i class="fas fa-bars"></i></button><span class="font-bold" id="header-title" style="color: #FFFFFF;">First Model Hub Admin</span></div></header>
+      <!-- 🟢 Header Bar (จัดระเบียบปุ่มสลับธีมไม่ให้บังตัวหนังสือ) -->
+      <header class="lg:pl-64 sticky top-0 z-30 bg-[#070410]/90 backdrop-blur-md border-b border-white/10" id="header">
+        <div class="p-4 flex justify-between items-center max-w-7xl mx-auto">
+          <div class="flex items-center gap-3">
+            <button class="lg:hidden text-lg w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white active:scale-95" id="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+            <span class="font-extrabold text-white text-base sm:text-lg" id="header-title">First Model Hub Admin</span>
+          </div>
+
+          <!-- ปุ่มสลับธีมฝังใน Header ไม่ลอยบังหน้าจอ -->
+          <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
+            <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
+          </button>
+        </div>
+      </header>
       
-      <main class="p-4 sm:p-6 lg:p-8 lg:ml-64">
-        <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold dashboard-title" id="view-title">First Model Hub<span class="star">🌟</span></h1><button class="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm text-sm font-medium transition card-surface" id="refresh-button"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline">รีเฟรช</span></button></div>
-        <div id="view-content"><div class="container-pro section-gap"></div></div>
+      <!-- 🟢 Main Content View Area -->
+      <main class="p-4 sm:p-6 lg:p-8 lg:ml-64 max-w-7xl">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold dashboard-title" id="view-title">First Model Hub<span class="star">🌟</span></h1>
+          <button class="flex items-center gap-2 px-3.5 py-2 rounded-xl shadow-sm text-xs font-bold transition card-surface text-white border border-white/10 hover:bg-white/10 active:scale-95" id="refresh-button">
+            <i class="fas fa-sync-alt text-purple-400"></i><span class="hidden sm:inline">รีเฟรชข้อมูล</span>
+          </button>
+        </div>
+
+        <div id="view-content"><div class="flex justify-center p-16"><div class="loader-lg"></div></div></div>
       </main>
     </div>
   </div>
+
 
 <script>
 // Supabase Configuration
