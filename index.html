@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th" data-theme="dark">
 <head>
@@ -242,7 +243,7 @@
         </div>
       </aside>
       
-      <!-- 🟢 Header Bar (จัดระเบียบปุ่มสลับธีมไม่ให้บังตัวหนังสือ) -->
+      <!-- 🟢 Header Bar -->
       <header class="lg:pl-64 sticky top-0 z-30 bg-[#070410]/90 backdrop-blur-md border-b border-white/10" id="header">
         <div class="p-4 flex justify-between items-center max-w-7xl mx-auto">
           <div class="flex items-center gap-3">
@@ -252,7 +253,6 @@
             <span class="font-extrabold text-white text-base sm:text-lg" id="header-title">First Model Hub Admin</span>
           </div>
 
-          <!-- ปุ่มสลับธีมฝังใน Header ไม่ลอยบังหน้าจอ -->
           <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
             <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
           </button>
@@ -301,6 +301,100 @@ async function uploadToCloudinary(file) {
         return null;
     }
 }
+
+// =========================================================================
+// 🟢 คลังคีย์เวิร์ดย่าน/โซนยอดนิยม 77 จังหวัด สำหรับดัน Local SEO ติดหน้าแรก
+// =========================================================================
+const LOCATION_PRESETS = {
+  // กรุงเทพฯ และปริมณฑล
+  'bangkok': ['รัชดา', 'ห้วยขวาง', 'สุขุมวิท', 'ลาดพร้าว', 'เอกมัย-ทองหล่อ', 'บางนา', 'ปิ่นเกล้า', 'พระราม 9', 'สาทร', 'อารีย์', 'รามคำแหง'],
+  'nonthaburi': ['งามวงศ์วาน', 'รัตนาธิเบศร์', 'ปากเกร็ด', 'แจ้งวัฒนะ', 'บางใหญ่', 'เมืองทองธานี', 'ไทรน้อย', 'ติวานนท์'],
+  'pathum-thani': ['รังสิต', 'ม.กรุงเทพ', 'ม.ธรรมศาสตร์', 'ฟิวเจอร์พาร์ค', 'คลองหลวง', 'ลำลูกกา', 'นวนคร', 'เมืองเอก'],
+  'samut-prakan': ['สำโรง', 'บางพลี', 'กิ่งแก้ว', 'แพรกษา', 'เทพารักษ์', 'เมกาบางนา', 'ศรีนครินทร์', 'บางบ่อ'],
+  'samut-sakhon': ['มหาชัย', 'กระทุ่มแบน', 'บ้านแพ้ว', 'มหาชัยเมืองใหม่', 'พระราม 2'],
+  'nakhon-pathom': ['ศาลายา', 'ม.มหิดล', 'ม.ศิลปากร', 'นครชัยศรี', 'ในเมืองนครปฐม', 'กำแพงแสน'],
+
+  // ภาคเหนือ
+  'chiang-mai': ['นิมมาน', 'เจ็ดยอด', 'สันติธรรม', 'ช้างเผือก', 'ท่าแพ', 'มช.', 'รวมโชค', 'หางดง', 'สันทราย', 'แม่โจ้'],
+  'chiang-rai': ['หอนาฬิกา', 'มฟล. (แม่ฟ้าหลวง)', 'บ้านดู่', 'เซ็นทรัลเชียงราย', 'แม่สาย', 'ในเมือง'],
+  'lampang': ['ในเมืองลำปาง', 'ม.ราชภัฏลำปาง', 'เซ็นทรัลลำปาง', 'สบตุ๋ย', 'เกาะคา'],
+  'lamphun': ['นิคมลำพูน', 'ในเมืองลำพูน', 'ป่าซาง', 'บ้านธิ'],
+  'mae-hong-son': ['ในเมืองแม่ฮ่องสอน', 'ปาย', 'แม่สะเรียง', 'ปางมะผ้า'],
+  'nan': ['ในเมืองน่าน', 'กาดข่วงเมือง', 'ปัว', 'ท่าวังผา'],
+  'phayao': ['ม.พะเยา (หน้ามอ)', 'กว๊านพะเยา', 'ในเมืองพะเยา', 'เชียงคำ'],
+  'phrae': ['ในเมืองแพร่', 'เด่นชัย', 'สูงเม่น', 'ร้องกวาง'],
+  'uttaradit': ['ในเมืองอุตรดิตถ์', 'มรภ.อุตรดิตถ์', 'ลับแล', 'พิชัย'],
+  'phitsanulok': ['ม.นเรศวร (มอนอ)', 'ในเมือง', 'ท็อปแลนด์', 'เซ็นทรัลพิษณุโลก', 'มรภ.พิบูลสงคราม'],
+  'sukhothai': ['ในเมืองสุโขทัย', 'เมืองเก่า', 'สวรรคโลก', 'ศรีสัชนาลัย'],
+  'phetchabun': ['ในเมืองเพชรบูรณ์', 'เขาค้อ', 'หล่มสัก', 'หล่มเก่า', 'วิเชียรบุรี'],
+  'phichit': ['ในเมืองพิจิตร', 'บางมูลนาก', 'ตะพานหิน', 'โพทะเล'],
+  'kamphaeng-phet': ['ในเมืองกำแพงเพชร', 'มรภ.กำแพงเพชร', 'พรานกระต่าย', 'คลองขลุง'],
+  'nakhon-sawan': ['ปากน้ำโพ', 'หนองสมบูรณ์', 'เซ็นทรัลนครสวรรค์', 'มรภ.นครสวรรค์', 'ในเมือง'],
+  'uthai-thani': ['ในเมืองอุทัยธานี', 'หนองฉาง', 'ทัพทัน', 'ลานสัก'],
+  'tak': ['แม่สอด', 'ในเมืองตาก', 'ริมเมย', 'มทร.ล้านนา ตาก'],
+
+  // ภาคอีสาน
+  'khon-kaen': ['กังสดาล', 'มข. (หลังมอ)', 'เซ็นทรัลขอนแก่น', 'บึงแก่นนคร', 'ในเมือง', 'ม.ภาค', 'ศิลา', 'บึงหนองโคตร'],
+  'nakhon-ratchasima': ['ในเมืองโคราช', 'เซ็นทรัลโคราช', 'เดอะมอลล์', 'มทส.', 'จอหอ', 'หัวทะเล', 'ปากช่อง', 'เซฟวัน'],
+  'udon-thani': ['ยูดีทาวน์', 'เซ็นทรัลอุดร', 'หนองประจักษ์', 'ในเมือง', 'รอบเมือง', 'มรภ.อุดร'],
+  'ubon-ratchathani': ['ในเมืองอุบล', 'ม.อุบลฯ (มูบล)', 'เซ็นทรัลอุบล', 'วารินชำราบ', 'ดอนกลาง'],
+  'nong-khai': ['สะพานมิตรภาพ', 'ในเมืองหนองคาย', 'ท่าบ่อ', 'ตลาดท่าเสด็จ'],
+  'nong-bua-lamphu': ['ในเมืองหนองบัวลำภู', 'ศรีบุญเรือง', 'โนนสัง', 'นากลาง'],
+  'loei': ['ในเมืองเลย', 'เชียงคาน', 'ภูกระดึง', 'วังสะพุง', 'มรภ.เลย'],
+  'sakon-nakhon': ['ในเมืองสกลนคร', 'หนองหาร', 'มรภ.สกลนคร', 'ม.เกษตร สกลฯ', 'พังโคน'],
+  'nakhon-phanom': ['ริมโขงนครพนม', 'ในเมือง', 'ม.นครพนม', 'ธาตุพนม'],
+  'mukdahan': ['ในเมืองมุกดาหาร', 'สะพานมิตรภาพ 2', 'ตลาดอินโดจีน', 'นิคมคำสร้อย'],
+  'kalasin': ['ในเมืองกาฬสินธุ์', 'ม.กาฬสินธุ์', 'ยางตลาด', 'สมเด็จ'],
+  'maha-sarakham': ['มมส.ใหม่ (ขามเรียง)', 'มมส.เก่า (ในเมือง)', 'เสริมไทยคอมเพล็กซ์', 'มรภ.สารคาม', 'กันทรวิชัย'],
+  'roi-et': ['ในเมืองร้อยเอ็ด', 'บึงพลาญชัย', 'โรบินสันร้อยเอ็ด', 'มรภ.ร้อยเอ็ด', 'โพนทอง'],
+  'yasothon': ['ในเมืองยโสธร', 'คำเขื่อนแก้ว', 'กุดชุม', 'เลิงนกทา'],
+  'amnat-charoen': ['ในเมืองอำนาจเจริญ', 'ชานุมาน', 'หัวตะพาน', 'ลืออำนาจ'],
+  'bueng-kan': ['ในเมืองบึงกาฬ', 'ริมโขง', 'เซกา', 'ปากคาด'],
+  'buriram': ['ในเมืองบุรีรัมย์', 'ช้างอารีนา', 'มรภ.บุรีรัมย์', 'ประโคนชัย', 'นางรอง'],
+  'surin': ['ในเมืองสุรินทร์', 'มรภ.สุรินทร์', 'โรบินสันสุรินทร์', 'ปราสาท', 'ศีขรภูมิ'],
+  'sisaket': ['ในเมืองศรีสะเกษ', 'มรภ.ศรีสะเกษ', 'กันทรลักษ์', 'อุทุมพรพิสัย'],
+  'chaiyaphum': ['ในเมืองชัยภูมิ', 'มรภ.ชัยภูมิ', 'ภูเขียว', 'แก้งคร้อ', 'จัตุรัส'],
+
+  // ภาคกลาง / ตะวันตก
+  'phra-nakhon-si-ayutthaya': ['โรจนะ', 'ในเกาะเมือง', 'อยุธยาซิตี้พาร์ค', 'บางปะอิน', 'เสนา', 'วังน้อย'],
+  'saraburi': ['ในเมืองสระบุรี', 'แก่งคอย', 'พระพุทธบาท', 'หนองแค', 'โรบินสันสระบุรี'],
+  'lopburi': ['ในเมืองลพบุรี', 'วงเวียนสระแก้ว', 'มรภ.เทพสตรี', 'บ้านหมี่', 'พัฒนานิคม'],
+  'sing-buri': ['ในเมืองสิงห์บุรี', 'อินทร์บุรี', 'บางระจัน', 'พรหมบุรี'],
+  'ang-thong': ['ในเมืองอ่างทอง', 'วิเศษชัยชาญ', 'ป่าโมก', 'โพธิ์ทอง'],
+  'chainat': ['ในเมืองชัยนาท', 'สวนนกชัยนาท', 'หันคา', 'วัดสิงห์'],
+  'suphan-buri': ['ในเมืองสุพรรณบุรี', 'ม.สวนดุสิต สุพรรณฯ', 'โรบินสันสุพรรณฯ', 'อู่ทอง', 'ด่านช้าง'],
+  'kanchanaburi': ['ในเมืองกาญจนบุรี', 'สะพานข้ามแม่น้ำแคว', 'ท่าม่วง', 'ท่ามะกา', 'ไทรโยค'],
+  'ratchaburi': ['ในเมืองราชบุรี', 'บ้านโป่ง', 'โพธาราม', 'ดำเนินสะดวก', 'สวนผึ้ง'],
+  'phetchaburi': ['ชะอำ', 'ในเมืองเพชรบุรี', 'ท่ายาง', 'บ้านแหลม', 'เขาวัง'],
+  'prachuap-khiri-khan': ['หัวหิน', 'ปราณบุรี', 'ในเมืองประจวบฯ', 'กุยบุรี', 'บางสะพาน'],
+  'samut-songkhram': ['อัมพวา', 'ในเมืองแม่กลอง', 'บางคนที', 'ดอนหอยหลอด'],
+
+  // ภาคตะวันออก
+  'chonburi': ['พัทยากลาง', 'พัทยาใต้', 'จอมเทียน', 'บางแสน', 'ม.บูรพา', 'ศรีราชา', 'แหลมฉบัง', 'อมตะนคร', 'บ่อวิน', 'สัตหีบ'],
+  'rayong': ['ในเมืองระยอง', 'มาบตาพุด', 'ปลวกแดง', 'บ้านฉาง', 'แกลง', 'หาดแสงจันทร์'],
+  'chanthaburi': ['ในเมืองจันทบุรี', 'ท่าใหม่', 'ขลุง', 'มรภ.รำไพพรรณี', 'แหลมสิงห์'],
+  'trat': ['ในเมืองตราด', 'เกาะช้าง', 'คลองใหญ่', 'แหลมงอบ'],
+  'chachoengsao': ['ในเมืองแปดริ้ว', 'บางปะกง', 'บ้านโพธิ์', 'แปลงยาว', 'พนมสารคาม'],
+  'prachinburi': ['นิคม 304', 'กบินทร์บุรี', 'ในเมืองปราจีนบุรี', 'ศรีมหาโพธิ', 'มจพ.ปราจีนบุรี'],
+  'sa-kaeo': ['อรัญประเทศ', 'ตลาดโรงเกลือ', 'ในเมืองสระแก้ว', 'วังน้ำเย็น', 'วัฒนานคร'],
+  'nakhon-nayok': ['ในเมืองนครนายก', 'มศว.องครักษ์', 'บ้านนา', 'เขื่อนขุนด่านฯ'],
+
+  // ภาคใต้
+  'phuket': ['ป่าตอง', 'กะตะ-กะรน', 'เมืองภูเก็ต', 'ฉลอง', 'บางเทา', 'ถลาง', 'ราไวย์', 'กะทู้', 'กมลา'],
+  'surat-thani': ['เกาะสมุย', 'เกาะพะงัน', 'ในเมืองสุราษฎร์', 'เซ็นทรัลสุราษฎร์', 'พุนพิน', 'ม.สงขลานครินทร์ สุราษฎร์'],
+  'songkhla': ['หาดใหญ่', 'ม.อ.หาดใหญ่', 'ไดอาน่า', 'เซ็นทรัลเฟสฯ หาดใหญ่', 'เมืองสงขลา', 'สมิหลา', 'ด่านนอก (สะเดา)'],
+  'nakhon-si-thammarat': ['ในเมืองนครศรีฯ', 'ม.วลัยลักษณ์ (ท่าศาลา)', 'เซ็นทรัลพลาซา นครศรีฯ', 'ทุ่งสง', 'สิชล'],
+  'krabi': ['อ่าวนาง', 'ในเมืองกระบี่', 'เกาะพีพี', 'คลองม่วง', 'อ่าวลึก'],
+  'phang-nga': ['เขาหลัก', 'ท้ายเหมือง', 'ในเมืองพังงา', 'ตะกั่วป่า', 'เกาะยาว'],
+  'trang': ['ในเมืองตรัง', 'มรภ.สวนดุสิต ตรัง', 'กันตัง', 'ห้วยยอด', 'ย่านตาขาว'],
+  'chumphon': ['ในเมืองชุมพร', 'หลังสวน', 'ปะทิว', 'ท่าแซะ'],
+  'ranong': ['ในเมืองระนอง', 'บ่อน้ำร้อนรักษะวาริน', 'กะเปอร์', 'เกาะพยาม'],
+  'phatthalung': ['ในเมืองพัทลุง', 'ควนขนุน', 'ม.ทักษิณ พัทลุง', 'เขาชัยสน'],
+  'satun': ['ในเมืองสตูล', 'ละงู (ปากบารา)', 'เกาะหลีเป๊ะ', 'ควนโดน'],
+  'pattani': ['ในเมืองปัตตานี', 'ม.อ.ปัตตานี', 'ยะหริ่ง', 'สายบุรี'],
+  'yala': ['ในเมืองยะลา', 'เบตง', 'มรภ.ยะลา', 'รามัน'],
+  'narathiwat': ['ในเมืองนราธิวาส', 'สุไหงโก-ลก', 'ตากใบ', 'ม.นราธิวาสราชนครินทร์']
+};
 
 const AppState = {
   currentUser: null,
@@ -634,11 +728,35 @@ const Controller = {
   setupEventListeners() {
     if (Controller.listenersInitialized) return;
     
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    const closeSidebarMobileBtn = document.getElementById('close-sidebar-mobile-btn');
+
+    const toggleSidebar = (isOpen) => {
+      if (isOpen) {
+        DOM.sidebar.classList.remove('-translate-x-full');
+        sidebarBackdrop?.classList.remove('hidden');
+      } else {
+        DOM.sidebar.classList.add('-translate-x-full');
+        sidebarBackdrop?.classList.add('hidden');
+      }
+    };
+
     DOM.loginForm.addEventListener('submit', e => Controller.handleLogin(e));
     DOM.logoutButton.addEventListener('click', () => Controller.handleLogout());
+    
     DOM.menuToggle.addEventListener('click', () => {
       AdminSoundEffects.playPop();
-      DOM.sidebar.classList.toggle('-translate-x-full');
+      const isCurrentlyClosed = DOM.sidebar.classList.contains('-translate-x-full');
+      toggleSidebar(isCurrentlyClosed);
+    });
+
+    closeSidebarMobileBtn?.addEventListener('click', () => {
+      AdminSoundEffects.playCancel();
+      toggleSidebar(false);
+    });
+
+    sidebarBackdrop?.addEventListener('click', () => {
+      toggleSidebar(false);
     });
     
     DOM.refreshButton.addEventListener('click', async () => {
@@ -650,6 +768,7 @@ const Controller = {
     document.body.addEventListener('click', e => {
       const navButton = e.target.closest('.nav-button');
       if (navButton) {
+        toggleSidebar(false); // ปิด Sidebar อัตโนมัติเมื่อกดเมนูบนมือถือ
         Controller.renderView(navButton.dataset.view, { action: navButton.dataset.action });
       }
       
@@ -1077,7 +1196,14 @@ const Controller = {
                                 ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
                             </select>
                         </div>
-                        <div><label class="label-style">พิกัดย่อย</label><input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="เช่น นิมมาน, เจ็ดยอด"></div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <label class="label-style mb-0">พิกัดย่อย / ย่านโซน (SEO)*</label>
+                                <span class="text-[10px] text-purple-400 font-bold">แตะเพื่อเลือกด่วน</span>
+                            </div>
+                            <input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="ระบุย่าน หรือกดชิปด้านล่าง">
+                            <div id="location-chips-container" class="flex flex-wrap gap-1.5 pt-1"></div>
+                        </div>
                         <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="เช่น 1500/1"></div>
                         <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
                     </div>
@@ -1116,11 +1242,18 @@ const Controller = {
             </div>
           </div>
           
-          <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl bg-zinc-950/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1001]">
-             <button type="button" class="nav-button px-6 py-3 font-bold text-zinc-400 hover:text-white" data-view="profiles-list-container">ยกเลิก</button>
-             <div class="flex gap-2">
-                <button type="button" id="preview-profile-button" class="px-5 py-3 font-bold text-zinc-300 bg-zinc-800/80 rounded-xl hover:bg-zinc-700 hover:text-white transition"><i class="fas fa-eye mr-1"></i> ดูตัวอย่าง</button>
-                <button type="submit" id="save-profile-button" class="px-8 py-3 font-bold text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg transition-transform active:scale-95">บันทึกคิวงาน</button>
+          <!-- แถบลอยด้านล่าง ปรับปรุงใหม่ไม่บังปุ่มเพลง + ตัวอักษรไม่ขึ้นบรรทัดใหม่อึดอัด -->
+          <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-zinc-950/95 backdrop-blur-lg p-3 sm:p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1000]">
+             <button type="button" class="nav-button px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-400 hover:text-white" data-view="profiles-list-container">
+               <i class="fas fa-arrow-left mr-1"></i> ยกเลิก
+             </button>
+             <div class="flex items-center gap-2">
+                <button type="button" id="preview-profile-button" class="px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-300 bg-zinc-800 rounded-xl hover:bg-zinc-700 hover:text-white transition">
+                  <i class="fas fa-eye sm:mr-1"></i> <span class="hidden sm:inline">ดูตัวอย่าง</span>
+                </button>
+                <button type="submit" id="save-profile-button" class="px-4 sm:px-8 py-2.5 font-bold text-xs sm:text-sm text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-900/40 active:scale-95 whitespace-nowrap">
+                  <i class="fas fa-save mr-1"></i> บันทึกข้อมูล
+                </button>
              </div>
           </div>
         </form>
@@ -1153,6 +1286,56 @@ const Controller = {
       altText: document.getElementById('altText')
     };
 
+    const chipsContainer = document.getElementById('location-chips-container');
+
+    // ฟังก์ชันอัปเดตชิปโซนย่อยตามจังหวัดที่เลือก
+    const renderLocationChips = () => {
+      if (!chipsContainer || !fields.province) return;
+      const selectedKey = (fields.province.value || '').toLowerCase().trim();
+      const normalizedKey = selectedKey.replace(/_/g, '-');
+      const presets = (typeof LOCATION_PRESETS !== 'undefined' && (LOCATION_PRESETS[normalizedKey] || LOCATION_PRESETS[selectedKey])) 
+                      || ['ในเมือง', 'รอบเมือง', 'ใกล้เซ็นทรัล', 'โซนมหาวิทยาลัย'];
+      
+      if (fields.location) {
+        fields.location.placeholder = `เช่น ${presets.slice(0, 3).join(', ')}`;
+      }
+
+      const currentLocations = (fields.location.value || '').split(',').map(s => s.trim()).filter(Boolean);
+
+      chipsContainer.innerHTML = presets.map(zone => {
+        const isSelected = currentLocations.includes(zone);
+        return `
+          <button type="button" class="loc-chip text-[11px] px-2.5 py-1 rounded-lg border transition-all active:scale-95 flex items-center gap-1 ${
+            isSelected 
+              ? 'bg-purple-600 border-purple-400 text-white font-bold shadow-sm shadow-purple-900/50' 
+              : 'bg-zinc-900/80 border-white/10 text-zinc-400 hover:text-purple-300 hover:border-purple-500/40'
+          }" data-zone="${zone}">
+            <i class="fas ${isSelected ? 'fa-check' : 'fa-map-pin'} text-[9px]"></i>
+            ${zone}
+          </button>
+        `;
+      }).join('');
+
+      chipsContainer.querySelectorAll('.loc-chip').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playPop();
+          const zone = btn.dataset.zone;
+          let locList = (fields.location.value || '').split(',').map(s => s.trim()).filter(Boolean);
+          
+          if (locList.includes(zone)) {
+            locList = locList.filter(z => z !== zone);
+          } else {
+            locList.push(zone);
+          }
+          
+          fields.location.value = locList.join(', ');
+          renderLocationChips();
+          triggerSmartGeneration();
+        });
+      });
+    };
+
     Object.keys(fields).forEach(key => {
       const el = fields[key];
       if (el && ['slug', 'seoTitle', 'metaDesc', 'altText'].includes(key)) {
@@ -1161,6 +1344,7 @@ const Controller = {
       }
     });
 
+    // 🚀 ระบบสร้าง Local SEO Tags อัตโนมัติ รองรับพิกัดย่อยหลายจุด
     const triggerSmartGeneration = () => {
       const name = fields.name?.value?.trim() || '';
       const provinceName = fields.province?.options[fields.province.selectedIndex]?.text || '';
@@ -1171,34 +1355,47 @@ const Controller = {
 
       if (!name) return;
 
+      // 1. Slug
       if (fields.slug && fields.slug.dataset.autogenerated === 'true') {
-        fields.slug.value = name.toLowerCase()
-                                .replace(/\s+/g, '-')
+        const locSlug = location ? `-${location.split(',')[0].trim()}` : '';
+        fields.slug.value = `${name.toLowerCase().replace(/\s+/g, '-')}${locSlug}`
                                 .replace(/[^a-zA-Z0-9ก-๙-]/g, '');
       }
 
+      // 2. SEO Title
       if (fields.seoTitle && fields.seoTitle.dataset.autogenerated === 'true') {
-        fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} ฟิวแฟน | First Model Hub`;
+        const locText = location ? `โซน${location}` : provinceName;
+        fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${locText} ฟิวแฟนตรงปก | First Model Hub`;
       }
 
+      // 3. Meta Description
       if (fields.metaDesc && fields.metaDesc.dataset.autogenerated === 'true') {
-        let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''} บน First Model Hub.`;
-        if (rate) desc += ` เรทบริการ ${rate}.`;
-        if (age) desc += ` อายุ ${age} ปี.`;
-        if (stats) desc += ` สัดส่วน ${stats}.`;
-        desc += ` น่ารัก อัธยาศัยดี มีความเป็นสุภาพสตรีสไตล์ฟิวแฟน ปลอดภัย จ่ายเงินหน้างาน 100% ไม่มีมัดจำ`;
+        let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''} นัดพบฟิวแฟนบน First Model Hub`;
+        if (rate) desc += ` เรทบริการ ${rate}`;
+        if (age) desc += ` อายุ ${age} ปี`;
+        if (stats) desc += ` สัดส่วน ${stats}`;
+        desc += ` การันตีตรงปก 100% ตัวจริงปลอดภัย สะอาด จ่ายเงินหน้างาน ไม่มีมัดจำ`;
         fields.metaDesc.value = desc;
       }
 
+      // 4. Alt Text
       if (fields.altText && fields.altText.dataset.autogenerated === 'true') {
-        fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? location : provinceName} เพื่อนเที่ยวฟิวแฟน ตรงปก First Model Hub`;
+        fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? ` ${location}` : ''} เพื่อนเที่ยวฟิวแฟน First Model Hub`;
       }
     };
 
-    ['name', 'province', 'location', 'rate', 'age', 'stats'].forEach(key => {
-      fields[key]?.addEventListener('input', triggerSmartGeneration);
-      fields[key]?.addEventListener('change', triggerSmartGeneration);
+    // ดักจับการเปลี่ยนจังหวัดเพื่อเรนเดอร์ชิปใหม่
+    fields.province?.addEventListener('change', () => {
+      renderLocationChips();
+      triggerSmartGeneration();
     });
+
+    ['name', 'location', 'rate', 'age', 'stats'].forEach(key => {
+      fields[key]?.addEventListener('input', triggerSmartGeneration);
+    });
+
+    // เรียกทำงานครั้งแรก
+    renderLocationChips();
   },
 
   initImageUploader(imageUrl) {
@@ -1502,7 +1699,6 @@ const Controller = {
             profileData.galleryPaths = uploadedUrls;
         } else {
             profileData.imagePath = currentImagePath;
-            // 🟢 ปรับปรุงรักษาคลังรูปภาพเดิมไว้ในกรณีที่มีการแก้ไขข้อมูลโดยไม่เลือกอัปโหลดรูปใหม่
             if (isEditing) {
               const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
               if (existingProfile && existingProfile.galleryPaths) {
@@ -1743,6 +1939,28 @@ const Controller = {
   }
 };
 
+// 🟢 เพิ่มฟังก์ชันหน้าต่างสถานะระบบ ป้องกัน Error เมื่อกดปุ่ม SYSTEM ONLINE
+window.showSystemStatusModal = function() {
+  AdminSoundEffects.playPop();
+  UI.showModal({
+    title: '🟢 สถานะระบบ First Model Hub',
+    message: `
+      <div class="space-y-2 text-xs text-zinc-300">
+        <p>• <strong>ระบบจัดการ:</strong> เวอร์ชัน 3.0 (Smart SEO & 77 จังหวัด)</p>
+        <p>• <strong>ฐานข้อมูล:</strong> Supabase Connected (Latency ปกติ)</p>
+        <p>• <strong>ระบบคลาวด์ภาพ:</strong> Cloudinary Active</p>
+        <p>• <strong>โปรไฟล์ในระบบ:</strong> ${AppState.allProfiles.length} รายการ</p>
+        <p>• <strong>จังหวัดที่เปิดใช้งาน:</strong> ${AppState.provinces.length} จังหวัด</p>
+        <p>• <strong>ผู้ดูแลระบบ:</strong> ${AppState.currentUser ? AppState.currentUser.email : 'ยังไม่ระบุ'}</p>
+      </div>
+    `,
+    confirmText: 'รับทราบ',
+    cancelText: 'ปิด',
+    isDestructive: false,
+    onConfirm: () => {}
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   Controller.setupEventListeners();
   Controller.initApp();
@@ -1870,10 +2088,6 @@ const AdminSoundEffects = {
 })();
 </script>
 
-<div class="toggle-wrap">
-  <button id="theme-toggle" class="theme-toggle">สลับธีม</button>
-</div>
-
 <!-- Cropper Modal -->
 <div id="cropper-modal">
   <div id="cropper-box" class="card-surface bg-zinc-950 text-white border border-white/10">
@@ -1900,7 +2114,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 <!-- 🎵 AUTONOMOUS SMART AUDIO WIDGET -->
 <!-- ================================================================================== -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 
 <style>
   #admin-assistive-root {
@@ -2704,7 +2918,6 @@ const AdminOS = {
     });
   },
 
-  // 🔮 [ฟังก์ชันที่เพิ่มแก้ไข] ระบบค้นหาเพลงสตรีมมิ่งออนไลน์
   async searchOnline() {
     const input = document.getElementById('online-search-input');
     const container = document.getElementById('online-results-container');
