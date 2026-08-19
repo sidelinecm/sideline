@@ -2855,8 +2855,8 @@ const AdminOS = {
   myAlbum: [
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
     { title: "ถูกที่ผิดเวลา", url: "./songs/ถูกที่ผิดเวลา.mp4", type: "audio" },
-    { title: "wawai (MP3)", url: "./songs/wawai.mp3", type: "audio" }
-        { title: "เลือกได้ไหม.mp4", url: "./songs/เลือกได้ไหม.mp4", type: "audio" }
+    { title: "wawai (MP3)", url: "./songs/wawai.mp3", type: "audio" },
+    { title: "เลือกได้ไหม.mp4", url: "./songs/เลือกได้ไหม.mp4", type: "audio" }
   ],
   
   root: document.getElementById('admin-assistive-root'),
@@ -2886,7 +2886,8 @@ const AdminOS = {
   init() {
     this.setupDraggable();
     this.renderPlaylist();
-    this.btn.addEventListener('click', () => {
+    this.btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (!this.isDragging) this.panel.classList.toggle('active');
     });
   },
