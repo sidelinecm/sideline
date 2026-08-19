@@ -10,7 +10,7 @@
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/styles.css">
 
@@ -21,215 +21,499 @@
       --accent-green: #00E676;
       --accent-red: #FF2E63;
       --accent-gold: #FBBF24;
+      --accent-cyan: #38BDF8;
       --body-bg: #060411;
-      --card-bg: linear-gradient(135deg, rgba(22, 11, 46, 0.8) 0%, rgba(9, 5, 22, 0.95) 100%);
-      --border-glow: rgba(192, 132, 252, 0.28);
+      --card-bg: linear-gradient(145deg, rgba(24, 14, 51, 0.7) 0%, rgba(11, 7, 26, 0.9) 100%);
+      --border-glow: rgba(192, 132, 252, 0.2);
+      --text-main: #F4F4F5;
+      --text-muted: #A1A1AA;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
       background-color: var(--body-bg) !important;
-      color: #E4E4E7;
+      color: var(--text-main);
       font-family: 'Prompt', sans-serif;
-      line-height: 1.6;
-      padding-bottom: 60px;
+      line-height: 1.7;
+      padding-bottom: 80px;
     }
 
     .playbook-container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 20px 16px;
+      padding: 32px 20px;
     }
 
-    /* Top Admin Badge */
+    /* Top Navigation Header */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-logo-text {
+      font-size: 20px;
+      font-weight: 900;
+      color: #FFF;
+      letter-spacing: -0.5px;
+    }
+
+    .hub-text {
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-purple);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(192, 132, 252, 0.08);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      padding: 6px 16px;
+      border-radius: 100px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back-home:hover {
+      background: rgba(192, 132, 252, 0.2);
+      border-color: var(--primary-purple);
+      color: #FFF;
+    }
+
+    /* Admin Hero Badge */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
     .admin-pill-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(124, 58, 237, 0.2);
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.25);
       border: 1px solid rgba(192, 132, 252, 0.4);
       color: #E9D5FF;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
-      padding: 4px 12px;
+      padding: 6px 16px;
       border-radius: 100px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
 
-    /* Bento Cards */
+    .hero-title {
+      font-size: clamp(24px, 4.5vw, 34px);
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #FFFFFF 20%, #E9D5FF 60%, var(--primary-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Top Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      padding: 18px 20px;
+      border-radius: 18px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Bento Sections */
     .bento-card {
       background: var(--card-bg);
       border: 1px solid var(--border-glow);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(147, 51, 234, 0.1);
-      backdrop-filter: blur(16px);
-      position: relative;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 30px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(147, 51, 234, 0.08);
+      backdrop-filter: blur(20px);
+    }
+
+    @media (max-width: 640px) {
+      .bento-card {
+        padding: 20px 16px;
+        border-radius: 20px;
+      }
     }
 
     .bento-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding-bottom: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .step-title {
-      font-size: 17px;
-      font-weight: 900;
+      font-size: 19px;
+      font-weight: 800;
       color: #FFFFFF;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .step-badge {
       background: linear-gradient(135deg, #7C3AED 0%, #5A2CBE 100%);
       color: #FFF;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 900;
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      display: flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .header-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Profile Spec Grid */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .spec-item {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .spec-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spec-value {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #FFF;
+      word-break: break-all;
     }
 
     /* Copy Box */
+    .copy-box-container {
+      margin-top: 16px;
+    }
+
+    .copy-header-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #E9D5FF;
+    }
+
     .copy-box-wrapper {
       position: relative;
-      background: rgba(5, 3, 12, 0.85);
-      border: 1px solid rgba(192, 132, 252, 0.25);
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 12.5px;
-      color: #CBD5E1;
+      background: rgba(5, 3, 14, 0.95);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      font-size: 13.5px;
+      color: #E2E8F0;
       white-space: pre-wrap;
       word-break: break-word;
-      line-height: 1.7;
+      line-height: 1.8;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
     .btn-copy {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(124, 58, 237, 0.3);
-      border: 1px solid rgba(192, 132, 252, 0.5);
+      top: 14px;
+      right: 14px;
+      background: rgba(124, 58, 237, 0.4);
+      border: 1px solid rgba(192, 132, 252, 0.6);
       color: #FFF;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 100px;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       transition: all 0.2s ease;
     }
 
     .btn-copy:hover {
-      background: #00E676;
-      border-color: #00E676;
+      background: var(--accent-green);
+      border-color: var(--accent-green);
       color: #000;
-      box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
+      box-shadow: 0 0 14px rgba(0, 230, 118, 0.6);
     }
 
     .btn-copy:active {
-      transform: scale(0.95);
+      transform: scale(0.96);
     }
 
-    /* Time Schedule Tiles */
-    .schedule-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .schedule-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .schedule-tile {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .schedule-time {
-      font-size: 14px;
-      font-weight: 900;
-      color: #00E676;
-    }
-
-    .schedule-desc {
-      font-size: 10px;
-      color: #A1A1AA;
-      margin-top: 2px;
-    }
-
-    /* Hashtag Matrix */
-    .tag-cloud {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+    .admin-note-badge {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--accent-gold);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
       margin-top: 8px;
     }
 
+    /* Schedule Matrix */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .schedule-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .schedule-tile {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .schedule-tile:hover {
+      background: rgba(192, 132, 252, 0.05);
+      border-color: rgba(192, 132, 252, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .schedule-time {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--accent-green);
+    }
+
+    .schedule-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Hashtag Matrix Card */
+    .hashtag-category {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .hashtag-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .x-tag {
-      background: rgba(192, 132, 252, 0.1);
-      border: 1px solid rgba(192, 132, 252, 0.25);
-      color: #E9D5FF;
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 10px;
+      background: rgba(192, 132, 252, 0.12);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      color: #F3E8FF;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 5px 12px;
       border-radius: 100px;
     }
 
-    /* Rule Checklist */
-    .rule-box {
+    /* =========================================================================
+       Detailed Anti-Ban Box Styles
+       ========================================================================= */
+    .anti-ban-subcard {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .subcard-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 10px;
+    }
+
+    .step-nav-path {
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: #E9D5FF;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .step-nav-path code {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #38BDF8;
+      font-weight: 700;
+    }
+
+    .substep-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .substep-item {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 12px;
-      background: rgba(255, 46, 99, 0.05);
-      border: 1px solid rgba(255, 46, 99, 0.2);
-      border-radius: 12px;
-      margin-bottom: 8px;
+      font-size: 13px;
+      color: #D4D4D8;
     }
 
-    .rule-box i {
-      color: #FF2E63;
-      font-size: 16px;
+    .substep-num {
+      background: var(--accent-green);
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       margin-top: 2px;
       flex-shrink: 0;
+    }
+
+    .diagnostic-tool-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(124, 58, 237, 0.15) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     /* Toast Notification */
     #toast-msg {
       position: fixed;
-      bottom: 24px;
+      bottom: 30px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #00E676;
-      color: #000;
-      padding: 10px 24px;
+      background: var(--accent-green);
+      color: #05030A;
+      padding: 12px 28px;
       border-radius: 100px;
-      font-size: 13px;
-      font-weight: 900;
-      box-shadow: 0 10px 30px rgba(0, 230, 118, 0.5);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(0, 230, 118, 0.45);
       z-index: 9999;
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     #toast-msg.show {
@@ -244,43 +528,51 @@
   <div class="playbook-container">
 
     <!-- Top Navigation Header -->
-    <header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-      <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
-        <span class="brand-logo-text" style="font-size: 18px !important;">
-          FirstModel<span class="hub-text">Hub</span><span class="star">🌟</span>
+    <header class="top-nav">
+      <a href="/" style="text-decoration: none;">
+        <span class="brand-logo-text">
+          FirstModel<span class="hub-text">Hub</span><span style="font-size: 16px; margin-left: 4px;">🌟</span>
         </span>
       </a>
-      <a href="/" style="color: var(--primary-purple); font-size: 12px; font-weight: 700; text-decoration: none; border: 1px solid rgba(192, 132, 252, 0.3); padding: 4px 12px; border-radius: 100px;">
-        &larr; กลับหน้าหลัก
+      <a href="/" class="btn-back-home">
+        <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
       </a>
     </header>
 
     <!-- Main Hero Banner -->
-    <div style="text-align: center; margin-bottom: 25px;">
+    <div class="hero-section">
       <span class="admin-pill-badge">
         <i class="fab fa-x-twitter" style="color: #FFF;"></i> OPERATIONAL PLAYBOOK 2026
       </span>
-      <h1 class="text-gradient-main" style="font-size: clamp(22px, 5vw, 32px); margin-bottom: 8px;">
-        พิมพ์เขียวการตลาด X (Twitter) ดึงคนเข้าเว็บ & จองคิว
+      <h1 class="hero-title">
+        พิมพ์เขียวการตลาด X (Twitter)<br>ดันยอดจองคิว & ส่งพลัง SEO
       </h1>
-      <p style="font-size: 12.5px; color: var(--text-muted); max-width: 650px; margin: 0 auto;">
-        คู่มือปฏิบัติการโพสต์รายวันบนแพลตฟอร์ม X สร้างความน่าเชื่อถือ ป้องกันการโดนแบน และส่งพลังคะแนน SEO กลับสู่เว็บไซต์ First Model Hub
+      <p class="hero-subtitle">
+        คู่มือปฏิบัติการโพสต์รายวันบนแพลตฟอร์ม X ออกแบบเพื่อสร้างความน่าเชื่อถือ ป้องกันการโดนปิดกั้น (Shadowban) และดึงลูกค้าที่มีความพร้อมเข้าสู่ระบบโดยตรง
       </p>
     </div>
 
     <!-- Quick Stats Metric Strip -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px;">
-      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
-        <div style="color: #00E676; font-size: 18px; font-weight: 900;"><i class="fas fa-bolt"></i> อันดับ 1</div>
-        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">ช่องทางดึงลูกค้าสด</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" style="color: var(--accent-green);">
+          <i class="fas fa-bolt"></i> ช่องทางหลัก
+        </div>
+        <div class="stat-label">ดึงลูกค้าสดเข้าไลน์ได้เร็วที่สุด</div>
       </div>
-      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
-        <div style="color: #C084FC; font-size: 18px; font-weight: 900;"><i class="fas fa-shield-alt"></i> 100%</div>
-        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">นโยบายจ่ายหน้างาน</div>
+
+      <div class="stat-card">
+        <div class="stat-value" style="color: var(--primary-purple);">
+          <i class="fas fa-shield-halved"></i> ชูจุดขาย 100%
+        </div>
+        <div class="stat-label">นโยบายจ่ายหน้างาน ไม่มัดจำ</div>
       </div>
-      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
-        <div style="color: #FBBF24; font-size: 18px; font-weight: 900;"><i class="fas fa-chart-line"></i> 2 เด้ง</div>
-        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">ยอดจอง + ดัน SEO</div>
+
+      <div class="stat-card">
+        <div class="stat-value" style="color: var(--accent-gold);">
+          <i class="fas fa-chart-line"></i> ทราฟฟิก 2 ทาง
+        </div>
+        <div class="stat-label">ยอดจองตรง + ส่งคะแนน SEO เว็บ</div>
       </div>
     </div>
 
@@ -292,24 +584,49 @@
         <h2 class="step-title">
           <span class="step-badge">1</span> ตั้งค่าหน้าโปรไฟล์ (Profile Architecture)
         </h2>
-        <span style="font-size: 11px; color: #00E676; font-weight: 700;">✓ สร้างความน่าเชื่อถือ</span>
-      </div>
-      
-      <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; font-size: 12.5px;">
-        <div><strong>ชื่อบัญชี (Name):</strong> <code style="color: #C084FC;">FirstModelHub | สาวรับงานเชียงใหม่ & ทั่วไทย (ไม่มัดจำ)</code></div>
-        <div><strong>ชื่อไอดี (Handle @):</strong> <code style="color: #00E676;">@FirstModelHub</code> หรือ <code style="color: #00E676;">@sidelinechiangmai</code></div>
-        <div><strong>ลิงก์หน้าโปรไฟล์ (Website URL):</strong> <code style="color: #38BDF8;">https://firstmodelhub.com</code></div>
+        <span class="header-tag" style="color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.3);">
+          ✓ ด่านแรกสร้างความเชื่อมั่น
+        </span>
       </div>
 
-      <div style="font-size: 12px; font-weight: 800; color: #E9D5FF; margin-bottom: 6px;">คำโปรยหน้าโปรไฟล์ (Bio Template):</div>
-      <div class="copy-box-wrapper" id="bio-copy-text">🌟 ศูนย์รวมผู้ดูแล & เพื่อนเที่ยวไซด์ไลน์ฟิวแฟน VIP ตรงปก 100%
-🛡️ ความปลอดภัยสูงสุด "จ่ายหน้างาน ไม่โอนมัดจำล่วงหน้าทุกกรณี"
+      <!-- Spec Grid -->
+      <div class="spec-grid">
+        <div class="spec-item">
+          <div class="spec-label"><i class="fas fa-font"></i> ชื่อบัญชี (Name)</div>
+          <div class="spec-value" style="color: var(--primary-purple);">FirstModelHub | สาวรับงานเชียงใหม่ & ทั่วไทย (ไม่มัดจำ)</div>
+        </div>
+
+        <div class="spec-item">
+          <div class="spec-label"><i class="fas fa-at"></i> ชื่อไอดี (Handle @)</div>
+          <div class="spec-value" style="color: var(--accent-green);">@FirstModelHub <span style="font-weight: 400; font-size: 11px; color: var(--text-muted);">(หรือไอดีที่ต้องการ)</span></div>
+        </div>
+
+        <div class="spec-item">
+          <div class="spec-label"><i class="fas fa-link"></i> เว็บไซต์ (Website URL)</div>
+          <div class="spec-value" style="color: var(--accent-cyan);">https://firstmodelhub.com</div>
+        </div>
+      </div>
+
+      <!-- Bio Copy Box -->
+      <div class="copy-box-container">
+        <div class="copy-header-label">
+          <span><i class="fas fa-id-card"></i> คำโปรยหน้าโปรไฟล์ (Bio Template):</span>
+          <span style="font-size: 11.5px; color: var(--accent-gold);"><i class="fas fa-info-circle"></i> ปรับ ID LINE ก่อนใช้งาน</span>
+        </div>
+
+        <div class="copy-box-wrapper" id="bio-copy-text">🌟 ศูนย์รวมผู้ดูแล & เพื่อนเที่ยวไซด์ไลน์ฟิวแฟน VIP ตรงปก 100%
+🛡️ ปลอดภัยสูงสุด "จ่ายหน้างาน ไม่โอนมัดจำล่วงหน้าทุกกรณี"
 📍 เชียงใหม่ • ขอนแก่น • เชียงราย • ลำปาง • อุดร • ภูเก็ต
-📲 ดูโปรไฟล์ทั้งหมด: firstmodelhub.com
-💬 จองคิวแอด LINE: @firstmodelhub (มี @)
-        <button type="button" class="btn-copy" onclick="copyText('bio-copy-text')">
-          <i class="fas fa-copy"></i> คัดลอก Bio
-        </button>
+📲 ดูโปรไฟล์ทั้งหมด: https://firstmodelhub.com
+💬 จองคิวแอด LINE: [ใส่ LINE ID ที่ต้องการใช้งาน]
+          <button type="button" class="btn-copy" onclick="copyText('bio-copy-text')">
+            <i class="fas fa-copy"></i> คัดลอก Bio
+          </button>
+        </div>
+
+        <div class="admin-note-badge">
+          💡 หมายเหตุแอดมิน: ตรง <code>[ใส่ LINE ID ที่ต้องการใช้งาน]</code> ให้แก้เป็นไอดี LINE สำหรับรับงานของท่าน
+        </div>
       </div>
     </section>
 
@@ -321,26 +638,34 @@
         <h2 class="step-title">
           <span class="step-badge">2</span> ทวีตปักหมุด (Pinned Tweet Blueprint)
         </h2>
-        <span style="font-size: 11px; color: #FF2E63; font-weight: 800;">🚨 ป้องกันมิจฉาชีพ</span>
+        <span class="header-tag" style="color: var(--accent-red); border: 1px solid rgba(255, 46, 99, 0.3);">
+          🚨 หัวใจสำคัญกันมิจฉาชีพ
+        </span>
       </div>
-      
-      <p style="font-size: 12px; color: #A1A1AA; margin-bottom: 10px;">
-        ทวีตนี้ต้องปักหมุดไว้บนสุดของหน้าโปรไฟล์เสมอ เพื่อให้ลูกค้าใหม่มั่นใจและกล้าทักจองคิว:
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        โพสต์นี้ต้อง <strong>"ปักหมุดไว้บนสุด (Pin to your profile)"</strong> ของหน้าโปรไฟล์เสมอ เพื่อให้ลูกค้าใหม่มั่นใจ กล้าทักจอง และไม่ถูกมิจฉาชีพหลอก:
       </p>
 
-      <div class="copy-box-wrapper" id="pinned-copy-text">🚨 คำเตือนป้องกันมิจฉาชีพ | นโยบาย First Model Hub 🚨
+      <div class="copy-box-container">
+        <div class="copy-box-wrapper" id="pinned-copy-text">🚨 คำเตือนความปลอดภัย | First Model Hub 🚨
 
 ❌ ไม่มีการโอนเงินมัดจำล่วงหน้าทุกกรณี
-❌ ไม่มีค่าจองคิว / ค่าธรรมเนียมใดๆ
+❌ ไม่มีค่าจองคิว / ค่าธรรมเนียมแอบแฝง
 ✅ พบตัวจริง ตรวจสอบความตรงปกหน้างานแล้วค่อยชำระเงินโดยตรง
 
-🌐 เช็กโปรไฟล์น้องๆ ที่พร้อมรับงานวันนี้: https://firstmodelhub.com
-💬 ติดต่อสอบถามคิวงาน: https://line.me/ti/p/ksLUWB89Y_
+🌐 เช็กโปรไฟล์น้องๆ พร้อมรับงานวันนี้: https://firstmodelhub.com
+💬 ติดต่อสอบถามคิวงาน / จองคิว: [ใส่ลิงก์ LINE หรือ LINE ID ที่ต้องการใช้งาน]
 
 #รับงานเชียงใหม่ #ไซด์ไลน์เชียงใหม่ #ฟิวแฟน #FirstModelHub
-        <button type="button" class="btn-copy" onclick="copyText('pinned-copy-text')">
-          <i class="fas fa-copy"></i> คัดลอกทวีตปักหมุด
-        </button>
+          <button type="button" class="btn-copy" onclick="copyText('pinned-copy-text')">
+            <i class="fas fa-copy"></i> คัดลอกทวีตปักหมุด
+          </button>
+        </div>
+
+        <div class="admin-note-badge">
+          💡 หมายเหตุแอดมิน: ตรง <code>[ใส่ลิงก์ LINE หรือ LINE ID ที่ต้องการใช้งาน]</code> ให้แก้เป็นลิงก์ <code>https://line.me/ti/p/...</code> หรือไอดีไลน์ของท่าน
+        </div>
       </div>
     </section>
 
@@ -350,44 +675,57 @@
     <section class="bento-card">
       <div class="bento-header">
         <h2 class="step-title">
-          <span class="step-badge">3</span> โครงสร้างโพสต์รายวัน (Daily Posting)
+          <span class="step-badge">3</span> โครงสร้างโพสต์รายวัน (Daily Posting Schedule)
         </h2>
-        <span style="font-size: 11px; color: #FBBF24; font-weight: 800;">วันละ 3 - 5 โพสต์</span>
+        <span class="header-tag" style="color: var(--accent-gold); border: 1px solid rgba(251, 191, 36, 0.3);">
+          ⏱️ วันละ 3 - 5 โพสต์
+        </span>
       </div>
 
+      <!-- Schedule Tiles -->
       <div class="schedule-grid">
         <div class="schedule-tile">
           <div class="schedule-time">11:00 น.</div>
-          <div class="schedule-desc">น้องพร้อมรับงานบ่าย</div>
+          <div class="schedule-desc">พร้อมรับงานรอบบ่าย / แนะนำน้องใหม่</div>
         </div>
         <div class="schedule-tile">
           <div class="schedule-time">15:00 น.</div>
-          <div class="schedule-desc">ไฮไลต์ประจำวัน / นิมมาน</div>
+          <div class="schedule-desc">โซนนิมมาน / สันติธรรม / นัดล่วงหน้า</div>
         </div>
         <div class="schedule-tile">
           <div class="schedule-time">18:00 น.</div>
-          <div class="schedule-desc">ช่วงเวลาคนเลิกงาน</div>
+          <div class="schedule-desc">ช่วงเลิกงาน / ฟิวแฟนทานข้าว พักผ่อน</div>
         </div>
         <div class="schedule-tile">
           <div class="schedule-time">21:00 น.</div>
-          <div class="schedule-desc">โปรไฟล์รอบดึก / ค้างคืน</div>
+          <div class="schedule-desc">โปรไฟล์รอบดึก / ค้างคืน (Overnight)</div>
         </div>
       </div>
 
-      <div style="font-size: 12px; font-weight: 800; color: #E9D5FF; margin-bottom: 6px;">ตัวอย่างโพสต์แนะนำน้อง (แนบคลิปสั้น 5-10 วิ หรือรูปพรีเมียม):</div>
-      <div class="copy-box-wrapper" id="daily-copy-text">🟢 พร้อมรับงานวันนี้ #เชียงใหม่
-💖 น้องป้อปปี้ (21 ปี) สัดส่วน 36-25-35
-📍 พิกัด: ตัวเมืองเชียงใหม่ / โซนนิมมาน / สันติธรรม
-✨ สไตล์: ฟิวแฟน อัธยาศัยดี พูดเพราะ ไม่เร่งเวลา ตรงปก 100%
-💵 ค่าขนม: 1,500.- (จ่ายหน้างาน ไม่มัดจำ)
+      <!-- Daily Posting Template -->
+      <div class="copy-box-container">
+        <div class="copy-header-label">
+          <span><i class="fas fa-bullhorn"></i> แบบฟอร์มโพสต์แนะนำน้อง (แนบคลิป 5–10 วิ หรือภาพพรีเมียม):</span>
+        </div>
 
-🔗 ดูรูปเพิ่มเติม & สัดส่วน: https://firstmodelhub.com/sideline/poppy
-📲 จองคิวทักไลน์: https://line.me/ti/p/ksLUWB89Y_
+        <div class="copy-box-wrapper" id="daily-copy-text">🟢 พร้อมรับงานวันนี้ #เชียงใหม่
+💖 น้อง[ใส่ชื่อน้อง] ([ใส่อายุ] ปี) สัดส่วน [ใส่สัดส่วน เช่น 34-24-35]
+📍 พิกัด: [ใส่โซน เช่น ตัวเมืองเชียงใหม่ / นิมมาน / สันติธรรม]
+✨ สไตล์: ฟิวแฟน อัธยาศัยดี พูดเพราะ ไม่เร่งเวลา ตรงปก 100%
+💵 ค่าขนม: [ใส่เรทราคา] (จ่ายหน้างาน ไม่มัดจำ)
+
+🔗 ดูรูปเพิ่มเติม & เช็กสถานะคิวว่าง: https://firstmodelhub.com
+📲 จองคิวทักไลน์: [ใส่ลิงก์ LINE หรือ ID LINE สำหรับจองคิว]
 
 #รับงานเชียงใหม่ #ไซด์ไลน์เชียงใหม่ #สาวรับงานเชียงใหม่ #รับงานนิมมาน #ฟิวแฟน
-        <button type="button" class="btn-copy" onclick="copyText('daily-copy-text')">
-          <i class="fas fa-copy"></i> คัดลอกแบบฟอร์มโพสต์
-        </button>
+          <button type="button" class="btn-copy" onclick="copyText('daily-copy-text')">
+            <i class="fas fa-copy"></i> คัดลอกแบบฟอร์มโพสต์
+          </button>
+        </div>
+
+        <div class="admin-note-badge">
+          💡 สลับรูปภาพ เปลี่ยนชื่อน้อง และเปลี่ยนคำโปรยเล็กน้อยในแต่ละโพสต์ เพื่อป้องกันการถูกมองว่าเป็นสแปม
+        </div>
       </div>
     </section>
 
@@ -399,11 +737,16 @@
         <h2 class="step-title">
           <span class="step-badge">4</span> คลังแฮชแท็กดึงลูกค้า (Hashtag Matrix)
         </h2>
-        <span style="font-size: 11px; color: #C084FC; font-weight: 700;">ใส่โพสต์ละ 4 - 6 แท็ก</span>
+        <span class="header-tag" style="color: var(--primary-purple); border: 1px solid rgba(192, 132, 252, 0.3);">
+          # โพสต์ละ 4 - 6 แท็ก
+        </span>
       </div>
 
-      <div style="margin-bottom: 12px;">
-        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">📍 1. แฮชแท็กพื้นที่เชียงใหม่ (ดันยอดค้นหาสูงสุด):</div>
+      <!-- Category 1 -->
+      <div class="hashtag-category">
+        <div class="hashtag-title">
+          <i class="fas fa-location-dot" style="color: var(--accent-pink);"></i> 1. แฮชแท็กพื้นที่เชียงใหม่ (โฟกัสหลัก ยอดค้นหาสูงสุด):
+        </div>
         <div class="tag-cloud">
           <span class="x-tag">#รับงานเชียงใหม่</span>
           <span class="x-tag">#ไซด์ไลน์เชียงใหม่</span>
@@ -415,8 +758,11 @@
         </div>
       </div>
 
-      <div style="margin-bottom: 12px;">
-        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">📍 2. แฮชแท็กจังหวัดอื่นๆ ในเครือ:</div>
+      <!-- Category 2 -->
+      <div class="hashtag-category">
+        <div class="hashtag-title">
+          <i class="fas fa-map" style="color: var(--accent-cyan);"></i> 2. แฮชแท็กจังหวัดเครือข่าย:
+        </div>
         <div class="tag-cloud">
           <span class="x-tag">#รับงานขอนแก่น</span>
           <span class="x-tag">#รับงานเชียงราย</span>
@@ -426,8 +772,11 @@
         </div>
       </div>
 
-      <div>
-        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">🎯 3. แฮชแท็กหมวดบริการ & แบรนด์:</div>
+      <!-- Category 3 -->
+      <div class="hashtag-category" style="margin-bottom: 0;">
+        <div class="hashtag-title">
+          <i class="fas fa-star" style="color: var(--accent-gold);"></i> 3. แฮชแท็กสไตล์บริการ & แบรนด์:
+        </div>
         <div class="tag-cloud">
           <span class="x-tag">#ฟิวแฟน</span>
           <span class="x-tag">#เพื่อนเที่ยว</span>
@@ -438,62 +787,173 @@
       </div>
     </section>
 
-    <!-- =========================================================================
-         กฎเหล็ก 4 ข้อ: ป้องกันโดนแบน (Anti-Shadowban)
+<!-- =========================================================================
+         คู่มือ & กฎเหล็กตั้งค่าบัญชี ป้องกัน X แบน / Shadowban 100% (Anti-Ban Master Protocol)
          ========================================================================= -->
-    <section class="bento-card" style="border-color: rgba(255, 46, 99, 0.4);">
+    <section class="bento-card" style="border: 1px solid rgba(255, 46, 99, 0.4); box-shadow: 0 0 30px rgba(255, 46, 99, 0.1);">
       <div class="bento-header">
-        <h2 class="step-title" style="color: #FF2E63;">
-          <i class="fas fa-shield-virus"></i> กฎเหล็ก 4 ข้อ ป้องกันบัญชีโดนแบน
+        <h2 class="step-title" style="color: var(--accent-red);">
+          <i class="fas fa-shield-virus"></i> กฎเหล็ก & วิธีตั้งค่าระบบ ป้องกัน X แบน / Shadowban
         </h2>
-        <span style="font-size: 11px; color: #FF2E63; font-weight: 900;">MUST FOLLOW</span>
+        <span class="header-tag" style="background: rgba(255, 46, 99, 0.15); color: var(--accent-red); border: 1px solid rgba(255, 46, 99, 0.4);">
+          🚨 แอดมินต้องทำตาม 100%
+        </span>
       </div>
 
-      <div class="rule-box">
-        <i class="fas fa-check-circle"></i>
-        <div style="font-size: 12px;">
-          <strong>1. เปิดการตั้งค่า Sensitive Media:</strong> ในการตั้งค่าบัญชี X ให้ติ๊กเปิด <em>"Mark media you post as containing material that may be sensitive"</em> เสมอเพื่อป้องกันระบบ AI แบนเงียบ (Shadowban)
+      <p style="font-size: 13px; color: #D4D4D8; margin-bottom: 20px;">
+        อัลกอริทึมของ X (Twitter) ใช้ระบบ AI ตรวจจับบัญชีอัตโนมัติ หากไม่ตั้งค่าและปฏิบัติตามนี้ บัญชีจะโดน <strong>Search Ban</strong> (ค้นหาไม่เจอ) หรือ <strong>Ghost Ban</strong> (ทวีตหายจากหน้าไทม์ไลน์คนอื่น) ทันที:
+      </p>
+
+      <!-- ส่วนที่ 1: ขั้นตอนตั้งค่าระบบในแอป/เว็บบัญชี X -->
+      <div class="anti-ban-subcard">
+        <div class="subcard-head">
+          <i class="fas fa-sliders" style="color: var(--accent-cyan);"></i>
+          <span>ส่วนที่ 1: ขั้นตอนตั้งค่าบัญชี X ทีละสเต็ป (System Settings Protocol)</span>
+        </div>
+
+        <!-- 1.1 Sensitive Media Setting -->
+        <div style="margin-bottom: 18px;">
+          <div style="font-size: 13.5px; font-weight: 700; color: #FFF; margin-bottom: 6px;">
+            1. เปิดสวิตช์ "แจ้งเตือนสื่อละเอียดอ่อน (Sensitive Content)" เสมอ:
+          </div>
+          <div class="step-nav-path">
+            <strong>เส้นทางภาษาไทย:</strong> การตั้งค่าและความเป็นส่วนตัว &rarr; ความเป็นส่วนตัวและความปลอดภัย &rarr; <code>โพสต์ของคุณ</code> &rarr; ติ๊กเปิด <strong>"ทำเครื่องหมายสื่อที่คุณโพสต์ว่าอาจมีเนื้อหาที่ละเอียดอ่อน"</strong><br>
+            <strong>English Path:</strong> Settings & privacy &rarr; Privacy and safety &rarr; <code>Your posts</code> &rarr; Check <strong>"Mark media you post as containing material that may be sensitive"</strong>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            💡 <em>เหตุผล:</em> หากไม่ติ๊กเปิด แล้ว AI ตรวจพบภาพวาบหวิว ระบบจะมองว่าบัญชีจงใจแอบแฝงสแปม และจะโดนแบนเงียบ (Shadowban) ทันที แต่ถ้าเปิดไว้ บัญชีจะถูกจัดเป็น Adult/Sensitive Creator อย่างถูกต้อง ปลอดภัย 100%
+          </p>
+        </div>
+
+        <!-- 1.2 Account Age & Verification -->
+        <div style="margin-bottom: 18px;">
+          <div style="font-size: 13.5px; font-weight: 700; color: #FFF; margin-bottom: 6px;">
+            2. ตั้งค่าวันเกิด (Date of Birth) ให้มีอายุ 20 ปีขึ้นไป:
+          </div>
+          <div class="step-nav-path">
+            ไปที่หน้า <code>Edit Profile (แก้ไขโปรไฟล์)</code> &rarr; <strong>Birth date</strong> &rarr; ระบุปีเกิดให้มีอายุเกิน 20 ปี และตั้งค่าความเป็นส่วนตัวของวันเกิดเป็น <code>Only you (เฉพาะคุณ)</code>
+          </div>
+        </div>
+
+        <!-- 1.3 Security Binding -->
+        <div>
+          <div style="font-size: 13.5px; font-weight: 700; color: #FFF; margin-bottom: 6px;">
+            3. ผูกอีเมลจริง + เบอร์โทรศัพท์ และเปิด 2FA:
+          </div>
+          <div class="substep-list">
+            <div class="substep-item">
+              <span class="substep-num">✓</span>
+              <span><strong>ยืนยันอีเมลและเบอร์โทร:</strong> บัญชีที่ยืนยันตัวตนครบจะมีคะแนน Trust Score สูงกว่าบัญชีเปิดใหม่ทั่วไป ไม่ถูก AI มองว่าเป็น Bot</span>
+            </div>
+            <div class="substep-item">
+              <span class="substep-num">✓</span>
+              <span><strong>เปิด Two-Factor Authentication (2FA):</strong> ช่วยป้องกันบัญชีถูกแฮกหรือถูกระบบล็อกเมื่อมีการล็อกอินสลับเครื่อง/สลับ IP</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="rule-box">
-        <i class="fas fa-check-circle"></i>
-        <div style="font-size: 12px;">
-          <strong>2. เน้นรูปพรีเมียม ไม่ใช้รูปอนาจารโจ่งแจ้ง 100%:</strong> ใช้รูปแนวเซ็กซี่ ชุดว่ายน้ำ บิกินี่ หรือเดรสสวยๆ จะดึงดูดลูกค้าเกรดพรีเมียมและปลอดภัยต่อบัญชีระยะยาว
+      <!-- ส่วนที่ 2: กฎเหล็กด้านพฤติกรรมและการโพสต์ -->
+      <div class="anti-ban-subcard">
+        <div class="subcard-head">
+          <i class="fas fa-ban" style="color: var(--accent-red);"></i>
+          <span>ส่วนที่ 2: 4 กฎเหล็กห้ามฝ่าฝืนด้านเนื้อหา (Content Safety Rules)</span>
+        </div>
+
+        <div class="substep-list">
+          <div class="substep-item">
+            <span class="substep-num" style="background: var(--accent-red); color: #FFF;"><i class="fas fa-times"></i></span>
+            <div>
+              <strong style="color: #FFF;">1. ห้ามใช้ภาพเปลือยโจ่งแจ้ง 100% (No Explicit Nudity):</strong><br>
+              ห้ามเห็นหัวนม หรืออวัยวะเพศเด็ดขาด ให้ใช้รูป <strong>ชุดว่ายน้ำ, บิกินี่, ชุดนอนเซ็กซี่, หรือเดรสรัดรูปพรีเมียม</strong> เท่านั้น ซึ่งดึงดูดลูกค้าเกรดพรีเมียมได้ดีกว่าและปลอดภัยต่อบัญชีระยะยาว
+            </div>
+          </div>
+
+          <div class="substep-item">
+            <span class="substep-num" style="background: var(--accent-red); color: #FFF;"><i class="fas fa-times"></i></span>
+            <div>
+              <strong style="color: #FFF;">2. ห้าม Copy-Paste ข้อความเดิมซ้ำๆ ติดกัน (Anti-Spam Filter):</strong><br>
+              ห้ามโพสต์ข้อความเดียวกันเป๊ะๆ ติดกันหลายโพสต์ ให้สลับชื่อน้อง สลับคำโปรย สลับอิโมจิ และ<strong>เว้นระยะเวลาโพสต์อย่างน้อย 2–3 ชั่วโมงต่อโพสต์</strong> (ห้ามยิงรวดเดียว 5 โพสต์ใน 10 นาที)
+            </div>
+          </div>
+
+          <div class="substep-item">
+            <span class="substep-num" style="background: var(--accent-red); color: #FFF;"><i class="fas fa-times"></i></span>
+            <div>
+              <strong style="color: #FFF;">3. เทคนิคการแปะลิงก์ (Link Posting Strategy):</strong><br>
+              การแปะ External Link ในทวีตทุกทวีตอาจทำให้อัลกอริทึมลดค่าการมองเห็น (Reach) แนะนำให้ใส่ลิงก์หลักไว้ที่ <strong>หน้า Bio + Pinned Tweet</strong> เป็นหลัก ส่วนโพสต์รายวันให้สลับระหว่างใส่ลิงก์ในโพสต์ กับใส่ลิงก์ใน Reply ใต้โพสต์
+            </div>
+          </div>
+
+          <div class="substep-item">
+            <span class="substep-num" style="background: var(--accent-green); color: #000;"><i class="fas fa-video"></i></span>
+            <div>
+              <strong style="color: #FFF;">4. ดันยอด Impressions สูงสุดด้วยคลิปสั้น 5–10 วินาที:</strong><br>
+              อัลกอริทึมของ X ปัจจุบันให้คะแนนวิดีโอสั้นแนว Portrait (Reels/TikTok style) สูงกว่ารูปภาพนิ่ง <strong>3–5 เท่า</strong> จะช่วยให้โพสต์ติดแท็กและดันขึ้นหน้า For You ได้เร็วที่สุด
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="rule-box">
-        <i class="fas fa-check-circle"></i>
-        <div style="font-size: 12px;">
-          <strong>3. สลับคำโปรยและรูปภาพเสมอ:</strong> อย่าก็อปปี้ข้อความเดิมเป๊ะๆ โพสต์ติดๆ กัน ให้เปลี่ยนชื่อน้อง สลับคำ และเว้นช่วงเวลาโพสต์อย่างน้อย 2–3 ชั่วโมง
+      <!-- ส่วนที่ 3: เครื่องมือตรวจเช็คสถานะ Shadowban & วิธีแก้ไข -->
+      <div class="anti-ban-subcard" style="margin-bottom: 0;">
+        <div class="subcard-head">
+          <i class="fas fa-stethoscope" style="color: var(--accent-gold);"></i>
+          <span>ส่วนที่ 3: เครื่องมือตรวจเช็คสถานะบัญชี & วิธีตรวจแบบแมนนวล</span>
         </div>
-      </div>
 
-      <div class="rule-box">
-        <i class="fas fa-check-circle"></i>
-        <div style="font-size: 12px;">
-          <strong>4. พลังของคลิปวิดีโอสั้น (5–10 วินาที):</strong> อัลกอริทึมของ X จะดันยอดการมองเห็น (Impressions) ของโพสต์ที่มีคลิปวิดีโอสูงกว่าภาพนิ่งถึง <strong>3–5 เท่า</strong>
+        <p style="font-size: 13px; color: #D4D4D8; margin-bottom: 14px;">
+          หากสังเกตว่ายอดเข้าถึงลดฮวบผิดปกติ หรือค้นหาแท็กแล้วไม่เจอโพสต์ ให้ตรวจเช็คด้วย 2 วิธีนี้:
+        </p>
+
+        <!-- Tool Links Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 16px;">
+          <a href="https://shadowban.yuzurisa.com" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38BDF8; padding: 12px 16px; border-radius: 12px; text-decoration: none; font-size: 13px; font-weight: 700;">
+            <span><i class="fas fa-globe"></i> Yuzurisa Shadowban</span>
+            <i class="fas fa-external-link-alt" style="font-size: 11px;"></i>
+          </a>
+
+          <a href="https://hisubway.online/shadowban/" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; background: rgba(192, 132, 252, 0.1); border: 1px solid rgba(192, 132, 252, 0.3); color: #C084FC; padding: 12px 16px; border-radius: 12px; text-decoration: none; font-size: 13px; font-weight: 700;">
+            <span><i class="fas fa-search"></i> HiSubway Tester</span>
+            <i class="fas fa-external-link-alt" style="font-size: 11px;"></i>
+          </a>
+        </div>
+
+        <!-- Manual Check Instructions -->
+        <div style="background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
+          <div style="font-size: 13px; font-weight: 800; color: var(--accent-green); margin-bottom: 6px;">
+            <i class="fas fa-user-secret"></i> วิธีเช็คด้วยตนเองแบบแม่นยำ 100% (Manual Check):
+          </div>
+          <ol style="font-size: 12.5px; color: #CBD5E1; padding-left: 18px; line-height: 1.8;">
+            <li>เปิด <strong>หน้าต่างไม่ระบุตัวตน (Incognito Mode)</strong> โดยไม่ต้องล็อกอิน</li>
+            <li>พิมพ์ค้นหาในช่อง Search: <code style="color: #38BDF8;">from:ไอดีของคุณ</code> (เช่น <code>from:FirstModelHub</code>)</li>
+            <li>หากพบทวีตล่าสุด = <strong>บัญชีปกติ 100%</strong> / หากค้นไม่พบ = <strong>ติด Search Ban</strong></li>
+          </ol>
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.7;">
+          <strong style="color: var(--accent-gold);">🛠️ วิธีแก้ไขเมื่อติด Shadowban:</strong> หยุดโพสต์และหยุดตอบกลับเป็นเวลา 24–48 ชั่วโมง (พักบัญชี), ลบทวีตล่าสุดที่ใช้คำสแลงหรือภาพสุ่มเสี่ยงออก ระบบ AI ของ X จะปลดล็อกการจำกัดและรีเซ็ตสถานะกลับมาเป็นปกติ
         </div>
       </div>
     </section>
-
     <!-- Footer Summary -->
-    <div style="text-align: center; font-size: 11px; color: #71717A; margin-top: 30px;">
-      © 2026 FirstModelHub Co., Ltd. • Internal Marketing Playbook
-    </div>
+    <footer style="text-align: center; font-size: 12px; color: #71717A; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+      © 2026 FirstModelHub Co., Ltd. • Internal Marketing Operating Standard
+    </footer>
 
   </div>
 
-  <!-- Toast Notification Element -->
-  <div id="toast-msg">คัดลอกข้อความสำเร็จแล้ว! ✨</div>
+  <!-- Toast Notification -->
+  <div id="toast-msg">
+    <i class="fas fa-check-circle"></i> คัดลอกข้อความสำเร็จแล้ว! ✨
+  </div>
 
   <script>
     function copyText(elementId) {
       const el = document.getElementById(elementId);
       if (!el) return;
 
-      // Extract text excluding the button text
+      // Extract text content excluding the copy button itself
       const clone = el.cloneNode(true);
       const btn = clone.querySelector('button');
       if (btn) btn.remove();
@@ -506,7 +966,7 @@
           toast.classList.add('show');
           setTimeout(() => {
             toast.classList.remove('show');
-          }, 2000);
+          }, 2200);
         }
       }).catch(err => {
         console.error('Failed to copy text: ', err);
