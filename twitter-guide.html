@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="th" class="dark-theme dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>X (Twitter) Marketing Playbook 2026 | First Model Hub</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#060411">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    :root {
+      --primary-purple: #C084FC;
+      --primary-pink: #FF5B9F;
+      --accent-green: #00E676;
+      --accent-red: #FF2E63;
+      --accent-gold: #FBBF24;
+      --body-bg: #060411;
+      --card-bg: linear-gradient(135deg, rgba(22, 11, 46, 0.8) 0%, rgba(9, 5, 22, 0.95) 100%);
+      --border-glow: rgba(192, 132, 252, 0.28);
+    }
+
+    body {
+      background-color: var(--body-bg) !important;
+      color: #E4E4E7;
+      font-family: 'Prompt', sans-serif;
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    .playbook-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* Top Admin Badge */
+    .admin-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #E9D5FF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Bento Cards */
+    .bento-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(147, 51, 234, 0.1);
+      backdrop-filter: blur(16px);
+      position: relative;
+    }
+
+    .bento-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+
+    .step-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-badge {
+      background: linear-gradient(135deg, #7C3AED 0%, #5A2CBE 100%);
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 900;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+    }
+
+    /* Copy Box */
+    .copy-box-wrapper {
+      position: relative;
+      background: rgba(5, 3, 12, 0.85);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 12.5px;
+      color: #CBD5E1;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.7;
+    }
+
+    .btn-copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(124, 58, 237, 0.3);
+      border: 1px solid rgba(192, 132, 252, 0.5);
+      color: #FFF;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      background: #00E676;
+      border-color: #00E676;
+      color: #000;
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.95);
+    }
+
+    /* Time Schedule Tiles */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .schedule-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .schedule-tile {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .schedule-time {
+      font-size: 14px;
+      font-weight: 900;
+      color: #00E676;
+    }
+
+    .schedule-desc {
+      font-size: 10px;
+      color: #A1A1AA;
+      margin-top: 2px;
+    }
+
+    /* Hashtag Matrix */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .x-tag {
+      background: rgba(192, 132, 252, 0.1);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      color: #E9D5FF;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* Rule Checklist */
+    .rule-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 46, 99, 0.05);
+      border: 1px solid rgba(255, 46, 99, 0.2);
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .rule-box i {
+      color: #FF2E63;
+      font-size: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Toast Notification */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #00E676;
+      color: #000;
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 10px 30px rgba(0, 230, 118, 0.5);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    #toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="fmh-app-page">
+
+  <div class="playbook-container">
+
+    <!-- Top Navigation Header -->
+    <header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <span class="brand-logo-text" style="font-size: 18px !important;">
+          FirstModel<span class="hub-text">Hub</span><span class="star">🌟</span>
+        </span>
+      </a>
+      <a href="/" style="color: var(--primary-purple); font-size: 12px; font-weight: 700; text-decoration: none; border: 1px solid rgba(192, 132, 252, 0.3); padding: 4px 12px; border-radius: 100px;">
+        &larr; กลับหน้าหลัก
+      </a>
+    </header>
+
+    <!-- Main Hero Banner -->
+    <div style="text-align: center; margin-bottom: 25px;">
+      <span class="admin-pill-badge">
+        <i class="fab fa-x-twitter" style="color: #FFF;"></i> OPERATIONAL PLAYBOOK 2026
+      </span>
+      <h1 class="text-gradient-main" style="font-size: clamp(22px, 5vw, 32px); margin-bottom: 8px;">
+        พิมพ์เขียวการตลาด X (Twitter) ดึงคนเข้าเว็บ & จองคิว
+      </h1>
+      <p style="font-size: 12.5px; color: var(--text-muted); max-width: 650px; margin: 0 auto;">
+        คู่มือปฏิบัติการโพสต์รายวันบนแพลตฟอร์ม X สร้างความน่าเชื่อถือ ป้องกันการโดนแบน และส่งพลังคะแนน SEO กลับสู่เว็บไซต์ First Model Hub
+      </p>
+    </div>
+
+    <!-- Quick Stats Metric Strip -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
+        <div style="color: #00E676; font-size: 18px; font-weight: 900;"><i class="fas fa-bolt"></i> อันดับ 1</div>
+        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">ช่องทางดึงลูกค้าสด</div>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
+        <div style="color: #C084FC; font-size: 18px; font-weight: 900;"><i class="fas fa-shield-alt"></i> 100%</div>
+        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">นโยบายจ่ายหน้างาน</div>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(192,132,252,0.2); padding: 12px; border-radius: 14px; text-align: center;">
+        <div style="color: #FBBF24; font-size: 18px; font-weight: 900;"><i class="fas fa-chart-line"></i> 2 เด้ง</div>
+        <div style="font-size: 10.5px; color: #A1A1AA; margin-top: 2px;">ยอดจอง + ดัน SEO</div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ขั้นตอนที่ 1: ตั้งค่าหน้าโปรไฟล์
+         ========================================================================= -->
+    <section class="bento-card">
+      <div class="bento-header">
+        <h2 class="step-title">
+          <span class="step-badge">1</span> ตั้งค่าหน้าโปรไฟล์ (Profile Architecture)
+        </h2>
+        <span style="font-size: 11px; color: #00E676; font-weight: 700;">✓ สร้างความน่าเชื่อถือ</span>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; font-size: 12.5px;">
+        <div><strong>ชื่อบัญชี (Name):</strong> <code style="color: #C084FC;">FirstModelHub | สาวรับงานเชียงใหม่ & ทั่วไทย (ไม่มัดจำ)</code></div>
+        <div><strong>ชื่อไอดี (Handle @):</strong> <code style="color: #00E676;">@FirstModelHub</code> หรือ <code style="color: #00E676;">@sidelinechiangmai</code></div>
+        <div><strong>ลิงก์หน้าโปรไฟล์ (Website URL):</strong> <code style="color: #38BDF8;">https://firstmodelhub.com</code></div>
+      </div>
+
+      <div style="font-size: 12px; font-weight: 800; color: #E9D5FF; margin-bottom: 6px;">คำโปรยหน้าโปรไฟล์ (Bio Template):</div>
+      <div class="copy-box-wrapper" id="bio-copy-text">🌟 ศูนย์รวมผู้ดูแล & เพื่อนเที่ยวไซด์ไลน์ฟิวแฟน VIP ตรงปก 100%
+🛡️ ความปลอดภัยสูงสุด "จ่ายหน้างาน ไม่โอนมัดจำล่วงหน้าทุกกรณี"
+📍 เชียงใหม่ • ขอนแก่น • เชียงราย • ลำปาง • อุดร • ภูเก็ต
+📲 ดูโปรไฟล์ทั้งหมด: firstmodelhub.com
+💬 จองคิวแอด LINE: @firstmodelhub (มี @)
+        <button type="button" class="btn-copy" onclick="copyText('bio-copy-text')">
+          <i class="fas fa-copy"></i> คัดลอก Bio
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         ขั้นตอนที่ 2: ทวีตปักหมุด
+         ========================================================================= -->
+    <section class="bento-card">
+      <div class="bento-header">
+        <h2 class="step-title">
+          <span class="step-badge">2</span> ทวีตปักหมุด (Pinned Tweet Blueprint)
+        </h2>
+        <span style="font-size: 11px; color: #FF2E63; font-weight: 800;">🚨 ป้องกันมิจฉาชีพ</span>
+      </div>
+      
+      <p style="font-size: 12px; color: #A1A1AA; margin-bottom: 10px;">
+        ทวีตนี้ต้องปักหมุดไว้บนสุดของหน้าโปรไฟล์เสมอ เพื่อให้ลูกค้าใหม่มั่นใจและกล้าทักจองคิว:
+      </p>
+
+      <div class="copy-box-wrapper" id="pinned-copy-text">🚨 คำเตือนป้องกันมิจฉาชีพ | นโยบาย First Model Hub 🚨
+
+❌ ไม่มีการโอนเงินมัดจำล่วงหน้าทุกกรณี
+❌ ไม่มีค่าจองคิว / ค่าธรรมเนียมใดๆ
+✅ พบตัวจริง ตรวจสอบความตรงปกหน้างานแล้วค่อยชำระเงินโดยตรง
+
+🌐 เช็กโปรไฟล์น้องๆ ที่พร้อมรับงานวันนี้: https://firstmodelhub.com
+💬 ติดต่อสอบถามคิวงาน: https://line.me/ti/p/ksLUWB89Y_
+
+#รับงานเชียงใหม่ #ไซด์ไลน์เชียงใหม่ #ฟิวแฟน #FirstModelHub
+        <button type="button" class="btn-copy" onclick="copyText('pinned-copy-text')">
+          <i class="fas fa-copy"></i> คัดลอกทวีตปักหมุด
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         ขั้นตอนที่ 3: โครงสร้างการโพสต์รายวัน & ตารางเวลา
+         ========================================================================= -->
+    <section class="bento-card">
+      <div class="bento-header">
+        <h2 class="step-title">
+          <span class="step-badge">3</span> โครงสร้างโพสต์รายวัน (Daily Posting)
+        </h2>
+        <span style="font-size: 11px; color: #FBBF24; font-weight: 800;">วันละ 3 - 5 โพสต์</span>
+      </div>
+
+      <div class="schedule-grid">
+        <div class="schedule-tile">
+          <div class="schedule-time">11:00 น.</div>
+          <div class="schedule-desc">น้องพร้อมรับงานบ่าย</div>
+        </div>
+        <div class="schedule-tile">
+          <div class="schedule-time">15:00 น.</div>
+          <div class="schedule-desc">ไฮไลต์ประจำวัน / นิมมาน</div>
+        </div>
+        <div class="schedule-tile">
+          <div class="schedule-time">18:00 น.</div>
+          <div class="schedule-desc">ช่วงเวลาคนเลิกงาน</div>
+        </div>
+        <div class="schedule-tile">
+          <div class="schedule-time">21:00 น.</div>
+          <div class="schedule-desc">โปรไฟล์รอบดึก / ค้างคืน</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; font-weight: 800; color: #E9D5FF; margin-bottom: 6px;">ตัวอย่างโพสต์แนะนำน้อง (แนบคลิปสั้น 5-10 วิ หรือรูปพรีเมียม):</div>
+      <div class="copy-box-wrapper" id="daily-copy-text">🟢 พร้อมรับงานวันนี้ #เชียงใหม่
+💖 น้องป้อปปี้ (21 ปี) สัดส่วน 36-25-35
+📍 พิกัด: ตัวเมืองเชียงใหม่ / โซนนิมมาน / สันติธรรม
+✨ สไตล์: ฟิวแฟน อัธยาศัยดี พูดเพราะ ไม่เร่งเวลา ตรงปก 100%
+💵 ค่าขนม: 1,500.- (จ่ายหน้างาน ไม่มัดจำ)
+
+🔗 ดูรูปเพิ่มเติม & สัดส่วน: https://firstmodelhub.com/sideline/poppy
+📲 จองคิวทักไลน์: https://line.me/ti/p/ksLUWB89Y_
+
+#รับงานเชียงใหม่ #ไซด์ไลน์เชียงใหม่ #สาวรับงานเชียงใหม่ #รับงานนิมมาน #ฟิวแฟน
+        <button type="button" class="btn-copy" onclick="copyText('daily-copy-text')">
+          <i class="fas fa-copy"></i> คัดลอกแบบฟอร์มโพสต์
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         ขั้นตอนที่ 4: กลยุทธ์แฮชแท็ก
+         ========================================================================= -->
+    <section class="bento-card">
+      <div class="bento-header">
+        <h2 class="step-title">
+          <span class="step-badge">4</span> คลังแฮชแท็กดึงลูกค้า (Hashtag Matrix)
+        </h2>
+        <span style="font-size: 11px; color: #C084FC; font-weight: 700;">ใส่โพสต์ละ 4 - 6 แท็ก</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">📍 1. แฮชแท็กพื้นที่เชียงใหม่ (ดันยอดค้นหาสูงสุด):</div>
+        <div class="tag-cloud">
+          <span class="x-tag">#รับงานเชียงใหม่</span>
+          <span class="x-tag">#ไซด์ไลน์เชียงใหม่</span>
+          <span class="x-tag">#สาวรับงานเชียงใหม่</span>
+          <span class="x-tag">#รับงานนิมมาน</span>
+          <span class="x-tag">#รับงานสันติธรรม</span>
+          <span class="x-tag">#รับงานเจ็ดยอด</span>
+          <span class="x-tag">#รับงานหลังมช</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">📍 2. แฮชแท็กจังหวัดอื่นๆ ในเครือ:</div>
+        <div class="tag-cloud">
+          <span class="x-tag">#รับงานขอนแก่น</span>
+          <span class="x-tag">#รับงานเชียงราย</span>
+          <span class="x-tag">#รับงานลำปาง</span>
+          <span class="x-tag">#รับงานอุดร</span>
+          <span class="x-tag">#รับงานภูเก็ต</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 11.5px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">🎯 3. แฮชแท็กหมวดบริการ & แบรนด์:</div>
+        <div class="tag-cloud">
+          <span class="x-tag">#ฟิวแฟน</span>
+          <span class="x-tag">#เพื่อนเที่ยว</span>
+          <span class="x-tag">#เด็กเอ็น</span>
+          <span class="x-tag">#แฟนเช่า</span>
+          <span class="x-tag">#FirstModelHub</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         กฎเหล็ก 4 ข้อ: ป้องกันโดนแบน (Anti-Shadowban)
+         ========================================================================= -->
+    <section class="bento-card" style="border-color: rgba(255, 46, 99, 0.4);">
+      <div class="bento-header">
+        <h2 class="step-title" style="color: #FF2E63;">
+          <i class="fas fa-shield-virus"></i> กฎเหล็ก 4 ข้อ ป้องกันบัญชีโดนแบน
+        </h2>
+        <span style="font-size: 11px; color: #FF2E63; font-weight: 900;">MUST FOLLOW</span>
+      </div>
+
+      <div class="rule-box">
+        <i class="fas fa-check-circle"></i>
+        <div style="font-size: 12px;">
+          <strong>1. เปิดการตั้งค่า Sensitive Media:</strong> ในการตั้งค่าบัญชี X ให้ติ๊กเปิด <em>"Mark media you post as containing material that may be sensitive"</em> เสมอเพื่อป้องกันระบบ AI แบนเงียบ (Shadowban)
+        </div>
+      </div>
+
+      <div class="rule-box">
+        <i class="fas fa-check-circle"></i>
+        <div style="font-size: 12px;">
+          <strong>2. เน้นรูปพรีเมียม ไม่ใช้รูปอนาจารโจ่งแจ้ง 100%:</strong> ใช้รูปแนวเซ็กซี่ ชุดว่ายน้ำ บิกินี่ หรือเดรสสวยๆ จะดึงดูดลูกค้าเกรดพรีเมียมและปลอดภัยต่อบัญชีระยะยาว
+        </div>
+      </div>
+
+      <div class="rule-box">
+        <i class="fas fa-check-circle"></i>
+        <div style="font-size: 12px;">
+          <strong>3. สลับคำโปรยและรูปภาพเสมอ:</strong> อย่าก็อปปี้ข้อความเดิมเป๊ะๆ โพสต์ติดๆ กัน ให้เปลี่ยนชื่อน้อง สลับคำ และเว้นช่วงเวลาโพสต์อย่างน้อย 2–3 ชั่วโมง
+        </div>
+      </div>
+
+      <div class="rule-box">
+        <i class="fas fa-check-circle"></i>
+        <div style="font-size: 12px;">
+          <strong>4. พลังของคลิปวิดีโอสั้น (5–10 วินาที):</strong> อัลกอริทึมของ X จะดันยอดการมองเห็น (Impressions) ของโพสต์ที่มีคลิปวิดีโอสูงกว่าภาพนิ่งถึง <strong>3–5 เท่า</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Summary -->
+    <div style="text-align: center; font-size: 11px; color: #71717A; margin-top: 30px;">
+      © 2026 FirstModelHub Co., Ltd. • Internal Marketing Playbook
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Element -->
+  <div id="toast-msg">คัดลอกข้อความสำเร็จแล้ว! ✨</div>
+
+  <script>
+    function copyText(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+
+      // Extract text excluding the button text
+      const clone = el.cloneNode(true);
+      const btn = clone.querySelector('button');
+      if (btn) btn.remove();
+      
+      const textToCopy = clone.innerText.trim();
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const toast = document.getElementById('toast-msg');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 2000);
+        }
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+</body>
+</html>

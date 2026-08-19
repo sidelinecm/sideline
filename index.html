@@ -213,10 +213,22 @@
         <div class="p-4 flex-grow overflow-y-auto">
           <h2 class="text-[11px] font-bold uppercase tracking-wider mb-3 px-2 text-zinc-500">เมนูหลัก</h2>
           <ul class="space-y-1.5">
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center"></i>บอทแสดงผล</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center"></i>โปรไฟล์ทั้งหมด</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center"></i>เพิ่มโปรไฟล์ใหม่</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center"></i>จัดการจังหวัด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center text-purple-400"></i>บอทแสดงผล</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center text-purple-400"></i>โปรไฟล์ทั้งหมด</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center text-purple-400"></i>เพิ่มโปรไฟล์ใหม่</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center text-purple-400"></i>จัดการจังหวัด</button></li>
+          </ul>
+
+          <!-- 🟢 [เพิ่มใหม่] เมนูเครื่องมือการตลาด & คู่มือ X / Twitter -->
+          <h2 class="text-[11px] font-bold uppercase tracking-wider mt-5 mb-2 px-2 text-zinc-500">การตลาด & เครื่องมือ</h2>
+          <ul class="space-y-1.5">
+            <li>
+              <a href="/twitter-guide.html" target="_blank" rel="noopener noreferrer" class="w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-200 transition bg-white/[0.03] border border-purple-500/20 hover:border-purple-500/50 hover:bg-purple-600/10 group">
+                <i class="fab fa-x-twitter w-5 mr-3 text-center text-white group-hover:scale-110 transition-transform"></i>
+                <span>คู่มือโพสต์ X (Twitter)</span>
+                <span class="ml-auto text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-1.5 py-0.5 rounded-full font-black">NEW</span>
+              </a>
+            </li>
           </ul>
 
           <div onclick="showSystemStatusModal()" class="mt-6 p-3 rounded-xl bg-purple-950/30 border border-purple-500/20 hover:border-purple-500/40 cursor-pointer transition-all duration-300 select-none active:scale-95 shadow-inner">
@@ -272,7 +284,6 @@
       </main>
     </div>
   </div>
-
 
 <script>
 // Supabase Configuration
@@ -2845,6 +2856,7 @@ const AdminOS = {
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
     { title: "ถูกที่ผิดเวลา", url: "./songs/ถูกที่ผิดเวลา.mp4", type: "audio" },
     { title: "wawai (MP3)", url: "./songs/wawai.mp3", type: "audio" }
+        { title: "เลือกได้มั้ย.mp4", url: "./songs/เลือกได้มั้ย.mp4", type: "audio" }
   ],
   
   root: document.getElementById('admin-assistive-root'),
