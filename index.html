@@ -26,7 +26,7 @@
   
   /* THEME "Lavender Dusk & S-Tier Royal Purple" */
   :root {
-    --color-primary: 90 44 190;   /* Royal Purple */
+    --color-primary: 90 44 190;
     --color-text-main: #2E2E2E;
     --color-text-muted: #5a5a6a;
     --color-card: rgba(255, 255, 255, 0.85);
@@ -44,7 +44,6 @@
     --grad-2: #C084FC;
   }
 
-  /* ANIMATED "LIVING" BACKGROUND */
   @keyframes animated-aurora {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -78,7 +77,6 @@
   }
   @keyframes star-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3) rotate(15deg); } }
 
-  /* Buttons with Shine Effect */
   .btn-pro, .btn-primary {
     position: relative; overflow: hidden; border-radius: 9999px;
     padding: .7rem 1.2rem; font-weight: 600; color: #fff !important;
@@ -97,7 +95,6 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* FORM ELEMENTS */
   .form-input-high {
     width: 100%;
     padding: 0.75rem 1.2rem;
@@ -198,10 +195,10 @@
     <!-- Admin Content Wrapper -->
     <div class="hidden" id="admin-content">
       
-      <!-- 🟢 Backdrop Overlay สำหรับปิด Sidebar บนมือถือเมื่อกดแตะพื้นที่ว่าง -->
+      <!-- Backdrop Overlay -->
       <div id="sidebar-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
 
-      <!-- 🟢 Sidebar Navigation -->
+      <!-- Sidebar Navigation -->
       <aside class="fixed top-0 left-0 h-full w-64 shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 bg-[#0c081d] border-r border-white/10 flex flex-col" id="sidebar">
         <div class="p-5 border-b border-white/10 flex items-center justify-between">
           <div class="kissmodel-logo">First Model Hub<span class="star">🌟</span></div>
@@ -219,7 +216,6 @@
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center text-purple-400"></i>จัดการจังหวัด</button></li>
           </ul>
 
-          <!-- 🟢 [เพิ่มใหม่] เมนูเครื่องมือการตลาด & คู่มือ X / Twitter -->
           <h2 class="text-[11px] font-bold uppercase tracking-wider mt-5 mb-2 px-2 text-zinc-500">การตลาด & เครื่องมือ</h2>
           <ul class="space-y-1.5">
             <li>
@@ -255,7 +251,7 @@
         </div>
       </aside>
       
-      <!-- 🟢 Header Bar -->
+      <!-- Header Bar -->
       <header class="lg:pl-64 sticky top-0 z-30 bg-[#070410]/90 backdrop-blur-md border-b border-white/10" id="header">
         <div class="p-4 flex justify-between items-center max-w-7xl mx-auto">
           <div class="flex items-center gap-3">
@@ -271,7 +267,7 @@
         </div>
       </header>
       
-      <!-- 🟢 Main Content View Area -->
+      <!-- Main Content View Area -->
       <main class="p-4 sm:p-6 lg:p-8 lg:ml-64 max-w-7xl">
         <div class="flex justify-between items-center mb-6">
           <h1 class="text-2xl sm:text-3xl font-bold dashboard-title" id="view-title">First Model Hub<span class="star">🌟</span></h1>
@@ -313,24 +309,29 @@ async function uploadToCloudinary(file) {
     }
 }
 
-// =========================================================================
-// 🟢 คลังคีย์เวิร์ดย่าน/โซนยอดนิยม 77 จังหวัด สำหรับดัน Local SEO ติดหน้าแรก
-// =========================================================================
+// 🟢 คลังคีย์เวิร์ดย่าน/โซนยอดนิยม 77 จังหวัด (รองรับทั้งแบบมีขีดและไม่มีขีด)
 const LOCATION_PRESETS = {
   // กรุงเทพฯ และปริมณฑล
   'bangkok': ['รัชดา', 'ห้วยขวาง', 'สุขุมวิท', 'ลาดพร้าว', 'เอกมัย-ทองหล่อ', 'บางนา', 'ปิ่นเกล้า', 'พระราม 9', 'สาทร', 'อารีย์', 'รามคำแหง'],
   'nonthaburi': ['งามวงศ์วาน', 'รัตนาธิเบศร์', 'ปากเกร็ด', 'แจ้งวัฒนะ', 'บางใหญ่', 'เมืองทองธานี', 'ไทรน้อย', 'ติวานนท์'],
   'pathum-thani': ['รังสิต', 'ม.กรุงเทพ', 'ม.ธรรมศาสตร์', 'ฟิวเจอร์พาร์ค', 'คลองหลวง', 'ลำลูกกา', 'นวนคร', 'เมืองเอก'],
+  'pathumthani': ['รังสิต', 'ม.กรุงเทพ', 'ม.ธรรมศาสตร์', 'ฟิวเจอร์พาร์ค', 'คลองหลวง', 'ลำลูกกา', 'นวนคร', 'เมืองเอก'],
   'samut-prakan': ['สำโรง', 'บางพลี', 'กิ่งแก้ว', 'แพรกษา', 'เทพารักษ์', 'เมกาบางนา', 'ศรีนครินทร์', 'บางบ่อ'],
+  'samutprakan': ['สำโรง', 'บางพลี', 'กิ่งแก้ว', 'แพรกษา', 'เทพารักษ์', 'เมกาบางนา', 'ศรีนครินทร์', 'บางบ่อ'],
   'samut-sakhon': ['มหาชัย', 'กระทุ่มแบน', 'บ้านแพ้ว', 'มหาชัยเมืองใหม่', 'พระราม 2'],
+  'samutsakhon': ['มหาชัย', 'กระทุ่มแบน', 'บ้านแพ้ว', 'มหาชัยเมืองใหม่', 'พระราม 2'],
   'nakhon-pathom': ['ศาลายา', 'ม.มหิดล', 'ม.ศิลปากร', 'นครชัยศรี', 'ในเมืองนครปฐม', 'กำแพงแสน'],
+  'nakhonpathom': ['ศาลายา', 'ม.มหิดล', 'ม.ศิลปากร', 'นครชัยศรี', 'ในเมืองนครปฐม', 'กำแพงแสน'],
 
   // ภาคเหนือ
   'chiang-mai': ['นิมมาน', 'เจ็ดยอด', 'สันติธรรม', 'ช้างเผือก', 'ท่าแพ', 'มช.', 'รวมโชค', 'หางดง', 'สันทราย', 'แม่โจ้'],
+  'chiangmai': ['นิมมาน', 'เจ็ดยอด', 'สันติธรรม', 'ช้างเผือก', 'ท่าแพ', 'มช.', 'รวมโชค', 'หางดง', 'สันทราย', 'แม่โจ้'],
   'chiang-rai': ['หอนาฬิกา', 'มฟล. (แม่ฟ้าหลวง)', 'บ้านดู่', 'เซ็นทรัลเชียงราย', 'แม่สาย', 'ในเมือง'],
+  'chiangrai': ['หอนาฬิกา', 'มฟล. (แม่ฟ้าหลวง)', 'บ้านดู่', 'เซ็นทรัลเชียงราย', 'แม่สาย', 'ในเมือง'],
   'lampang': ['ในเมืองลำปาง', 'ม.ราชภัฏลำปาง', 'เซ็นทรัลลำปาง', 'สบตุ๋ย', 'เกาะคา'],
   'lamphun': ['นิคมลำพูน', 'ในเมืองลำพูน', 'ป่าซาง', 'บ้านธิ'],
   'mae-hong-son': ['ในเมืองแม่ฮ่องสอน', 'ปาย', 'แม่สะเรียง', 'ปางมะผ้า'],
+  'maehongson': ['ในเมืองแม่ฮ่องสอน', 'ปาย', 'แม่สะเรียง', 'ปางมะผ้า'],
   'nan': ['ในเมืองน่าน', 'กาดข่วงเมือง', 'ปัว', 'ท่าวังผา'],
   'phayao': ['ม.พะเยา (หน้ามอ)', 'กว๊านพะเยา', 'ในเมืองพะเยา', 'เชียงคำ'],
   'phrae': ['ในเมืองแพร่', 'เด่นชัย', 'สูงเม่น', 'ร้องกวาง'],
@@ -340,27 +341,42 @@ const LOCATION_PRESETS = {
   'phetchabun': ['ในเมืองเพชรบูรณ์', 'เขาค้อ', 'หล่มสัก', 'หล่มเก่า', 'วิเชียรบุรี'],
   'phichit': ['ในเมืองพิจิตร', 'บางมูลนาก', 'ตะพานหิน', 'โพทะเล'],
   'kamphaeng-phet': ['ในเมืองกำแพงเพชร', 'มรภ.กำแพงเพชร', 'พรานกระต่าย', 'คลองขลุง'],
+  'kamphaengphet': ['ในเมืองกำแพงเพชร', 'มรภ.กำแพงเพชร', 'พรานกระต่าย', 'คลองขลุง'],
   'nakhon-sawan': ['ปากน้ำโพ', 'หนองสมบูรณ์', 'เซ็นทรัลนครสวรรค์', 'มรภ.นครสวรรค์', 'ในเมือง'],
+  'nakhonsawan': ['ปากน้ำโพ', 'หนองสมบูรณ์', 'เซ็นทรัลนครสวรรค์', 'มรภ.นครสวรรค์', 'ในเมือง'],
   'uthai-thani': ['ในเมืองอุทัยธานี', 'หนองฉาง', 'ทัพทัน', 'ลานสัก'],
+  'uthaithani': ['ในเมืองอุทัยธานี', 'หนองฉาง', 'ทัพทัน', 'ลานสัก'],
   'tak': ['แม่สอด', 'ในเมืองตาก', 'ริมเมย', 'มทร.ล้านนา ตาก'],
 
   // ภาคอีสาน
   'khon-kaen': ['กังสดาล', 'มข. (หลังมอ)', 'เซ็นทรัลขอนแก่น', 'บึงแก่นนคร', 'ในเมือง', 'ม.ภาค', 'ศิลา', 'บึงหนองโคตร'],
+  'khonkaen': ['กังสดาล', 'มข. (หลังมอ)', 'เซ็นทรัลขอนแก่น', 'บึงแก่นนคร', 'ในเมือง', 'ม.ภาค', 'ศิลา', 'บึงหนองโคตร'],
   'nakhon-ratchasima': ['ในเมืองโคราช', 'เซ็นทรัลโคราช', 'เดอะมอลล์', 'มทส.', 'จอหอ', 'หัวทะเล', 'ปากช่อง', 'เซฟวัน'],
+  'nakhonratchasima': ['ในเมืองโคราช', 'เซ็นทรัลโคราช', 'เดอะมอลล์', 'มทส.', 'จอหอ', 'หัวทะเล', 'ปากช่อง', 'เซฟวัน'],
   'udon-thani': ['ยูดีทาวน์', 'เซ็นทรัลอุดร', 'หนองประจักษ์', 'ในเมือง', 'รอบเมือง', 'มรภ.อุดร'],
+  'udonthani': ['ยูดีทาวน์', 'เซ็นทรัลอุดร', 'หนองประจักษ์', 'ในเมือง', 'รอบเมือง', 'มรภ.อุดร'],
   'ubon-ratchathani': ['ในเมืองอุบล', 'ม.อุบลฯ (มูบล)', 'เซ็นทรัลอุบล', 'วารินชำราบ', 'ดอนกลาง'],
+  'ubonratchathani': ['ในเมืองอุบล', 'ม.อุบลฯ (มูบล)', 'เซ็นทรัลอุบล', 'วารินชำราบ', 'ดอนกลาง'],
   'nong-khai': ['สะพานมิตรภาพ', 'ในเมืองหนองคาย', 'ท่าบ่อ', 'ตลาดท่าเสด็จ'],
+  'nongkhai': ['สะพานมิตรภาพ', 'ในเมืองหนองคาย', 'ท่าบ่อ', 'ตลาดท่าเสด็จ'],
   'nong-bua-lamphu': ['ในเมืองหนองบัวลำภู', 'ศรีบุญเรือง', 'โนนสัง', 'นากลาง'],
+  'nongbualamphu': ['ในเมืองหนองบัวลำภู', 'ศรีบุญเรือง', 'โนนสัง', 'นากลาง'],
   'loei': ['ในเมืองเลย', 'เชียงคาน', 'ภูกระดึง', 'วังสะพุง', 'มรภ.เลย'],
   'sakon-nakhon': ['ในเมืองสกลนคร', 'หนองหาร', 'มรภ.สกลนคร', 'ม.เกษตร สกลฯ', 'พังโคน'],
+  'sakonnakhon': ['ในเมืองสกลนคร', 'หนองหาร', 'มรภ.สกลนคร', 'ม.เกษตร สกลฯ', 'พังโคน'],
   'nakhon-phanom': ['ริมโขงนครพนม', 'ในเมือง', 'ม.นครพนม', 'ธาตุพนม'],
+  'nakhonphanom': ['ริมโขงนครพนม', 'ในเมือง', 'ม.นครพนม', 'ธาตุพนม'],
   'mukdahan': ['ในเมืองมุกดาหาร', 'สะพานมิตรภาพ 2', 'ตลาดอินโดจีน', 'นิคมคำสร้อย'],
   'kalasin': ['ในเมืองกาฬสินธุ์', 'ม.กาฬสินธุ์', 'ยางตลาด', 'สมเด็จ'],
   'maha-sarakham': ['มมส.ใหม่ (ขามเรียง)', 'มมส.เก่า (ในเมือง)', 'เสริมไทยคอมเพล็กซ์', 'มรภ.สารคาม', 'กันทรวิชัย'],
+  'mahasarakham': ['มมส.ใหม่ (ขามเรียง)', 'มมส.เก่า (ในเมือง)', 'เสริมไทยคอมเพล็กซ์', 'มรภ.สารคาม', 'กันทรวิชัย'],
   'roi-et': ['ในเมืองร้อยเอ็ด', 'บึงพลาญชัย', 'โรบินสันร้อยเอ็ด', 'มรภ.ร้อยเอ็ด', 'โพนทอง'],
+  'roiet': ['ในเมืองร้อยเอ็ด', 'บึงพลาญชัย', 'โรบินสันร้อยเอ็ด', 'มรภ.ร้อยเอ็ด', 'โพนทอง'],
   'yasothon': ['ในเมืองยโสธร', 'คำเขื่อนแก้ว', 'กุดชุม', 'เลิงนกทา'],
   'amnat-charoen': ['ในเมืองอำนาจเจริญ', 'ชานุมาน', 'หัวตะพาน', 'ลืออำนาจ'],
+  'amnatcharoen': ['ในเมืองอำนาจเจริญ', 'ชานุมาน', 'หัวตะพาน', 'ลืออำนาจ'],
   'bueng-kan': ['ในเมืองบึงกาฬ', 'ริมโขง', 'เซกา', 'ปากคาด'],
+  'buengkan': ['ในเมืองบึงกาฬ', 'ริมโขง', 'เซกา', 'ปากคาด'],
   'buriram': ['ในเมืองบุรีรัมย์', 'ช้างอารีนา', 'มรภ.บุรีรัมย์', 'ประโคนชัย', 'นางรอง'],
   'surin': ['ในเมืองสุรินทร์', 'มรภ.สุรินทร์', 'โรบินสันสุรินทร์', 'ปราสาท', 'ศีขรภูมิ'],
   'sisaket': ['ในเมืองศรีสะเกษ', 'มรภ.ศรีสะเกษ', 'กันทรลักษ์', 'อุทุมพรพิสัย'],
@@ -368,17 +384,23 @@ const LOCATION_PRESETS = {
 
   // ภาคกลาง / ตะวันตก
   'phra-nakhon-si-ayutthaya': ['โรจนะ', 'ในเกาะเมือง', 'อยุธยาซิตี้พาร์ค', 'บางปะอิน', 'เสนา', 'วังน้อย'],
+  'phranakhonsiayutthaya': ['โรจนะ', 'ในเกาะเมือง', 'อยุธยาซิตี้พาร์ค', 'บางปะอิน', 'เสนา', 'วังน้อย'],
   'saraburi': ['ในเมืองสระบุรี', 'แก่งคอย', 'พระพุทธบาท', 'หนองแค', 'โรบินสันสระบุรี'],
   'lopburi': ['ในเมืองลพบุรี', 'วงเวียนสระแก้ว', 'มรภ.เทพสตรี', 'บ้านหมี่', 'พัฒนานิคม'],
   'sing-buri': ['ในเมืองสิงห์บุรี', 'อินทร์บุรี', 'บางระจัน', 'พรหมบุรี'],
+  'singburi': ['ในเมืองสิงห์บุรี', 'อินทร์บุรี', 'บางระจัน', 'พรหมบุรี'],
   'ang-thong': ['ในเมืองอ่างทอง', 'วิเศษชัยชาญ', 'ป่าโมก', 'โพธิ์ทอง'],
+  'angthong': ['ในเมืองอ่างทอง', 'วิเศษชัยชาญ', 'ป่าโมก', 'โพธิ์ทอง'],
   'chainat': ['ในเมืองชัยนาท', 'สวนนกชัยนาท', 'หันคา', 'วัดสิงห์'],
   'suphan-buri': ['ในเมืองสุพรรณบุรี', 'ม.สวนดุสิต สุพรรณฯ', 'โรบินสันสุพรรณฯ', 'อู่ทอง', 'ด่านช้าง'],
+  'suphanburi': ['ในเมืองสุพรรณบุรี', 'ม.สวนดุสิต สุพรรณฯ', 'โรบินสันสุพรรณฯ', 'อู่ทอง', 'ด่านช้าง'],
   'kanchanaburi': ['ในเมืองกาญจนบุรี', 'สะพานข้ามแม่น้ำแคว', 'ท่าม่วง', 'ท่ามะกา', 'ไทรโยค'],
   'ratchaburi': ['ในเมืองราชบุรี', 'บ้านโป่ง', 'โพธาราม', 'ดำเนินสะดวก', 'สวนผึ้ง'],
   'phetchaburi': ['ชะอำ', 'ในเมืองเพชรบุรี', 'ท่ายาง', 'บ้านแหลม', 'เขาวัง'],
   'prachuap-khiri-khan': ['หัวหิน', 'ปราณบุรี', 'ในเมืองประจวบฯ', 'กุยบุรี', 'บางสะพาน'],
+  'prachuapkhirikhan': ['หัวหิน', 'ปราณบุรี', 'ในเมืองประจวบฯ', 'กุยบุรี', 'บางสะพาน'],
   'samut-songkhram': ['อัมพวา', 'ในเมืองแม่กลอง', 'บางคนที', 'ดอนหอยหลอด'],
+  'samutsongkhram': ['อัมพวา', 'ในเมืองแม่กลอง', 'บางคนที', 'ดอนหอยหลอด'],
 
   // ภาคตะวันออก
   'chonburi': ['พัทยากลาง', 'พัทยาใต้', 'จอมเทียน', 'บางแสน', 'ม.บูรพา', 'ศรีราชา', 'แหลมฉบัง', 'อมตะนคร', 'บ่อวิน', 'สัตหีบ'],
@@ -388,15 +410,20 @@ const LOCATION_PRESETS = {
   'chachoengsao': ['ในเมืองแปดริ้ว', 'บางปะกง', 'บ้านโพธิ์', 'แปลงยาว', 'พนมสารคาม'],
   'prachinburi': ['นิคม 304', 'กบินทร์บุรี', 'ในเมืองปราจีนบุรี', 'ศรีมหาโพธิ', 'มจพ.ปราจีนบุรี'],
   'sa-kaeo': ['อรัญประเทศ', 'ตลาดโรงเกลือ', 'ในเมืองสระแก้ว', 'วังน้ำเย็น', 'วัฒนานคร'],
+  'sakaeo': ['อรัญประเทศ', 'ตลาดโรงเกลือ', 'ในเมืองสระแก้ว', 'วังน้ำเย็น', 'วัฒนานคร'],
   'nakhon-nayok': ['ในเมืองนครนายก', 'มศว.องครักษ์', 'บ้านนา', 'เขื่อนขุนด่านฯ'],
+  'nakhonnayok': ['ในเมืองนครนายก', 'มศว.องครักษ์', 'บ้านนา', 'เขื่อนขุนด่านฯ'],
 
   // ภาคใต้
   'phuket': ['ป่าตอง', 'กะตะ-กะรน', 'เมืองภูเก็ต', 'ฉลอง', 'บางเทา', 'ถลาง', 'ราไวย์', 'กะทู้', 'กมลา'],
   'surat-thani': ['เกาะสมุย', 'เกาะพะงัน', 'ในเมืองสุราษฎร์', 'เซ็นทรัลสุราษฎร์', 'พุนพิน', 'ม.สงขลานครินทร์ สุราษฎร์'],
+  'suratthani': ['เกาะสมุย', 'เกาะพะงัน', 'ในเมืองสุราษฎร์', 'เซ็นทรัลสุราษฎร์', 'พุนพิน', 'ม.สงขลานครินทร์ สุราษฎร์'],
   'songkhla': ['หาดใหญ่', 'ม.อ.หาดใหญ่', 'ไดอาน่า', 'เซ็นทรัลเฟสฯ หาดใหญ่', 'เมืองสงขลา', 'สมิหลา', 'ด่านนอก (สะเดา)'],
   'nakhon-si-thammarat': ['ในเมืองนครศรีฯ', 'ม.วลัยลักษณ์ (ท่าศาลา)', 'เซ็นทรัลพลาซา นครศรีฯ', 'ทุ่งสง', 'สิชล'],
+  'nakhonsithammarat': ['ในเมืองนครศรีฯ', 'ม.วลัยลักษณ์ (ท่าศาลา)', 'เซ็นทรัลพลาซา นครศรีฯ', 'ทุ่งสง', 'สิชล'],
   'krabi': ['อ่าวนาง', 'ในเมืองกระบี่', 'เกาะพีพี', 'คลองม่วง', 'อ่าวลึก'],
   'phang-nga': ['เขาหลัก', 'ท้ายเหมือง', 'ในเมืองพังงา', 'ตะกั่วป่า', 'เกาะยาว'],
+  'phangnga': ['เขาหลัก', 'ท้ายเหมือง', 'ในเมืองพังงา', 'ตะกั่วป่า', 'เกาะยาว'],
   'trang': ['ในเมืองตรัง', 'มรภ.สวนดุสิต ตรัง', 'กันตัง', 'ห้วยยอด', 'ย่านตาขาว'],
   'chumphon': ['ในเมืองชุมพร', 'หลังสวน', 'ปะทิว', 'ท่าแซะ'],
   'ranong': ['ในเมืองระนอง', 'บ่อน้ำร้อนรักษะวาริน', 'กะเปอร์', 'เกาะพยาม'],
@@ -529,7 +556,6 @@ const UI = {
     const modalRoot = document.getElementById('modal-root');
     const placeholder = 'https://firstmodelhub.com/images/firstmodelhub.webp';
     
-    // จัดการรูปภาพทั้งหมดในคลัง
     const gallery = profile.galleryPaths && Array.isArray(profile.galleryPaths) && profile.galleryPaths.length > 0
       ? profile.galleryPaths
       : [profile.imagePath || placeholder];
@@ -538,7 +564,6 @@ const UI = {
     const provinceName = AppState.provinces.find(p => p.key === profile.provinceKey)?.nameThai || profile.provinceKey || 'ไม่ระบุ';
     const modalId = `lightbox-${profile.id}`;
     
-    // ตรวจสอบคะแนนความพร้อม SEO
     let seoScore = 100;
     if (!profile.description || profile.description.length < 30) seoScore -= 25;
     if (!profile.quote) seoScore -= 15;
@@ -555,7 +580,6 @@ const UI = {
         
         <div class="bg-[#0c081d] border border-purple-500/20 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto relative modal-box text-white flex flex-col lg:flex-row gap-6 p-5 sm:p-8">
           
-          <!-- ปุ่มปิด -->
           <button class="lightbox-close-btn absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full z-20 flex items-center justify-center transition active:scale-95">
             <i class="fas fa-times text-lg"></i>
           </button>
@@ -576,7 +600,6 @@ const UI = {
               </div>
             </div>
 
-            <!-- แถบรูปย่อย (Thumbnail Strip) -->
             ${gallery.length > 1 ? `
               <div class="flex gap-2 overflow-x-auto p-1 scrollbar-thin">
                 ${gallery.map((imgUrl) => `
@@ -589,8 +612,6 @@ const UI = {
 
           <!-- ฝั่งขวา: Bento Grid รายละเอียดเชิงลึก -->
           <div class="w-full lg:w-7/12 flex flex-col gap-5 text-left">
-            
-            <!-- ส่วนหัวชื่อโปรไฟล์ & คำโปรย -->
             <div class="border-b border-white/10 pb-4">
               <div class="flex items-center gap-3 flex-wrap">
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-white">${profile.name || 'ไม่ระบุชื่อ'}</h3>
@@ -602,7 +623,6 @@ const UI = {
               <p class="text-sm text-purple-300 font-semibold mt-1">"${profile.quote || 'ไม่มีคำโปรย'}"</p>
             </div>
 
-            <!-- Bento Tiles (กล่องสรุปสถิติจำเพาะ) -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <div class="bg-white/[0.03] border border-white/5 p-3 rounded-2xl text-center">
                 <span class="text-[11px] text-zinc-400 font-bold block">อายุ</span>
@@ -622,7 +642,6 @@ const UI = {
               </div>
             </div>
 
-            <!-- ข้อมูลพิกัดและช่องทางติดต่อ -->
             <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl space-y-2.5 text-xs sm:text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-zinc-400"><i class="fas fa-map-marker-alt text-purple-400 mr-2"></i>พิกัดรับงาน:</span>
@@ -640,7 +659,6 @@ const UI = {
               </div>
             </div>
 
-            <!-- รายละเอียดงานและแท็กสไตล์ -->
             <div>
               <span class="text-xs font-bold text-zinc-400 block mb-1.5">รายละเอียดบริการ:</span>
               <p class="text-xs text-zinc-300 bg-white/[0.02] p-3.5 rounded-2xl border border-white/5 leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto">
@@ -654,7 +672,6 @@ const UI = {
               </div>
             ` : ''}
 
-            <!-- ปุ่มแก้ไข -->
             <div class="flex gap-2.5 pt-2 mt-auto border-t border-white/10">
               <button onclick="document.getElementById('${modalId}').remove(); Controller.renderView('profile-form-container', { profileId: '${profile.id}' })" 
                       class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold rounded-xl transition shadow-lg shadow-purple-900/30 flex items-center justify-center gap-2">
@@ -830,7 +847,7 @@ const Controller = {
     document.body.addEventListener('click', e => {
       const navButton = e.target.closest('.nav-button');
       if (navButton) {
-        toggleSidebar(false); // ปิด Sidebar อัตโนมัติเมื่อกดเมนูบนมือถือ
+        toggleSidebar(false);
         Controller.renderView(navButton.dataset.view, { action: navButton.dataset.action });
       }
       
@@ -995,6 +1012,33 @@ const Controller = {
                 <canvas id="chart-provinces"></canvas>
             </div>
         </div>
+
+        <!-- 🟢 ตาราง TOP 5 น้องยอดนิยมที่มีคนทักไลน์สูงสุด -->
+        <div class="mt-8 card-surface p-6 text-left animate-slide-up">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-extrabold text-white flex items-center gap-2">
+                    <i class="fas fa-fire text-pink-500"></i> 5 อันดับน้องที่มีคนกดทัก LINE สูงสุด (Live Traffic)
+                </h4>
+                <span class="text-xs text-purple-400 font-bold">อัปเดตอัตโนมัติจากหน้าเว็บ</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                ${[...AppState.allProfiles]
+                    .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+                    .slice(0, 5)
+                    .map((p, idx) => `
+                    <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center group hover:border-purple-500/40 transition">
+                        <div class="relative w-16 h-16 rounded-full overflow-hidden mb-2 border-2 border-purple-500/40">
+                            <img src="${p.imagePath && p.imagePath.startsWith('http') ? p.imagePath : 'https://firstmodelhub.com/images/firstmodelhub.webp'}" class="w-full h-full object-cover" onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'">
+                            <span class="absolute top-0 right-0 bg-pink-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">#${idx+1}</span>
+                        </div>
+                        <span class="font-extrabold text-xs text-white truncate max-w-full">${p.name || 'ไม่ระบุ'}</span>
+                        <span class="text-[11px] text-pink-400 font-black mt-1 flex items-center gap-1">
+                            <i class="fas fa-heart text-[9px]"></i> ${p.likes || 0} ทักไลน์
+                        </span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
     `;
     
     setTimeout(() => {
@@ -1045,33 +1089,7 @@ const Controller = {
         }
     }, 100);
   },
-  <!-- 🟢 เพิ่มตาราง TOP 5 น้องยอดนิยมที่มีคนทักไลน์สูงสุด -->
-        <div class="mt-8 card-surface p-6 text-left animate-slide-up">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="text-lg font-extrabold text-white flex items-center gap-2">
-                    <i class="fas fa-fire text-pink-500"></i> 5 อันดับน้องที่มีคนกดทัก LINE สูงสุด (Live Traffic)
-                </h4>
-                <span class="text-xs text-purple-400 font-bold">อัปเดตอัตโนมัติจากหน้าเว็บ</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                ${AppState.allProfiles
-                    .sort((a, b) => (b.likes || 0) - (a.likes || 0))
-                    .slice(0, 5)
-                    .map((p, idx) => `
-                    <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center group hover:border-purple-500/40 transition">
-                        <div class="relative w-16 h-16 rounded-full overflow-hidden mb-2 border-2 border-purple-500/40">
-                            <img src="${p.imagePath || DEFAULT_FALLBACK_IMG}" class="w-full h-full object-cover">
-                            <span class="absolute top-0 right-0 bg-pink-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">#${idx+1}</span>
-                        </div>
-                        <span class="font-extrabold text-xs text-white truncate max-w-full">${p.name}</span>
-                        <span class="text-[11px] text-pink-400 font-black mt-1 flex items-center gap-1">
-                            <i class="fas fa-heart text-[9px]"></i> ${p.likes || 0} ทักไลน์
-                        </span>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-        
+  
   renderProfilesListContainer() {
     DOM.viewContent.innerHTML = `
       <div class="space-y-6">
@@ -1092,10 +1110,6 @@ const Controller = {
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" id="filter-featured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950 border-zinc-800">
                   <span class="font-bold text-zinc-300 text-sm">เฉพาะปักหมุดแนะนำ</span>
-                  <!-- แปะไว้ข้างๆ ป้ายปักหมุดแนะนำ -->
-<span class="absolute top-2 left-2 bg-black/70 backdrop-blur text-pink-300 text-[10px] px-2 py-0.5 rounded-full font-bold border border-pink-500/30 flex items-center gap-1">
-  <i class="fas fa-heart text-pink-400 text-[8px]"></i> ${p.likes || 0}
-</span>
                 </label>
             </div>
           </div>
@@ -1182,7 +1196,7 @@ const Controller = {
   },
 
   getProfileCardHTML(p) {
-    let imgUrl = 'https://placehold.co/400x500?text=No+Image';
+    let imgUrl = 'https://firstmodelhub.com/images/firstmodelhub.webp';
 
     if (p.imagePath && p.imagePath.startsWith('http')) {
         imgUrl = p.imagePath;
@@ -1198,9 +1212,15 @@ const Controller = {
         <div class="relative aspect-[3/4] overflow-hidden">
             <img src="${imgUrl}" 
                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                 onerror="this.src='https://placehold.co/400x500?text=Image+Error'" 
+                 onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'" 
                  loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            
+            <!-- 🟢 ป้ายยอดคนกดแอดไลน์ (Likes) แสดงมุมซ้ายบน -->
+            <span class="absolute top-2 left-2 bg-black/75 backdrop-blur-md text-pink-300 border border-pink-500/40 text-[9px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 shadow-md">
+                <i class="fas fa-heart text-pink-400 text-[8px]"></i> ${p.likes || 0}
+            </span>
+
             ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[9px] px-2.5 py-0.5 rounded-full font-extrabold shadow-md">RECOMMENDED</span>' : ''}
         </div>
         <div class="p-3 flex flex-col flex-grow text-left">
@@ -1334,7 +1354,7 @@ const Controller = {
             </div>
           </div>
           
-          <!-- แถบลอยด้านล่าง ปรับปรุงใหม่ไม่บังปุ่มเพลง + ตัวอักษรไม่ขึ้นบรรทัดใหม่อึดอัด -->
+          <!-- แถบลอยด้านล่าง -->
           <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-zinc-950/95 backdrop-blur-lg p-3 sm:p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1000]">
              <button type="button" class="nav-button px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-400 hover:text-white" data-view="profiles-list-container">
                <i class="fas fa-arrow-left mr-1"></i> ยกเลิก
@@ -1380,7 +1400,6 @@ const Controller = {
 
     const chipsContainer = document.getElementById('location-chips-container');
 
-    // ฟังก์ชันอัปเดตชิปโซนย่อยตามจังหวัดที่เลือก
     const renderLocationChips = () => {
       if (!chipsContainer || !fields.province) return;
       const selectedKey = (fields.province.value || '').toLowerCase().trim();
@@ -1436,7 +1455,6 @@ const Controller = {
       }
     });
 
-    // 🚀 ระบบสร้าง Local SEO Tags อัตโนมัติ รองรับพิกัดย่อยหลายจุด
     const triggerSmartGeneration = () => {
       const name = fields.name?.value?.trim() || '';
       const provinceName = fields.province?.options[fields.province.selectedIndex]?.text || '';
@@ -1447,20 +1465,17 @@ const Controller = {
 
       if (!name) return;
 
-      // 1. Slug
       if (fields.slug && fields.slug.dataset.autogenerated === 'true') {
         const locSlug = location ? `-${location.split(',')[0].trim()}` : '';
         fields.slug.value = `${name.toLowerCase().replace(/\s+/g, '-')}${locSlug}`
                                 .replace(/[^a-zA-Z0-9ก-๙-]/g, '');
       }
 
-      // 2. SEO Title
       if (fields.seoTitle && fields.seoTitle.dataset.autogenerated === 'true') {
         const locText = location ? `โซน${location}` : provinceName;
         fields.seoTitle.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${locText} ฟิวแฟนตรงปก | First Model Hub`;
       }
 
-      // 3. Meta Description
       if (fields.metaDesc && fields.metaDesc.dataset.autogenerated === 'true') {
         let desc = `โปรไฟล์ น้อง${name} สาวรับงานไซด์ไลน์ ${provinceName} ${location ? `ย่าน${location}` : ''} นัดพบฟิวแฟนบน First Model Hub`;
         if (rate) desc += ` เรทบริการ ${rate}`;
@@ -1470,13 +1485,11 @@ const Controller = {
         fields.metaDesc.value = desc;
       }
 
-      // 4. Alt Text
       if (fields.altText && fields.altText.dataset.autogenerated === 'true') {
         fields.altText.value = `น้อง${name} สาวรับงาน${provinceName} ไซด์ไลน์${location ? ` ${location}` : ''} เพื่อนเที่ยวฟิวแฟน First Model Hub`;
       }
     };
 
-    // ดักจับการเปลี่ยนจังหวัดเพื่อเรนเดอร์ชิปใหม่
     fields.province?.addEventListener('change', () => {
       renderLocationChips();
       triggerSmartGeneration();
@@ -1486,7 +1499,6 @@ const Controller = {
       fields[key]?.addEventListener('input', triggerSmartGeneration);
     });
 
-    // เรียกทำงานครั้งแรก
     renderLocationChips();
   },
 
@@ -1756,9 +1768,8 @@ const Controller = {
         if (files.length) {
             UI.showToast(`กำลังประมวลผลและบีบอัดรูปภาพทั้ง ${files.length} ใบ...`, 'info');
             
-            for (const [index, f] of files.entries()) {
+            for (const f of files) {
                 const formData = new FormData();
-                
                 let processedFile = f;
                 try {
                     processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.8);
@@ -1823,9 +1834,8 @@ const Controller = {
         if (result.error) throw result.error;
         
         AdminSoundEffects.playSuccessBoom();
-        
         UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
-        await Controller.fetchData();
+        await Controller.fetchData(true);
         Controller.renderView('profiles-list-container');
         
     } catch (err) {
@@ -1871,7 +1881,6 @@ const Controller = {
     if (!form) return;
     
     AdminSoundEffects.playPop();
-    
     const profileData = Controller.collectFormData(form);
     const currentImagePath = form.querySelector('#current-image-path').value;
     const fileInput = form.querySelector('#image-file-input');
@@ -1900,9 +1909,8 @@ const Controller = {
           if (error) throw error;
           
           AdminSoundEffects.playSuccessBoom();
-          
           UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
-          await Controller.fetchData();
+          await Controller.fetchData(true);
           Controller.renderView(AppState.currentView, AppState.currentParams);
         } catch (error) {
           AdminSoundEffects.playCancel();
@@ -1995,10 +2003,9 @@ const Controller = {
       if (error) throw error;
       
       AdminSoundEffects.playSuccessBoom();
-      
       UI.showToast(`เพิ่มจังหวัด ${nameThai} เรียบร้อยแล้ว`, 'success');
       form.reset();
-      await Controller.fetchData();
+      await Controller.fetchData(true);
       Controller.renderView('provinces-management-container');
     } catch (error) {
       AdminSoundEffects.playCancel();
@@ -2018,9 +2025,8 @@ const Controller = {
           if (error) throw error;
           
           AdminSoundEffects.playSuccessBoom();
-          
           UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
-          await Controller.fetchData();
+          await Controller.fetchData(true);
           Controller.renderView('provinces-management-container');
         } catch (error) {
           AdminSoundEffects.playCancel();
@@ -2031,7 +2037,6 @@ const Controller = {
   }
 };
 
-// 🟢 เพิ่มฟังก์ชันหน้าต่างสถานะระบบ ป้องกัน Error เมื่อกดปุ่ม SYSTEM ONLINE
 window.showSystemStatusModal = function() {
   AdminSoundEffects.playPop();
   UI.showModal({
@@ -2201,12 +2206,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   document.getElementById('cropper-modal').classList.remove('active');
 });
 </script>
-
-<!-- ================================================================================== -->
-<!-- 🎵 AUTONOMOUS SMART AUDIO WIDGET -->
-<!-- ================================================================================== -->
-
-
 
 <style>
   #admin-assistive-root {
@@ -2591,13 +2590,11 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 
 <!-- Control Panel -->
 <div class="control-center-panel" id="admin-control-panel">
-  <!-- Header -->
   <div class="panel-header">
     <span style="font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: #fff;">Media Center</span>
     <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   </div>
 
-  <!-- Tab Control -->
   <div class="tab-bar">
     <button class="tab-btn active" onclick="AdminOS.switchTab('player')">ผู้เล่น</button>
     <button class="tab-btn" onclick="AdminOS.switchTab('search')">ค้นหาออนไลน์</button>
