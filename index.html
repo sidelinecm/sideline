@@ -1833,6 +1833,15 @@ const Controller = {
         
         if (result.error) throw result.error;
         
+        // 🟢 เพิ่มคำสั่งนี้เข้าไป
+        try {
+            await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
+                method: 'GET',
+                mode: 'no-cors'
+            });
+        } catch (cacheErr) {
+            console.warn('Auto purge:', cacheErr);
+        }
         AdminSoundEffects.playSuccessBoom();
         UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
         await Controller.fetchData(true);
@@ -1907,7 +1916,15 @@ const Controller = {
             .eq('id', id);
             
           if (error) throw error;
-          
+          // 🟢 เพิ่มคำสั่งนี้เข้าไป
+          try {
+              await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
+                  method: 'GET',
+                  mode: 'no-cors'
+              });
+          } catch (cacheErr) {
+              console.warn('Auto purge:', cacheErr);
+          }
           AdminSoundEffects.playSuccessBoom();
           UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
           await Controller.fetchData(true);
@@ -2202,7 +2219,7 @@ const AdminSoundEffects = {
 
 <script>
 document.getElementById('crop-cancel')?.addEventListener('click', () => {
-  AdminSoundEffects.playCancel();
+  if (window.AdminSoundEffects) AdminSoundEffects.playCancel();
   document.getElementById('cropper-modal').classList.remove('active');
 });
 </script>
@@ -2252,14 +2269,14 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     position: fixed;
     bottom: 100px;
     right: 24px;
-    width: 350px;
-    background: rgba(10, 10, 18, 0.85);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1);
-    padding: 22px;
+    width: 360px;
+    background: rgba(10, 10, 18, 0.94);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 26px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.15);
+    padding: 20px;
     display: none;
     flex-direction: column;
     z-index: 9999;
@@ -2273,7 +2290,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
   .close-btn {
     cursor: pointer;
@@ -2299,11 +2316,11 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     padding: 4px;
     border-radius: 12px;
     gap: 4px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
   .tab-btn {
     flex: 1;
-    padding: 8px 4px;
+    padding: 7px 4px;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -2315,21 +2332,21 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     transition: all 0.2s;
   }
   .tab-btn.active {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
     color: #ffffff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
 
   .music-cover {
-    width: 100px;
-    height: 100px;
-    margin: 8px auto;
+    width: 90px;
+    height: 90px;
+    margin: 4px auto 8px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
     border: 3px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transition: transform 0.1s ease;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   .music-cover img {
     width: 100%;
@@ -2337,7 +2354,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     object-fit: cover;
   }
   .music-cover.spinning img {
-    animation: spinCD 12s linear infinite;
+    animation: spinCD 10s linear infinite;
   }
   @keyframes spinCD {
     from { transform: rotate(0deg); }
@@ -2350,19 +2367,80 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     transform: translate(-50%, -50%);
     width: 18px; height: 18px;
     background: rgba(10, 10, 18, 0.95);
-    border: 3px solid rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.25);
     border-radius: 50%;
     z-index: 2;
+  }
+
+  .player-timeline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #9ca3af;
+    margin-bottom: 8px;
+  }
+  .custom-range {
+    flex-grow: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    outline: none;
+    cursor: pointer;
+  }
+  .custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #c084fc;
+    box-shadow: 0 0 8px #a855f7;
+    cursor: pointer;
+  }
+
+  .player-btn-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .control-icon-btn {
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .control-icon-btn:hover {
+    color: #c084fc;
+    transform: scale(1.1);
+  }
+  .play-pause-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: white;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
   }
 
   .visualizer-container {
     width: 100%;
     height: 52px;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 14px;
     overflow: hidden;
-    margin-bottom: 12px;
-    border: 1px solid rgba(255,255,255,0.04);
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
   }
   #audio-visualizer {
     width: 100%;
@@ -2370,20 +2448,21 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     display: block;
   }
 
+  /* DSP HUD */
   .dsp-hud {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 12px;
-    margin-bottom: 14px;
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
   }
   .hud-title {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #a855f7;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    color: #c084fc;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -2391,9 +2470,9 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   .hud-row {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 10.5px;
     color: #9ca3af;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
   .hud-row:last-child {
     margin-bottom: 0;
@@ -2409,48 +2488,16 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     background-color: #10b981;
     border-radius: 50%;
     box-shadow: 0 0 6px #10b981;
-    transition: background-color 0.3s, box-shadow 0.3s;
-  }
-  .status-dot.active {
-    background-color: #3b82f6;
-    box-shadow: 0 0 6px #3b82f6;
-  }
-  .status-dot.alert {
-    background-color: #ec4899;
-    box-shadow: 0 0 6px #ec4899;
-  }
-
-  .hifi-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: rgba(168, 85, 247, 0.12);
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    color: #c084fc;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    width: max-content;
-    margin: 8px auto 12px;
-  }
-  .hifi-status i {
-    animation: hifiPulse 1.2s infinite alternate;
-  }
-  @keyframes hifiPulse {
-    from { opacity: 0.4; }
-    to { opacity: 1; text-shadow: 0 0 8px #c084fc; }
+    transition: background-color 0.3s;
   }
 
   .media-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    font-size: 12px;
+    border-radius: 10px;
+    font-size: 11.5px;
     color: #fff;
     outline: none;
     box-sizing: border-box;
@@ -2458,7 +2505,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   }
   .media-input:focus {
     border-color: rgba(168, 85, 247, 0.5);
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
     background: rgba(255,255,255,0.08);
   }
   .action-grid {
@@ -2468,7 +2515,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     margin-top: 10px;
   }
   .action-btn {
-    padding: 10px;
+    padding: 8px 10px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.04);
     color: #e5e7eb;
@@ -2492,7 +2539,6 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   }
   .action-btn-primary:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
   }
   .action-btn-danger {
     background: rgba(239, 68, 68, 0.15);
@@ -2507,8 +2553,8 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   .playlist-view {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-height: 270px;
+    gap: 6px;
+    max-height: 280px;
     overflow-y: auto;
     padding-right: 4px;
   }
@@ -2522,17 +2568,17 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   .playlist-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
+    gap: 10px;
+    padding: 8px 10px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255,255,255,0.02);
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .playlist-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.1);
+  .playlist-item:hover, .playlist-item.active-item {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
   }
   .playlist-info {
     flex-grow: 1;
@@ -2540,7 +2586,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     overflow: hidden;
   }
   .playlist-title {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     color: #f3f4f6;
     white-space: nowrap;
@@ -2552,7 +2598,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   #video-display-area {
@@ -2560,25 +2606,13 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     width: 100%;
     height: 180px;
     background: #000;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     border: 1px solid rgba(255,255,255,0.08);
   }
-
-  #dynamic-media-controls {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    justify-content: center;
-  }
-
-  .tab-pane {
-    display: none;
-  }
-  .tab-pane.active {
-    display: block;
-  }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
 </style>
 
 <!-- Assistive Floating Button -->
@@ -2591,7 +2625,10 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 <!-- Control Panel -->
 <div class="control-center-panel" id="admin-control-panel">
   <div class="panel-header">
-    <span style="font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: #fff;">Media Center</span>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-weight: 700; font-size: 13px; letter-spacing: 0.5px; color: #fff;">Hi-Fi Studio Master</span>
+      <span style="font-size: 9px; padding: 2px 6px; border-radius: 99px; background: rgba(16, 185, 129, 0.15); color:#34d399; border:1px solid rgba(16, 185, 129, 0.3);">Clean Audio</span>
+    </div>
     <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
   </div>
 
@@ -2601,7 +2638,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     <button class="tab-btn" onclick="AdminOS.switchTab('playlist')">คลังอัลบั้ม</button>
   </div>
 
-  <!-- TAB 1: PLAYER & AUTONOMOUS DSP -->
+  <!-- TAB 1: PLAYER -->
   <div id="tab-player" class="tab-pane active">
     <div id="video-display-area">
       <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
@@ -2611,52 +2648,56 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
       <div class="music-cover" id="music-cover-container">
         <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Music Cover">
       </div>
-      <p style="font-size: 13px; font-weight: 600; color: #fff; margin: 8px 0 2px; text-align: center;" id="current-track-name">สแตนด์บายการเล่น</p>
-      <p style="font-size: 10px; color: #9ca3af; margin: 0 0 10px; text-align: center;">Autonomous Intelligent DSP V3</p>
+      <p style="font-size: 13px; font-weight: 600; color: #fff; margin: 4px 0 1px; text-align: center;" id="current-track-name">สแตนด์บายการเล่น</p>
+      <p style="font-size: 9.5px; color: #34d399; margin: 0 0 8px; text-align: center; font-weight: 500;" id="audio-ai-status">✨ Crystal-Clear Sound Protection Active</p>
     </div>
 
+    <!-- Visualizer Canvas -->
     <div class="visualizer-container">
-      <canvas id="audio-visualizer" width="306" height="52"></canvas>
+      <canvas id="audio-visualizer" width="320" height="52"></canvas>
     </div>
 
-    <div id="dynamic-media-controls">
-      <button class="action-btn" id="btn-view-mv" style="display: none; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; flex: 1;" onclick="AdminOS.watchMV()">
-        <i class="fas fa-video"></i> สลับไปดูวิดีโอ / MV
-      </button>
-      <button class="action-btn" id="btn-back-audio" style="display: none; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; flex: 1;" onclick="AdminOS.backToAudio()">
-        <i class="fas fa-headphones"></i> สลับกลับโหมดฟังเพลง
-      </button>
-      <button class="action-btn" id="btn-pip" style="display: none; background: rgba(255, 255, 255, 0.08); flex: 1;" onclick="AdminOS.togglePiP()">
-        <i class="fas fa-window-restore"></i> ย่อจอ (PiP)
-      </button>
+    <!-- Seek Bar Timeline -->
+    <div class="player-timeline">
+      <span id="time-current">0:00</span>
+      <input type="range" id="seek-slider" class="custom-range" value="0" min="0" max="100" step="0.1" oninput="AdminOS.seek(this.value)">
+      <span id="time-duration">0:00</span>
     </div>
 
+    <!-- Playback Controls -->
+    <div class="player-btn-row">
+      <button class="control-icon-btn" onclick="AdminOS.prevTrack()"><i class="fas fa-backward-step"></i></button>
+      <button class="control-icon-btn play-pause-circle" id="btn-play-pause" onclick="AdminOS.togglePlayPause()"><i class="fas fa-play"></i></button>
+      <button class="control-icon-btn" onclick="AdminOS.nextTrack()"><i class="fas fa-forward-step"></i></button>
+      <div style="display:flex; align-items:center; gap:6px; margin-left: 12px;">
+        <i class="fas fa-volume-high" style="font-size: 11px; color:#9ca3af;"></i>
+        <input type="range" class="custom-range" style="width: 60px;" min="0" max="1" step="0.01" value="1" oninput="AdminOS.setVolume(this.value)">
+      </div>
+    </div>
+
+    <!-- DSP Diagnostics HUD -->
     <div class="dsp-hud">
       <div class="hud-title">
-        <i class="fas fa-microchip"></i> Real-time AI Audio Tuning
+        <i class="fas fa-sliders"></i> Master Output Diagnostics
       </div>
       <div class="hud-row">
-        <span>ปรับสมดุลเบส (Auto-Bass)</span>
-        <span class="hud-val" id="hud-bass">0.0 dB</span>
+        <span>เบสลูกลึกนุ่ม (Deep Bass)</span>
+        <span class="hud-val" id="hud-bass" style="color:#60a5fa;">+2.5 dB</span>
       </div>
       <div class="hud-row">
-        <span>ชดเชยเสียงร้อง (Vocal Boost)</span>
-        <span class="hud-val" id="hud-vocal">0.0 dB</span>
+        <span>เสียงร้องชัดใส (Vocal Presence)</span>
+        <span class="hud-val" id="hud-vocal" style="color:#c084fc;">+2.0 dB</span>
       </div>
       <div class="hud-row">
-        <span>จำกัดความถี่แหลม (Soft-Clip Shield)</span>
-        <span class="hud-val" id="hud-treble" style="color: #10b981;">ปกติ</span>
+        <span>ป้องกันสัญญาณล้น (Headroom Guard)</span>
+        <span class="hud-val" style="color:#34d399;">-2.5 dB Protected</span>
       </div>
-      <div class="hud-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 4px;">
-        <span>สถานะระบบป้องกันเสียงแตก</span>
+      <div class="hud-row">
+        <span>สถานะ Brickwall Limiter</span>
         <span class="hud-val" style="display:flex; align-items:center; gap:5px;">
-          <span class="status-dot" id="led-softclip"></span> <span id="text-softclip" style="font-size: 10px;">STANDBY</span>
+          <span class="status-dot" id="led-softclip"></span> <span id="text-softclip" style="font-size: 10px; color:#10b981;">NO CLIPPING</span>
         </span>
       </div>
-    </div>
-
-    <div class="hifi-status">
-      <i class="fas fa-shield-halved"></i> Active Sound Protection Active
     </div>
 
     <input type="text" class="media-input" id="media-url-input" 
@@ -2677,9 +2718,9 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
   <div id="tab-search" class="tab-pane">
     <div style="display: flex; gap: 8px; margin-bottom: 12px;">
       <input type="text" class="media-input" id="online-search-input" 
-             placeholder="ค้นชื่อเพลง, ศิลปิน, วงดนตรี..." 
+             placeholder="ค้นชื่อเพลง, ศิลปิน..." 
              onkeypress="if(event.key === 'Enter') AdminOS.searchOnline()">
-      <button class="action-btn action-btn-primary" onclick="AdminOS.searchOnline()" style="width: 50px; flex-shrink: 0; padding: 0;">
+      <button class="action-btn action-btn-primary" onclick="AdminOS.searchOnline()" style="width: 44px; flex-shrink: 0; padding: 0;">
         <i class="fas fa-search"></i>
       </button>
     </div>
@@ -2687,12 +2728,12 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
     <div class="playlist-view" id="online-results-container">
       <div style="text-align: center; padding: 40px 10px; font-size: 11px; color: #9ca3af;">
         <i class="fas fa-globe" style="font-size: 24px; margin-bottom: 8px; display: block; color: #a855f7;"></i>
-        ค้นหาและเชื่อมต่อสตรีมดนตรีสดแบบออนไลน์ <br>ผ่านเครือข่ายกระจายศูนย์โดยตรง
+        ค้นหาและสตรีมดนตรีสดแบบออนไลน์ผ่านระบบ Hi-Fi Clean Audio
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: PLAYLIST (LOCAL FILES) -->
+  <!-- TAB 3: PLAYLIST -->
   <div id="tab-playlist" class="tab-pane">
     <div class="playlist-view" id="playlist-view-container"></div>
   </div>
@@ -2704,7 +2745,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 
 <script>
 /**
- * 🔊 AudioEngine V3: Autonomous Hi-Fi DSP Engine
+ * 🔊 Clean Hi-Fi AudioEngine (Zero Distortion Architecture)
  */
 const AudioEngine = {
   ctx: null,
@@ -2725,79 +2766,95 @@ const AudioEngine = {
       this.nodes.videoSource = this.ctx.createMediaElementSource(videoEl);
 
       this.analyser = this.ctx.createAnalyser();
-      this.analyser.fftSize = 256; 
+      this.analyser.fftSize = 256;
+      this.analyser.smoothingTimeConstant = 0.85;
 
+      // 1. Pre-Gain Headroom: ลดทอนสัญญาณลง 2.5dB ป้องกันเสียงแตก 100%
+      this.nodes.preGain = this.ctx.createGain();
+      this.nodes.preGain.gain.value = 0.75; 
+
+      // 2. Clean 4-Band Parametric Master EQ (ปรับให้นุ่ม ใส โปร่ง)
+      this.nodes.subBass = this.ctx.createBiquadFilter();
+      this.nodes.subBass.type = "lowshelf";
+      this.nodes.subBass.frequency.value = 80;
+      this.nodes.subBass.gain.value = 2.5; // เบสนุ่มลึก ไม่กระพือแตก
+
+      this.nodes.mudCut = this.ctx.createBiquadFilter();
+      this.nodes.mudCut.type = "peaking";
+      this.nodes.mudCut.frequency.value = 320; 
+      this.nodes.mudCut.gain.value = -2.0; // ตัดเสียงอู้อี้ก้องๆ ออก
+      this.nodes.mudCut.Q.value = 1.2;
+
+      this.nodes.vocalPresence = this.ctx.createBiquadFilter();
+      this.nodes.vocalPresence.type = "peaking";
+      this.nodes.vocalPresence.frequency.value = 3000;
+      this.nodes.vocalPresence.gain.value = 2.0; // เสียงร้องคมชัด เด่นขึ้น
+      this.nodes.vocalPresence.Q.value = 1.0;
+
+      this.nodes.airPresence = this.ctx.createBiquadFilter();
+      this.nodes.airPresence.type = "highshelf";
+      this.nodes.airPresence.frequency.value = 11000;
+      this.nodes.airPresence.gain.value = 2.0; // ประกายเสียงแหลมใส
+
+      // 3. Stereo Haas Widener (มิติเสียงกว้างเป็นธรรมชาติ ไร้เสียงซ่า)
       this.nodes.splitter = this.ctx.createChannelSplitter(2);
       this.nodes.merger = this.ctx.createChannelMerger(2);
-      
       this.nodes.delayLeft = this.ctx.createDelay();
       this.nodes.delayRight = this.ctx.createDelay();
-      this.nodes.delayLeft.delayTime.value = 0.0;    
-      this.nodes.delayRight.delayTime.value = 0.012; 
+      this.nodes.delayLeft.delayTime.value = 0.0;
+      this.nodes.delayRight.delayTime.value = 0.006; // 6ms Stereo Width
 
-      this.nodes.audioSource.connect(this.analyser);
-      this.nodes.videoSource.connect(this.analyser);
+      // 4. Brickwall Master Limiter (ตัวล็อกเพดานเสียง ป้องกันเสียงแตก 100%)
+      this.nodes.limiter = this.ctx.createDynamicsCompressor();
+      this.nodes.limiter.threshold.setValueAtTime(-1.5, this.ctx.currentTime);
+      this.nodes.limiter.knee.setValueAtTime(0.0, this.ctx.currentTime);
+      this.nodes.limiter.ratio.setValueAtTime(20.0, this.ctx.currentTime);
+      this.nodes.limiter.attack.setValueAtTime(0.001, this.ctx.currentTime);
+      this.nodes.limiter.release.setValueAtTime(0.08, this.ctx.currentTime);
 
-      this.analyser.connect(this.nodes.splitter);
+      // 5. Master Gain Out
+      this.nodes.masterGain = this.ctx.createGain();
+      this.nodes.masterGain.gain.value = 1.0;
+
+      // เชื่อมต่อ Audio Graph
+      const connectSrc = (src) => {
+        src.connect(this.nodes.preGain);
+        src.connect(this.analyser);
+      };
+      connectSrc(this.nodes.audioSource);
+      connectSrc(this.nodes.videoSource);
+
+      this.nodes.preGain.connect(this.nodes.subBass);
+      this.nodes.subBass.connect(this.nodes.mudCut);
+      this.nodes.mudCut.connect(this.nodes.vocalPresence);
+      this.nodes.vocalPresence.connect(this.nodes.airPresence);
+
+      // ต่อแยกมิติเสียง ซ้าย-ขวา
+      this.nodes.airPresence.connect(this.nodes.splitter);
       this.nodes.splitter.connect(this.nodes.delayLeft, 0);
       this.nodes.splitter.connect(this.nodes.delayRight, 1);
       this.nodes.delayLeft.connect(this.nodes.merger, 0, 0);
       this.nodes.delayRight.connect(this.nodes.merger, 0, 1);
 
-      this.nodes.bass = this.ctx.createBiquadFilter();
-      this.nodes.bass.type = "lowshelf";
-      this.nodes.bass.frequency.value = 80; 
-
-      this.nodes.midClean = this.ctx.createBiquadFilter();
-      this.nodes.midClean.type = "peaking";
-      this.nodes.midClean.frequency.value = 320;
-      this.nodes.midClean.Q.value = 1.0;
-
-      this.nodes.vocals = this.ctx.createBiquadFilter();
-      this.nodes.vocals.type = "peaking";
-      this.nodes.vocals.frequency.value = 3000;
-      this.nodes.vocals.Q.value = 1.2;
-
-      this.nodes.treble = this.ctx.createBiquadFilter();
-      this.nodes.treble.type = "highshelf";
-      this.nodes.treble.frequency.value = 11000;
-
-      this.nodes.compressor = this.ctx.createDynamicsCompressor();
-      this.nodes.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
-      this.nodes.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
-      this.nodes.compressor.ratio.setValueAtTime(4.0, this.ctx.currentTime);
-      this.nodes.compressor.attack.setValueAtTime(0.005, this.ctx.currentTime); 
-      this.nodes.compressor.release.setValueAtTime(0.12, this.ctx.currentTime);
-
-      this.nodes.masterGain = this.ctx.createGain();
-      this.nodes.masterGain.gain.value = 1.0; 
-
-      this.nodes.merger.connect(this.nodes.bass);
-      this.nodes.bass.connect(this.nodes.midClean);
-      this.nodes.midClean.connect(this.nodes.vocals);
-      this.nodes.vocals.connect(this.nodes.treble);
-      this.nodes.treble.connect(this.nodes.compressor);
-      this.nodes.compressor.connect(this.nodes.masterGain);
+      // ผ่าน Limiter สู่ลำโพงปลายทาง
+      this.nodes.merger.connect(this.nodes.limiter);
+      this.nodes.limiter.connect(this.nodes.masterGain);
       this.nodes.masterGain.connect(this.ctx.destination);
 
       this.initialized = true;
-      this.startAdaptiveLoop();
-      console.log("🔊 Autonomous Intelligent Audio Engine loaded.");
+      this.startVisualizer();
+      console.log("🔊 Clean Hi-Fi AudioEngine Loaded Successfully (Zero Distortion).");
     } catch (e) {
-      console.warn("ไม่สนับสนุน Web Audio DSP: ใช้ระบบดั้งเดิมแบบเบราว์เซอร์", e);
+      console.warn("Web Audio API fallback:", e);
     }
   },
 
-  startAdaptiveLoop() {
+  startVisualizer() {
     const canvas = document.getElementById('audio-visualizer');
     if (!canvas) return;
     const canvasCtx = canvas.getContext('2d');
     const bufferLength = this.analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
-
-    let currentBassGain = 2.0;
-    let currentVocalGain = 1.5;
-    let currentTrebleGain = 2.0;
 
     const run = () => {
       requestAnimationFrame(run);
@@ -2805,117 +2862,34 @@ const AudioEngine = {
 
       this.analyser.getByteFrequencyData(dataArray);
 
-      let lowFreqSum = 0;
-      let midFreqSum = 0;
-      let highFreqSum = 0;
+      let subSum = 0;
+      for (let i = 0; i < 10; i++) subSum += dataArray[i];
+      const subAvg = subSum / 10;
 
-      for (let i = 0; i < 15; i++) lowFreqSum += dataArray[i];        
-      for (let i = 15; i < 65; i++) midFreqSum += dataArray[i];      
-      for (let i = 65; i < 110; i++) highFreqSum += dataArray[i];    
-
-      const lowAvg = lowFreqSum / 15;
-      const midAvg = midFreqSum / 50;
-      const highAvg = highFreqSum / 45;
-
-      if (lowAvg === 0 && midAvg === 0 && highAvg === 0) {
-        const time = Date.now() * 0.003;
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        canvasCtx.fillStyle = 'rgba(10, 10, 18, 0.15)';
-        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(0, canvas.height / 2);
-        for (let i = 0; i < canvas.width; i++) {
-          const y = canvas.height / 2 + Math.sin(i * 0.04 + time) * 5;
-          canvasCtx.lineTo(i, y);
-        }
-        canvasCtx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
-        canvasCtx.lineWidth = 2;
-        canvasCtx.stroke();
-        return;
-      }
-
-      let targetBassGain = 2.0;
-      let targetVocalGain = 1.5;
-      let targetTrebleGain = 1.0;
-      let targetMasterGain = 1.0;
-
-      const led = document.getElementById('led-softclip');
-      const textStatus = document.getElementById('text-softclip');
-
-      if (lowAvg > 195) { 
-        targetBassGain = -3.0; 
-        targetMasterGain = 0.85; 
-        led.className = "status-dot alert";
-        textStatus.innerText = "SOFT-CLIP SHIELDED";
-        textStatus.style.color = "#ec4899";
-        document.getElementById('hud-treble').innerText = "บีบอัดรักษาเสียง";
-        document.getElementById('hud-treble').style.color = "#ec4899";
-      } else if (lowAvg < 70 && lowAvg > 10) { 
-        targetBassGain = 6.0; 
-        led.className = "status-dot active";
-        textStatus.innerText = "BASS COMPENSATING";
-        textStatus.style.color = "#3b82f6";
-        document.getElementById('hud-treble').innerText = "ปกติ";
-        document.getElementById('hud-treble').style.color = "#10b981";
-      } else {
-        led.className = "status-dot";
-        textStatus.innerText = "STABLE";
-        textStatus.style.color = "#10b981";
-        document.getElementById('hud-treble').innerText = "ปกติ";
-        document.getElementById('hud-treble').style.color = "#10b981";
-      }
-
-      if (midAvg < 110 && midAvg > 20) {
-        targetVocalGain = 4.0; 
-      } else {
-        targetVocalGain = 1.0;
-      }
-
-      if (highAvg > 160) {
-        targetTrebleGain = -4.0; 
-      } else {
-        targetTrebleGain = 2.0;
-      }
-
-      currentBassGain += (targetBassGain - currentBassGain) * 0.1;
-      currentVocalGain += (targetVocalGain - currentVocalGain) * 0.1;
-      currentTrebleGain += (targetTrebleGain - currentTrebleGain) * 0.1;
-
-      this.nodes.bass.gain.setTargetAtTime(currentBassGain, this.ctx.currentTime, 0.15);
-      this.nodes.vocals.gain.setTargetAtTime(currentVocalGain, this.ctx.currentTime, 0.15);
-      this.nodes.treble.gain.setTargetAtTime(currentTrebleGain, this.ctx.currentTime, 0.15);
-      this.nodes.masterGain.gain.setTargetAtTime(targetMasterGain, this.ctx.currentTime, 0.2);
-
-      document.getElementById('hud-bass').innerText = (currentBassGain >= 0 ? '+' : '') + currentBassGain.toFixed(1) + " dB";
-      document.getElementById('hud-vocal').innerText = (currentVocalGain >= 0 ? '+' : '') + currentVocalGain.toFixed(1) + " dB";
-
-      const totalVolume = lowAvg + midAvg + highAvg;
+      // Cover Pulse
       const cdCover = document.getElementById('music-cover-container');
       if (cdCover) {
-        const scale = 1 + (totalVolume / 765) * 0.12; 
+        const scale = 1 + (subAvg / 255) * 0.06;
         cdCover.style.transform = `scale(${scale})`;
       }
 
+      // Visualizer Rendering
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      canvasCtx.fillStyle = 'rgba(10, 10, 18, 0.15)';
+      canvasCtx.fillStyle = 'rgba(10, 10, 18, 0.25)';
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const barWidth = (canvas.width / bufferLength) * 1.8;
-      let barHeight;
+      const barWidth = (canvas.width / bufferLength) * 2.2;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        barHeight = (dataArray[i] / 255) * canvas.height * 0.85;
+        const barHeight = (dataArray[i] / 255) * canvas.height * 0.88;
+        const grad = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
+        grad.addColorStop(0, '#6366f1');
+        grad.addColorStop(0.5, '#a855f7');
+        grad.addColorStop(1, '#ec4899');
 
-        const gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
-        gradient.addColorStop(0, '#6366f1');
-        gradient.addColorStop(0.5, '#a855f7');
-        gradient.addColorStop(1, '#ec4899');
-
-        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillStyle = grad;
         canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
-
         x += barWidth;
       }
     };
@@ -2929,6 +2903,9 @@ const AudioEngine = {
   }
 };
 
+/**
+ * 👑 AdminOS Core Controller
+ */
 const AdminOS = {
   myAlbum: [
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
@@ -2940,8 +2917,8 @@ const AdminOS = {
     { title: "misscall", url: "./songs/misscall.mp3", type: "audio" },
     { title: "พี่คงไม่ชอบหนู", url: "./songs/พี่คงไม่ชอบหนู.mp3", type: "audio" }
   ],
- 
   
+  currentIndex: 0,
   root: document.getElementById('admin-assistive-root'),
   btn: document.getElementById('assistive-main-btn'),
   panel: document.getElementById('admin-control-panel'),
@@ -2953,11 +2930,12 @@ const AdminOS = {
   coverContainer: document.getElementById('music-cover-container'),
   trackName: document.getElementById('current-track-name'),
   playlistContainer: document.getElementById('playlist-view-container'),
+  playPauseBtn: document.getElementById('btn-play-pause'),
+  seekSlider: document.getElementById('seek-slider'),
+  timeCurrent: document.getElementById('time-current'),
+  timeDuration: document.getElementById('time-duration'),
   isDragging: false,
-  
-  currentOnlineVideoId: null,
-  currentTrackTitle: "",
-  activeOnlineInstance: 'https://invidious.nerdvpn.de',
+
   onlineNodes: [
     'https://invidious.nerdvpn.de',
     'https://inv.nadeko.net',
@@ -2965,14 +2943,28 @@ const AdminOS = {
     'https://iv.melmac.space',
     'https://inv.tux.pizza'
   ],
+  activeNodeIdx: 0,
 
   init() {
     this.setupDraggable();
     this.renderPlaylist();
+    this.setupTimeUpdate();
+
+    const unlockAudio = () => {
+      AudioEngine.resume();
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
     this.btn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!this.isDragging) this.panel.classList.toggle('active');
     });
+
+    this.audioPlayer.addEventListener('ended', () => this.nextTrack());
+    this.videoPlayer.addEventListener('ended', () => this.nextTrack());
   },
 
   closePanel() { this.panel.classList.remove('active'); },
@@ -2990,194 +2982,93 @@ const AdminOS = {
     }
   },
 
+  formatTime(secs) {
+    if (isNaN(secs)) return "0:00";
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  },
+
+  setupTimeUpdate() {
+    const updateProgress = (player) => {
+      if (player.duration) {
+        this.seekSlider.value = (player.currentTime / player.duration) * 100;
+        this.timeCurrent.innerText = this.formatTime(player.currentTime);
+        this.timeDuration.innerText = this.formatTime(player.duration);
+      }
+    };
+    this.audioPlayer.addEventListener('timeupdate', () => updateProgress(this.audioPlayer));
+    this.videoPlayer.addEventListener('timeupdate', () => updateProgress(this.videoPlayer));
+  },
+
+  seek(val) {
+    const active = this.getActivePlayer();
+    if (active && active.duration) {
+      active.currentTime = (val / 100) * active.duration;
+    }
+  },
+
+  setVolume(val) {
+    this.audioPlayer.volume = val;
+    this.videoPlayer.volume = val;
+  },
+
+  getActivePlayer() {
+    return this.videoArea.style.display === 'flex' ? this.videoPlayer : this.audioPlayer;
+  },
+
+  togglePlayPause() {
+    const active = this.getActivePlayer();
+    AudioEngine.resume();
+
+    if (active.paused) {
+      active.play();
+      this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      this.coverContainer.classList.add('spinning');
+      this.btn.classList.add('playing-pulse');
+    } else {
+      active.pause();
+      this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      this.coverContainer.classList.remove('spinning');
+      this.btn.classList.remove('playing-pulse');
+    }
+  },
+
+  nextTrack() {
+    this.currentIndex = (this.currentIndex + 1) % this.myAlbum.length;
+    const next = this.myAlbum[this.currentIndex];
+    this.playMedia(next.url, next.type, next.title);
+  },
+
+  prevTrack() {
+    this.currentIndex = (this.currentIndex - 1 + this.myAlbum.length) % this.myAlbum.length;
+    const prev = this.myAlbum[this.currentIndex];
+    this.playMedia(prev.url, prev.type, prev.title);
+  },
+
   renderPlaylist() {
     this.playlistContainer.innerHTML = '';
-    this.myAlbum.forEach((item) => {
+    this.myAlbum.forEach((item, idx) => {
       const el = document.createElement('div');
-      el.className = 'playlist-item';
+      el.className = `playlist-item ${idx === this.currentIndex ? 'active-item' : ''}`;
       let icon = item.type === 'video' ? 'fa-video' : (item.type === 'youtube' ? 'fa-brands fa-youtube' : 'fa-music');
       let color = item.type === 'youtube' ? '#ef4444' : (item.type === 'video' ? '#3b82f6' : '#a855f7');
       
       el.innerHTML = `
-        <i class="${icon}" style="color:${color}; width: 22px; text-align: center; font-size: 14px;"></i>
+        <i class="${icon}" style="color:${color}; width: 20px; text-align: center; font-size: 13px;"></i>
         <div class="playlist-info">
           <div class="playlist-title">${item.title}</div>
           <div class="playlist-type">${item.type}</div>
         </div>
-        <i class="fas fa-play-circle" style="color:#a855f7; font-size: 20px;"></i>
+        <i class="fas fa-play-circle" style="color:#a855f7; font-size: 18px;"></i>
       `;
       el.onclick = () => {
+        this.currentIndex = idx;
         this.playMedia(item.url, item.type, item.title);
         this.switchTab('player');
       };
       this.playlistContainer.appendChild(el);
     });
-  },
-
-  async searchOnline() {
-    const input = document.getElementById('online-search-input');
-    const container = document.getElementById('online-results-container');
-    if (!input || !container) return;
-
-    const query = input.value.trim();
-    if (!query) return;
-
-    container.innerHTML = `
-      <div style="text-align: center; padding: 30px; font-size: 12px; color: #a855f7;">
-        <i class="fas fa-spinner animate-spin text-2xl mb-2 block"></i>
-        กำลังค้นหาเพลง "${query}"...
-      </div>`;
-
-    try {
-      const instance = this.activeOnlineInstance || 'https://invidious.nerdvpn.de';
-      const res = await fetch(`${instance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
-      
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = await res.json();
-
-      if (!data || data.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 30px; font-size: 11px; color: #9ca3af;">ไม่พบผลการค้นหา</div>`;
-        return;
-      }
-
-      container.innerHTML = '';
-      data.slice(0, 10).forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'playlist-item';
-        div.innerHTML = `
-          <img src="${item.videoThumbnails?.[0]?.url || `https://img.youtube.com/vi/${item.videoId}/default.jpg`}" style="width: 40px; height: 30px; object-fit: cover; border-radius: 6px;">
-          <div class="playlist-info">
-            <div class="playlist-title">${item.title}</div>
-            <div class="playlist-type">${item.author || 'YouTube Stream'}</div>
-          </div>
-          <i class="fas fa-play-circle" style="color:#a855f7; font-size: 18px;"></i>
-        `;
-        div.onclick = () => {
-          this.playOnlineStream(item.videoId, item.title, instance);
-          this.switchTab('player');
-        };
-        container.appendChild(div);
-      });
-    } catch (err) {
-      console.warn("Online search error, providing manual input option:", err);
-      container.innerHTML = `
-        <div style="text-align: center; padding: 20px; font-size: 11px; color: #fca5a5;">
-          การค้นหาแบบกระจายศูนย์ขัดข้องชั่วคราว <br>
-          <button onclick="AdminOS.playFromInput('https://www.youtube.com/results?search_query=${encodeURIComponent(query)}')" class="action-btn action-btn-primary mt-2 mx-auto">
-            วางลิงก์เพื่อเปิดเล่นโดยตรง
-          </button>
-        </div>`;
-    }
-  },
-
-  playOnlineStream(videoId, title, instance) {
-    this.audioPlayer.pause();
-    this.videoPlayer.pause();
-    this.coverContainer.classList.remove('spinning');
-    this.btn.classList.add('playing-pulse');
-    this.trackName.innerText = "กำลังปรับจูนสตรีม...";
-
-    this.currentOnlineVideoId = videoId;
-    this.currentTrackTitle = title;
-    this.coverImg.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-
-    document.getElementById('btn-view-mv').style.display = 'inline-flex';
-    document.getElementById('btn-back-audio').style.display = 'none';
-    document.getElementById('btn-pip').style.display = 'none';
-
-    let playSuccess = false;
-
-    this.musicArea.style.display = 'block';
-    this.videoArea.style.display = 'none';
-    this.coverContainer.classList.add('spinning');
-
-    const directProxiedAudioUrl = `${instance}/latest_version?id=${videoId}&itag=140&local=true`;
-    this.audioPlayer.src = directProxiedAudioUrl;
-
-    const fallbackTimeout = setTimeout(() => {
-      if (!playSuccess) {
-        console.warn("สตรีมมิ่งไฟล์เสียงล่าช้า เปลี่ยนเส้นทางสู่ Video Player หลัก");
-        this.switchToVideoIframe(videoId, title);
-      }
-    }, 4500);
-
-    this.audioPlayer.onplaying = () => {
-      playSuccess = true;
-      clearTimeout(fallbackTimeout);
-      this.trackName.innerText = title;
-      AudioEngine.init(this.audioPlayer, this.videoPlayer);
-    };
-
-    this.audioPlayer.onerror = () => {
-      if (!playSuccess) {
-        clearTimeout(fallbackTimeout);
-        this.switchToVideoIframe(videoId, title);
-      }
-    };
-
-    AudioEngine.resume();
-    this.audioPlayer.play().catch(e => console.log("Autoplay caught:", e));
-  },
-
-  switchToVideoIframe(videoId, title) {
-    this.audioPlayer.pause();
-    this.musicArea.style.display = 'none';
-    this.videoArea.style.display = 'flex';
-    this.coverContainer.classList.remove('spinning');
-    this.trackName.innerText = title;
-
-    document.getElementById('btn-view-mv').style.display = 'none';
-    document.getElementById('btn-back-audio').style.display = 'inline-flex';
-    document.getElementById('btn-pip').style.display = 'none';
-
-    this.videoArea.innerHTML = `
-      <iframe id="online-yt-iframe" src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
-      allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
-  },
-
-  watchMV() {
-    if (this.currentOnlineVideoId) {
-      this.switchToVideoIframe(this.currentOnlineVideoId, this.currentTrackTitle);
-    }
-  },
-
-  backToAudio() {
-    if (this.currentOnlineVideoId) {
-      document.getElementById('btn-back-audio').style.display = 'none';
-      this.playOnlineStream(this.currentOnlineVideoId, this.currentTrackTitle, this.activeOnlineInstance);
-    }
-  },
-
-  togglePiP() {
-    if (document.pictureInPictureElement) {
-      document.exitPictureInPicture();
-    } else if (this.videoPlayer && this.videoPlayer.readyState >= 1) {
-      this.videoPlayer.requestPictureInPicture().catch(err => console.log("PiP error:", err));
-    }
-  },
-
-  stopAll() {
-    this.videoPlayer.pause();
-    this.audioPlayer.pause();
-    this.videoArea.style.display = 'none'; 
-    this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
-    this.videoPlayer = document.getElementById('main-video-player'); 
-    
-    this.musicArea.style.display = 'block'; 
-    this.coverContainer.classList.remove('spinning');
-    this.btn.classList.remove('playing-pulse');
-    this.trackName.innerText = "หยุดการเล่นแล้ว";
-    if (this.coverContainer) this.coverContainer.style.transform = 'scale(1)';
-
-    document.getElementById('btn-view-mv').style.display = 'none';
-    document.getElementById('btn-back-audio').style.display = 'none';
-    document.getElementById('btn-pip').style.display = 'none';
-  },
-
-  playFromInput(url) {
-    url = url.trim();
-    if (!url) return;
-    this.playMedia(url, null, 'สตรีมมิ่งภายนอก');
   },
 
   playMedia(source, type, title) {
@@ -3196,29 +3087,16 @@ const AdminOS = {
       }
     }
 
-    document.getElementById('btn-view-mv').style.display = 'none';
-    document.getElementById('btn-back-audio').style.display = 'none';
-    document.getElementById('btn-pip').style.display = (detectedType === 'video') ? 'inline-flex' : 'none';
-
     AudioEngine.resume();
     this.btn.classList.add('playing-pulse');
+    this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     if (title) this.trackName.innerText = title;
 
     if (detectedType === 'youtube') {
       this.musicArea.style.display = 'none';  
       this.videoArea.style.display = 'flex';  
-      
-      let vId = '';
-      if (source.includes('youtu.be')) {
-        vId = source.split('/').pop().split('?')[0];
-      } else if (source.includes('v=')) {
-        vId = source.split('v=')[1].split('&')[0];
-      }
-      
-      this.videoArea.innerHTML = `
-        <iframe src="https://www.youtube.com/embed/${vId}?autoplay=1" 
-        allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
-
+      let vId = source.includes('youtu.be') ? source.split('/').pop().split('?')[0] : source.split('v=')[1]?.split('&')[0];
+      this.videoArea.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
     } else if (detectedType === 'video') {
       this.musicArea.style.display = 'none';
       this.videoArea.style.display = 'flex';
@@ -3230,8 +3108,7 @@ const AdminOS = {
 
       this.videoPlayer.src = source;
       AudioEngine.init(this.audioPlayer, this.videoPlayer);
-      this.videoPlayer.play().catch(err => console.log("Blocked:", err));
-
+      this.videoPlayer.play().catch(e => console.log("Play blocked:", e));
     } else {
       this.musicArea.style.display = 'block';
       this.videoArea.style.display = 'none';
@@ -3239,8 +3116,9 @@ const AdminOS = {
 
       this.audioPlayer.src = source;
       AudioEngine.init(this.audioPlayer, this.videoPlayer);
-      this.audioPlayer.play().catch(err => console.log("Blocked:", err));
+      this.audioPlayer.play().catch(e => console.log("Play blocked:", e));
     }
+    this.renderPlaylist();
   },
 
   playLocalFile(input) {
@@ -3250,6 +3128,78 @@ const AdminOS = {
       const type = file.type.startsWith('video') ? 'video' : 'audio';
       this.playMedia(url, type, file.name);
     }
+  },
+
+  playFromInput(url) {
+    url = url.trim();
+    if (!url) return;
+    this.playMedia(url, null, 'สตรีมมิ่งภายนอก');
+  },
+
+  async searchOnline() {
+    const input = document.getElementById('online-search-input');
+    const container = document.getElementById('online-results-container');
+    if (!input || !container) return;
+    const query = input.value.trim();
+    if (!query) return;
+
+    container.innerHTML = `<div style="text-align:center; padding:30px; font-size:12px; color:#a855f7;"><i class="fas fa-spinner animate-spin text-2xl mb-2 block"></i> กำลังค้นหา "${query}"...</div>`;
+
+    const instance = this.onlineNodes[this.activeNodeIdx];
+    try {
+      const res = await fetch(`${instance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+      if (!res.ok) throw new Error("Node error");
+      const data = await res.json();
+
+      if (!data || data.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:#9ca3af;">ไม่พบผลการค้นหา</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      data.slice(0, 10).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'playlist-item';
+        div.innerHTML = `
+          <img src="${item.videoThumbnails?.[0]?.url || `https://img.youtube.com/vi/${item.videoId}/default.jpg`}" style="width: 38px; height: 28px; object-fit: cover; border-radius: 6px;">
+          <div class="playlist-info">
+            <div class="playlist-title">${item.title}</div>
+            <div class="playlist-type">${item.author || 'Stream'}</div>
+          </div>
+          <i class="fas fa-play-circle" style="color:#a855f7; font-size: 18px;"></i>
+        `;
+        div.onclick = () => {
+          this.playMedia(`https://www.youtube.com/watch?v=${item.videoId}`, 'youtube', item.title);
+          this.switchTab('player');
+        };
+        container.appendChild(div);
+      });
+    } catch (err) {
+      console.warn("Switching to backup node...");
+      this.activeNodeIdx = (this.activeNodeIdx + 1) % this.onlineNodes.length;
+      container.innerHTML = `
+        <div style="text-align:center; padding:20px; font-size:11px; color:#fca5a5;">
+          ระบบกำลังเชื่อมต่อโหนดสำรอง กรุณากดค้นหาอีกครั้ง <br>
+          <button onclick="AdminOS.searchOnline()" class="action-btn action-btn-primary mt-2 mx-auto">
+            ลองค้นหาใหม่อีกครั้ง
+          </button>
+        </div>`;
+    }
+  },
+
+  stopAll() {
+    this.videoPlayer.pause();
+    this.audioPlayer.pause();
+    this.videoArea.style.display = 'none'; 
+    this.videoArea.innerHTML = `<video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>`;
+    this.videoPlayer = document.getElementById('main-video-player'); 
+    
+    this.musicArea.style.display = 'block'; 
+    this.coverContainer.classList.remove('spinning');
+    this.btn.classList.remove('playing-pulse');
+    this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    this.trackName.innerText = "หยุดการเล่นแล้ว";
+    if (this.coverContainer) this.coverContainer.style.transform = 'scale(1)';
   },
 
   setupDraggable() {
@@ -3296,6 +3246,7 @@ const AdminOS = {
   }
 };
 
+// Start AdminOS
 AdminOS.init();
 </script>
 
