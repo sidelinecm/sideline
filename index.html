@@ -251,7 +251,7 @@
         </div>
       </aside>
       
-      <!-- Header Bar -->
+<!-- Header Bar -->
       <header class="lg:pl-64 sticky top-0 z-30 bg-[#070410]/90 backdrop-blur-md border-b border-white/10" id="header">
         <div class="p-4 flex justify-between items-center max-w-7xl mx-auto">
           <div class="flex items-center gap-3">
@@ -261,9 +261,17 @@
             <span class="font-extrabold text-white text-base sm:text-lg" id="header-title">First Model Hub Admin</span>
           </div>
 
-          <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
-            <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <!-- 🟢 ปุ่มล้างแคชเว็บหลัก -->
+            <button type="button" onclick="manualPurgeCache()" class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
+              <i class="fas fa-bolt text-emerald-400"></i> <span>ล้างแคชเว็บหลัก</span>
+            </button>
+
+            <!-- ปุ่มสลับธีม -->
+            <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
+              <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
+            </button>
+          </div>
         </div>
       </header>
       
@@ -870,6 +878,7 @@ const Controller = {
     Controller.listenersInitialized = true;
   },
   
+
   async fetchData(force = false) {
     const { data: profiles, error: pErr } = await supabase
         .from('profiles')
@@ -2073,6 +2082,26 @@ window.showSystemStatusModal = function() {
     isDestructive: false,
     onConfirm: () => {}
   });
+};
+
+
+
+window.manualPurgeCache = async function() {
+  if (window.AdminSoundEffects) AdminSoundEffects.playPop();
+  UI.showToast("กำลังส่งคำสั่งล้างแคชไปยังเว็บหลัก...", "info");
+  
+  try {
+    await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    if (window.AdminSoundEffects) AdminSoundEffects.playSuccessBoom();
+    UI.showToast("⚡ ล้างแคชเว็บหลักสำเร็จ! ข้อมูลอัปเดตทันที", "success");
+  } catch (err) {
+    if (window.AdminSoundEffects) AdminSoundEffects.playCancel();
+    UI.showToast("เกิดข้อผิดพลาดในการล้างแคช", "error");
+    console.error("Purge Error:", err);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
