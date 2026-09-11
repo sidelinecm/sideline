@@ -1535,8 +1535,9 @@ const Controller = {
     const previewGrid = document.getElementById('multi-preview');
     if (!fileInput || !previewGrid) return;
     
-    const MAX_FILES = 20;
-    const MAX_SIZE = 10 * 1024 * 1024;
+    // ปรับลดจาก 20 ให้เหลือ 6 รูป (เพียงพอสำหรับโปรไฟล์สาวไซด์ไลน์ 1 ปก + 5 รูปรีวิว)
+const MAX_FILES = 6; 
+const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก่อนบีบอัดไม่เกิน 5MB
     
     const dedup = (files) => {
       const seen = new Set();
@@ -1756,7 +1757,7 @@ const Controller = {
     });
   },
 
-  async handleProfileFormSubmit(e) {
+ async handleProfileFormSubmit(e) {
     e.preventDefault();
     AdminSoundEffects.init();
     
@@ -1773,14 +1774,16 @@ const Controller = {
         let uploadedUrls = [];
         const files = Array.from(fileInput?.files || []);
         
+        // 🟢 จำกัดและบีบอัดรูปภาพก่อนส่งขึ้น Cloudinary เพื่อเซฟเครดิตฟรี
         if (files.length) {
-            UI.showToast(`กำลังประมวลผลและบีบอัดรูปภาพทั้ง ${files.length} ใบ...`, 'info');
+            UI.showToast(`กำลังบีบอัดรูปภาพทั้ง ${files.length} ใบเพื่อประหยัดพื้นที่...`, 'info');
             
             for (const f of files) {
                 const formData = new FormData();
                 let processedFile = f;
                 try {
-                    processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.8);
+                    // บีบอัดคุณภาพ 75% และกว้างไม่เกิน 1000px ช่วยลด Bandwidth Cloudinary มหาศาล
+                    processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.75);
                 } catch (compressErr) {
                     console.warn("การบีบอัดขัดข้อง กำลังส่งไฟล์ต้นฉบับ:", compressErr);
                 }
@@ -1822,37 +1825,42 @@ const Controller = {
             throw new Error('กรุณาเลือกรูปภาพสำหรับโปรไฟล์ใหม่');
         }
 
-        let result;
+        let savedData;
         if (isEditing) {
             const { id, ...updateData } = profileData; 
-            result = await supabase
+            const result = await supabase
                 .from('profiles')
                 .update(updateData)
                 .eq('id', profileId)
                 .select()
                 .single();
+                
+            if (result.error) throw result.error;
+            savedData = result.data;
+            
+            // 🟢 เซฟโควตา Supabase: อัปเดตใน AppState ทันที ไม่ต้องดึงใหม่ทั้ง Table
+            const idx = AppState.allProfiles.findIndex(p => String(p.id) === String(profileId));
+            if (idx !== -1) AppState.allProfiles[idx] = savedData;
         } else {
-            result = await supabase
+            const result = await supabase
                 .from('profiles')
                 .insert([profileData])
                 .select()
                 .single();
+                
+            if (result.error) throw result.error;
+            savedData = result.data;
+            
+            // 🟢 เซฟโควตา Supabase: เพิ่มเข้าใน AppState โดยตรง
+            AppState.allProfiles.unshift(savedData);
         }
         
-        if (result.error) throw result.error;
-        
-        // 🟢 เพิ่มคำสั่งนี้เข้าไป
-        try {
-            await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
-                method: 'GET',
-                mode: 'no-cors'
-            });
-        } catch (cacheErr) {
-            console.warn('Auto purge:', cacheErr);
-        }
+        // ❌ นำคำสั่ง auto purge-cache ออกเรียบร้อย (ไม่กินโควตา Netlify อีกต่อไป)
+
         AdminSoundEffects.playSuccessBoom();
         UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
-        await Controller.fetchData(true);
+        
+        Controller.updateStats();
         Controller.renderView('profiles-list-container');
         
     } catch (err) {
@@ -1862,6 +1870,37 @@ const Controller = {
     } finally {
         UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึกข้อมูล' : 'บันทึกคิวงาน');
     }
+  },
+
+  handleDeleteProfile({ id, name }) {
+    UI.showModal({
+      title: 'ยืนยันการลบโปรไฟล์',
+      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ ยืนยันหรือไม่?`,
+      onConfirm: async () => {
+        UI.showToast(`กำลังเคลียร์ข้อมูล...`, 'info');
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .delete()
+            .eq('id', id);
+            
+          if (error) throw error;
+          
+          // ❌ นำคำสั่ง auto purge-cache ออกเรียบร้อย (ไม่กินโควตา Netlify)
+
+          // 🟢 เซฟโควตา Supabase: กรองรายการที่ลบออกจาก AppState ในเครื่องเลย ไม่ต้องโหลดใหม่จากเซิร์ฟเวอร์
+          AppState.allProfiles = AppState.allProfiles.filter(p => String(p.id) !== String(id));
+          Controller.updateStats();
+
+          AdminSoundEffects.playSuccessBoom();
+          UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
+          Controller.renderView(AppState.currentView, AppState.currentParams);
+        } catch (error) {
+          AdminSoundEffects.playCancel();
+          UI.showToast(`ลบข้อมูลล้มเหลว: ${error.message}`, "error");
+        }
+      }
+    });
   },
 
   collectFormData(form) {
