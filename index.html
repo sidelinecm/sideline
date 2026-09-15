@@ -262,11 +262,6 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <!-- 🟢 ปุ่มล้างแคชเว็บหลัก -->
-            <button type="button" onclick="manualPurgeCache()" class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
-              <i class="fas fa-bolt text-emerald-400"></i> <span>ล้างแคชเว็บหลัก</span>
-            </button>
-
             <!-- ปุ่มสลับธีม -->
             <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
               <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
@@ -1288,11 +1283,15 @@ const Controller = {
                     <h3 class="font-bold text-white mb-4">รูปภาพโปรไฟล์</h3>
                     <div id="image-uploader" class="w-full"></div>
                 </div>
-                <div class="card-surface p-5 text-left">
+               <div class="card-surface p-5 text-left">
                     <h3 class="font-bold text-white mb-4">สถานะและการแสดงผล</h3>
-                    <label class="flex items-center gap-3 p-3 bg-purple-950/20 border border-purple-500/10 rounded-xl mb-3 cursor-pointer">
+                    <label class="flex items-center gap-3 p-3 bg-purple-950/20 border border-purple-500/10 rounded-xl mb-2 cursor-pointer">
                         <input type="checkbox" id="isFeatured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950" ${p.isfeatured ? 'checked' : ''}>
-                        <span class="font-bold text-purple-400 text-sm">ปักหมุดแนะนำ (Featured)</span>
+                        <span class="font-bold text-purple-400 text-sm">⭐ ปักหมุดแนะนำ (Featured)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-blue-950/20 border border-blue-500/10 rounded-xl mb-3 cursor-pointer">
+                        <input type="checkbox" id="isVerified" class="h-5 w-5 text-blue-600 rounded bg-zinc-950" ${p.verified ? 'checked' : ''}>
+                        <span class="font-bold text-blue-400 text-sm">💎 การันตีตรงปก 100% (Verified)</span>
                     </label>
                     <label class="label-style">สถานะรับงาน</label>
                     <select id="availability" class="form-input-high w-full">
@@ -1305,10 +1304,10 @@ const Controller = {
                 <div class="card-surface p-6 text-left">
                     <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">ข้อมูลพื้นฐาน</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
-                        <div><label class="label-style">อายุ</label><input type="number" id="age" class="form-input-high" value="${p.age || ''}"></div>
-                        <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" id="height" class="form-input-high" value="${p.height || ''}"></div>
-                        <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
+                       <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
+                        <div><label class="label-style">อายุ</label><input type="number" inputmode="numeric" id="age" class="form-input-high" value="${p.age || ''}"></div>
+                        <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" inputmode="numeric" id="height" class="form-input-high" value="${p.height || ''}"></div>
+                        <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" inputmode="numeric" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
                         <div><label class="label-style">สัดส่วน</label><input type="text" id="stats" class="form-input-high" value="${p.stats || ''}" placeholder="34-24-35"></div>
                         <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="เช่น ผิวขาวอมชมพู, ผิวแทนน้ำผึ้ง"></div>
                         <div><label class="label-style">จังหวัด*</label>
@@ -1872,36 +1871,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     }
   },
 
-  handleDeleteProfile({ id, name }) {
-    UI.showModal({
-      title: 'ยืนยันการลบโปรไฟล์',
-      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ ยืนยันหรือไม่?`,
-      onConfirm: async () => {
-        UI.showToast(`กำลังเคลียร์ข้อมูล...`, 'info');
-        try {
-          const { error } = await supabase
-            .from('profiles')
-            .delete()
-            .eq('id', id);
-            
-          if (error) throw error;
-          
-          // ❌ นำคำสั่ง auto purge-cache ออกเรียบร้อย (ไม่กินโควตา Netlify)
-
-          // 🟢 เซฟโควตา Supabase: กรองรายการที่ลบออกจาก AppState ในเครื่องเลย ไม่ต้องโหลดใหม่จากเซิร์ฟเวอร์
-          AppState.allProfiles = AppState.allProfiles.filter(p => String(p.id) !== String(id));
-          Controller.updateStats();
-
-          AdminSoundEffects.playSuccessBoom();
-          UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
-          Controller.renderView(AppState.currentView, AppState.currentParams);
-        } catch (error) {
-          AdminSoundEffects.playCancel();
-          UI.showToast(`ลบข้อมูลล้มเหลว: ${error.message}`, "error");
-        }
-      }
-    });
-  },
+  
 
   collectFormData(form) {
     const fv = (id) => form.querySelector(`#${id}`)?.value?.trim() || '';
@@ -1922,8 +1892,9 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
         lineId: fv('lineId'),
         quote: fv('quote'),
         description: fv('description'),
-        altText: fv('altText'),
+       altText: fv('altText'),
         isfeatured: fc('isFeatured'),
+        verified: fc('isVerified'), // 🟢 ดึงค่าตรงปกส่งเข้า Supabase
         styleTags: styleTags,
         lastUpdated: new Date().toISOString(),
         seo_title: fv('seo-title'),
@@ -2124,23 +2095,7 @@ window.showSystemStatusModal = function() {
 
 
 
-window.manualPurgeCache = async function() {
-  if (window.AdminSoundEffects) AdminSoundEffects.playPop();
-  UI.showToast("กำลังส่งคำสั่งล้างแคชไปยังเว็บหลัก...", "info");
-  
-  try {
-    await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
-      method: 'GET',
-      mode: 'no-cors'
-    });
-    if (window.AdminSoundEffects) AdminSoundEffects.playSuccessBoom();
-    UI.showToast("⚡ ล้างแคชเว็บหลักสำเร็จ! ข้อมูลอัปเดตทันที", "success");
-  } catch (err) {
-    if (window.AdminSoundEffects) AdminSoundEffects.playCancel();
-    UI.showToast("เกิดข้อผิดพลาดในการล้างแคช", "error");
-    console.error("Purge Error:", err);
-  }
-};
+
 
 document.addEventListener('DOMContentLoaded', () => {
   Controller.setupEventListeners();
@@ -2295,11 +2250,11 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 <!-- 👑 HI-FI AUDIOPHILE STUDIO MASTER PRO UI   -->
 <!-- ========================================== -->
 <style>
-  #admin-assistive-root {
+ #admin-assistive-root {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 9999;
+    bottom: 90px;
+    right: 20px;
+    z-index: 999;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   #admin-assistive-root:hover {
@@ -2992,7 +2947,7 @@ const AdminOS = {
     { title: "sea", url: "./songs/sea.mp3", type: "audio" },
     { title: "ใจเย็น", url: "./songs/ใจเย็น.mp3", type: "audio" },
     { title: "misscall", url: "./songs/misscall.mp3", type: "audio" },
-    { title: "พี่คงไม่ชอบหนู", url: "./songs/พี่คงไม่ชอบหนู.mp3", type: "audio" }
+    { title: "คำถามโง่ๆR&B", url: "./songs/คำถามโง่ๆR&B.mp3", type: "audio" }
   ],
   
   currentIndex: 0,
