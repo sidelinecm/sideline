@@ -283,10 +283,6 @@
       </main>
     </div>
   </div>
-<!-- ========================================================================= -->
-<!-- 🎵 KISSMODEL MUSIC SECURITY TRAP (หน้ากากยืนยันสิทธิ์เครื่องเล่นเพลง) v2 -->
-<!--    · GPS ครั้งเดียวต่อ session · ไม่ทับ login · ฉลาด+ยืดหยุ่นขึ้น        -->
-<!-- ========================================================================= -->
 
 <style>
   #music-security-screen{
@@ -346,10 +342,6 @@
 </div>
 
 <script>
-/* ============================================================
-   📍 ตำแหน่งถูกดึง "ครั้งเดียว" ตอนยืนยันตัวตน แล้ว memoize ไว้
-   silentCapture() ทุกจุดอ่านจาก cache นี้ — ไม่เรียก GPS ซ้ำเลย
-   ============================================================ */
 const GPSForensic = {
   _position: null,        // cache เดียวของ session (null = พยายามแล้วแต่ไม่ได้)
   _attempted: false,
@@ -392,7 +384,7 @@ const GPSForensic = {
     return new Promise(res => this._promises.push(res));
   },
 
-  // บันทึกข้อมูลลงฐานข้อมูลลับ (โครงสร้างตาราง/column เดิมทุกตัว)
+  
   async saveLog(actionType, detail, targetName, position) {
     if (!position) return;
     try {
@@ -1918,13 +1910,23 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     
     if (imageUrl) {
       previewGrid.innerHTML = `
-        <div class="relative rounded-xl overflow-hidden shadow-lg border-2 border-purple-500 bg-zinc-950">
+        <div id="current-cover-card" class="relative rounded-xl overflow-hidden shadow-lg border-2 border-purple-500 bg-zinc-950">
           <img src="${imageUrl}" class="w-full h-40 object-cover" alt="">
           <div class="absolute top-2 left-2 bg-purple-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">รูปปกปัจจุบัน</div>
+          <button type="button" id="btn-remove-current-img" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold shadow transition flex items-center gap-1 cursor-pointer">
+            <i class="fas fa-trash-alt"></i> ลบรูปนี้
+          </button>
         </div>
       `;
-    }
-  },
+
+      document.getElementById('btn-remove-current-img')?.addEventListener('click', () => {
+        document.getElementById('current-image-path').value = '';
+        document.getElementById('current-cover-card').remove();
+        if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
+        UI.showToast('ลบรูปภาพเดิมออกแล้ว (อย่าลืมกดปุ่มบันทึกข้อมูลด้านล่าง)', 'info');
+      });
+   }
+   },
 
   initTagInput(initialTags = []) {
     const container = document.getElementById('tag-input-component');
@@ -2078,15 +2080,20 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
 
         const profileData = Controller.collectFormData(form);
 
-        if (uploadedUrls.length > 0) {
+       if (uploadedUrls.length > 0) {
             profileData.imagePath = uploadedUrls[0];
             profileData.galleryPaths = uploadedUrls;
         } else {
             profileData.imagePath = currentImagePath;
             if (isEditing) {
-              const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
-              if (existingProfile && existingProfile.galleryPaths) {
-                profileData.galleryPaths = existingProfile.galleryPaths;
+              if (!currentImagePath) {
+                // ถ้าผู้ใช้กดปุ่มลบรูป ให้เคลียร์แกลเลอรีให้ว่างด้วย
+                profileData.galleryPaths = [];
+              } else {
+                const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
+                if (existingProfile && existingProfile.galleryPaths) {
+                  profileData.galleryPaths = existingProfile.galleryPaths;
+                }
               }
             }
         }
