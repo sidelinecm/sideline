@@ -342,130 +342,227 @@
 </div>
 
 <script>
+
 const GPSForensic = {
-  _position: null,        // cache เดียวของ session (null = พยายามแล้วแต่ไม่ได้)
-  _attempted: false,
-  _promises: [],          // คิวรอผล พร้อมกันหลาย call → resolve ครั้งเดียว
-  _retryCount: 0,
-
-  /** ขอตำแหน่งแบบฉลาด: memoize + retry 1 ครั้งถ้า timeout + กัน race */
-  getPosition(timeoutMs = 10000) {
-    if (this._attempted && this._position) return Promise.resolve(this._position);
-    if (!navigator.geolocation) { this._attempted = true; return Promise.resolve(null); }
-    if (this._pending) return new Promise(res => this._promises.push(res));
-
-    this._pending = true;
-    const settle = (v) => {
-      this._pending = false;
-      this._position = v;                       // memoize ทั้ง success/fail
-      this._attempted = true;
-      this._promises.forEach(cb => cb(v));
-      this._promises = [];
-    };
-
-    let done = false;
-    const hardTimer = setTimeout(() => { if (!done) { done = true; settle(null); } }, timeoutMs + 2000);
-
-    const tryOnce = (isRetry) => navigator.geolocation.getCurrentPosition(
-      (pos) => { if (!done) { done = true; clearTimeout(hardTimer); settle(pos); } },
-      (err) => {
-        // retry อัตโนมัติ 1 ครั้งเฉพาะกรณี timeout (ไม่ใช่กรณีผู้ใช้ block)
-        if (!done && err.code === 3 && !isRetry && this._retryCount < 1) {
-          this._retryCount++;
-          tryOnce(true);
-          return;
-        }
-        if (!done) { done = true; clearTimeout(hardTimer); settle(null); }
-      },
-      { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 5 * 60 * 1000 } // ✅ cache 5 นาที
-    );
-    tryOnce(false);
-
-    return new Promise(res => this._promises.push(res));
+  getCachedData() {
+    try {
+      const raw = sessionStorage.getItem('fmh_audit_cached');
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
   },
 
   
-  async saveLog(actionType, detail, targetName, position) {
-    if (!position) return;
+  async getDeviceFingerprint() {
+    let batteryInfo = "N/A";
     try {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
-      const email = typeof AppState !== 'undefined' && AppState.currentUser ? AppState.currentUser.email : "admin_verify";
+      if (navigator.getBattery) {
+        const b = await navigator.getBattery();
+        batteryInfo = `${Math.round(b.level * 100)}% (${b.charging ? 'กำลังชาร์จ' : 'ใช้แบต'})`;
+      }
+    } catch(e) {}
 
-      let subdistrict = "-", district = "-", province = "-";
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=th`);
-        const geo = await res.json();
-        subdistrict = geo.address.suburb || geo.address.village || geo.address.town || "-";
-        district = geo.address.county || geo.address.city || "-";
-        province = geo.address.state || geo.address.province || "-";
-      } catch(e) {}
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const netType = conn ? `${conn.effectiveType || ''} ${conn.type || ''}`.trim() : 'เน็ตปกติ';
 
+    return {
+      screen: `${window.screen.width}x${window.screen.height} (Pixel Ratio: ${window.devicePixelRatio || 1})`,
+      battery: batteryInfo,
+      network: netType || 'LAN/WiFi',
+      platform: navigator.platform || '-',
+      ua: navigator.userAgent
+    };
+  },
+
+  
+  async reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          subdistrict: data.locality || data.localityInfo?.administrative?.[3]?.name || "-",
+          district: data.city || data.localityInfo?.administrative?.[2]?.name || "-",
+          province: data.principalSubdivision || "-"
+        };
+      }
+    } catch(e) {}
+    return { subdistrict: "-", district: "-", province: "-" };
+  },
+
+ 
+  async getIPFallback() {
+    // ผู้ให้บริการที่ 1
+    try {
+      const res = await fetch('https://ipwho.is/');
+      if (res.ok) {
+        const d = await res.json();
+        if (d.success !== false) {
+          return {
+            lat: d.latitude || 0, lng: d.longitude || 0, accuracy: 2500,
+            subdistrict: d.city || '-', district: d.region || '-', province: d.region || '-',
+            isp: `${d.connection?.isp || d.isp || '-'} (IP: ${d.ip})`, isFallback: true
+          };
+        }
+      }
+    } catch(e) {}
+
+    
+    try {
+      const res2 = await fetch('https://ipapi.co/json/');
+      if (res2.ok) {
+        const d2 = await res2.json();
+        return {
+          lat: d2.latitude || 0, lng: d2.longitude || 0, accuracy: 3000,
+          subdistrict: d2.city || '-', district: d2.region || '-', province: d2.region || '-',
+          isp: `${d2.org || '-'} (IP: ${d2.ip})`, isFallback: true
+        };
+      }
+    } catch(e) {}
+
+    return null;
+  },
+
+  
+  async resolveLocation() {
+    const fp = await this.getDeviceFingerprint();
+
+    const getGPS = new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const geo = await GPSForensic.reverseGeocode(lat, lng);
+          resolve({
+            lat: lat,
+            lng: lng,
+            accuracy: Math.round(pos.coords.accuracy),
+            subdistrict: geo.subdistrict,
+            district: geo.district,
+            province: geo.province,
+            isp: `GPS Hardware Direct (ความแม่นยำ ±${Math.round(pos.coords.accuracy)}ม.)`,
+            isFallback: false
+          });
+        },
+        () => resolve(null),
+        { enableHighAccuracy: true, timeout: 3500, maximumAge: 10 * 60 * 1000 }
+      );
+    });
+
+    let loc = await getGPS;
+    if (!loc) {
+      loc = await this.getIPFallback();
+    }
+
+    const finalBundle = {
+      loc: loc || { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุเครือข่าย', isFallback: true },
+      fp: fp
+    };
+
+    try {
+      sessionStorage.setItem('fmh_audit_cached', JSON.stringify(finalBundle));
+      sessionStorage.setItem('fmh_gps_verified', 'true');
+    } catch(e) {}
+
+    return finalBundle;
+  },
+
+
+  async saveLog(actionType, detail, targetName, bundle = null) {
+    const data = bundle || this.getCachedData();
+    if (!data) return;
+
+    try {
+      const { loc, fp } = data;
+      const email = typeof AppState !== 'undefined' && AppState.currentUser ? AppState.currentUser.email : "admin";
       const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
-      const mapsUrl = `https://www.google.com/maps/place/${lat},${lng}/@${lat},${lng},19z`;
+      const mapsUrl = loc.lat ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
+      const enrichedDetail = `${detail} | [เครือข่าย: ${loc.isp}] [แบต: ${fp.battery}]`;
 
       const row = {
-        th_time: thTime, admin_email: email, action_type: actionType,
-        action_detail: detail, target_name: targetName,
-        latitude: lat, longitude: lng, accuracy_meters: accuracy,
-        subdistrict: subdistrict, district: district, province: province,
-        google_maps_url: mapsUrl, device_model: navigator.userAgent
+        th_time: thTime,
+        admin_email: email,
+        action_type: actionType,
+        action_detail: enrichedDetail,
+        target_name: targetName,
+        latitude: loc.lat,
+        longitude: loc.lng,
+        accuracy_meters: loc.accuracy,
+        subdistrict: loc.subdistrict,
+        district: loc.district,
+        province: loc.province,
+        google_maps_url: mapsUrl,
+        device_model: `${fp.platform} | จอ: ${fp.screen} | ${fp.ua}`
       };
 
-      // ✅ fail-safe: ถ้าเน็ตล่ม เก็บเข้าคิวแล้วส่งใหม่อัตโนมัติ (log ไม่หาย)
-      try {
-        await supabase.from('admin_gps_logs').insert([row]);
-      } catch (insErr) {
-        GPSForensic._queue.push(row);
-        GPSForensic._flushLater();
-      }
-    } catch (err) {}
-  },
-
-  _queue: [],
-  _flushing: false,
-  async _flushLater() {
-    if (GPSForensic._flushing) return;
-    GPSForensic._flushing = true;
-    while (GPSForensic._queue.length) {
-      try { await supabase.from('admin_gps_logs').insert([GPSForensic._queue[0]]); GPSForensic._queue.shift(); }
-      catch (e) { setTimeout(() => { GPSForensic._flushing = false; GPSForensic._flushLater(); }, 5000); return; }
+      await supabase.from('admin_gps_logs').insert([row]);
+    } catch (err) {
+      console.warn("Audit Log Dispatch Error:", err);
     }
-    GPSForensic._flushing = false;
   },
-
 
   silentCapture(actionType, detail, targetName) {
-    const pos = GPSForensic._position;
-    if (pos) {
-      GPSForensic.saveLog(actionType, detail, targetName, pos);
+    const data = this.getCachedData();
+    if (data) {
+      this.saveLog(actionType, detail, targetName, data);
     }
+  },
+
+ 
+  captureProfileDiff(oldData, newData, profileName, filesUploadedCount, isCoverRemoved) {
+    const changes = [];
+    const fields = [
+      { key: 'rate', label: 'เรทราคา' },
+      { key: 'location', label: 'ย่าน/โซน' },
+      { key: 'provinceKey', label: 'รหัสจังหวัด' },
+      { key: 'lineId', label: 'LINE ID' },
+      { key: 'availability', label: 'สถานะรับงาน' },
+      { key: 'isfeatured', label: 'ปักหมุดแนะนำ' },
+      { key: 'verified', label: 'การันตีตรงปก' }
+    ];
+
+    fields.forEach(f => {
+      const oVal = oldData ? String(oldData[f.key] ?? '-') : '-';
+      const nVal = newData ? String(newData[f.key] ?? '-') : '-';
+      if (oVal !== nVal) {
+        changes.push(`${f.label}: [${oVal} ➔ ${nVal}]`);
+      }
+    });
+
+   
+    if (filesUploadedCount > 0) {
+      changes.push(`รูปภาพ: [อัปโหลดภาพใหม่ ${filesUploadedCount} รูป]`);
+    }
+    if (isCoverRemoved) {
+      changes.push(`รูปภาพ: [ลบรูปปกเดิมออก]`);
+    }
+
+    const diffText = changes.length > 0 
+      ? `แก้ไขโปรไฟล์: ${changes.join(', ')}` 
+      : 'แก้ไขโปรไฟล์ (ไม่มีข้อมูลสำคัญเปลี่ยนแปลง)';
+
+    this.silentCapture('UPDATE', diffText, `น้อง${profileName}`);
   }
 };
 
-// =========================================================================
-// 🕷️ ระบบ Hooks แฝงตัวเข้าไปใน Controller ของระบบ
-// =========================================================================
 
 (function installHooks() {
-  if (window.__MST_INSTALLED) return;                 // ✅ กัน hook ซ้อน 2 รอบ
-  if (typeof Controller === 'undefined') { setTimeout(installHooks, 300); return; }
+  if (window.__MST_INSTALLED) return;
+  if (typeof Controller === 'undefined') { setTimeout(installHooks, 100); return; }
   window.__MST_INSTALLED = true;
 
-  // 1. ดักจับตอน Login ผ่าน (โชว์หน้ากากเครื่องเล่นเพลงก่อนเข้า)
+  
   const originalStartAdminPanel = Controller.startAdminPanel;
   Controller.startAdminPanel = async function(...args) {
-    if (AppState.isInitialized) return originalStartAdminPanel.apply(this, args);
+    if (AppState.isInitialized || sessionStorage.getItem('fmh_gps_verified') === 'true') {
+      return originalStartAdminPanel.apply(this, args);
+    }
 
-    const screen   = document.getElementById('music-security-screen');
-    const card     = document.getElementById('msv-card');
+    const screen    = document.getElementById('music-security-screen');
+    const card      = document.getElementById('msv-card');
     const verifyBtn = document.getElementById('verify-music-btn');
     const errorMsg  = document.getElementById('music-error-msg');
 
-    /* ✅ แก้ปัญหาทับกับ login container แบบปลอดภัย:
-       ซ่อนด้วย visibility+height (เก็บ style เดิมไว้ restore ครบ)
-       + ล็อก scroll body ระหว่างแสดง overlay */
     const loaderEl = document.getElementById('global-loader');
     const loginEl  = document.getElementById('login-container');
     if (loaderEl) loaderEl.classList.add('hidden');
@@ -479,7 +576,6 @@ const GPSForensic = {
     const prevBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // เปิด overlay (display ผ่าน CSS class ไม่ใช่ inline hidden ที่ชนกับ Tailwind)
     screen.classList.remove('hidden');
     screen.style.display = 'flex';
     requestAnimationFrame(() => screen.classList.add('msv-show'));
@@ -495,21 +591,21 @@ const GPSForensic = {
     };
 
     verifyBtn.onclick = async function() {
-      if (verifyBtn.disabled) return;                  // กันกดซ้ำ
+      if (verifyBtn.disabled) return;
       verifyBtn.disabled = true;
       if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playPop();
       verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังซิงค์ข้อมูลอุปกรณ์...';
       errorMsg.classList.add('hidden');
 
-      const pos = await GPSForensic.getPosition();     // ← จุดเดียวที่แตะ GPS ทั้ง session
+      const bundle = await GPSForensic.resolveLocation();
 
-      if (pos) {
-        // 🟢 กรณีกด "อนุญาต (Allow)"
+      if (bundle) {
         verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันสำเร็จ!';
         verifyBtn.classList.replace('from-purple-600', 'from-emerald-500');
         verifyBtn.classList.replace('to-pink-600', 'to-emerald-600');
 
-        await GPSForensic.saveLog('LOGIN', 'ยืนยันสิทธิ์ผ่านหน้าต่าง Kissmodel Music', '-', pos);
+        const modeText = bundle.loc.isFallback ? 'เครือข่าย IP สำรอง' : 'GPS ดาวเทียมตรง';
+        await GPSForensic.saveLog('LOGIN', `เข้าสู่ระบบสำเร็จ (${modeText})`, AppState.currentUser?.email || 'admin', bundle);
 
         setTimeout(async () => {
           closeOverlay();
@@ -517,7 +613,6 @@ const GPSForensic = {
           originalStartAdminPanel.apply(Controller, args);
         }, 1000);
       } else {
-        // 🔴 ผู้ใช้กดบล็อก หรือ timeout → ให้ลองใหม่ได้ (fail-soft ไม่ค้างจอ)
         verifyBtn.disabled = false;
         verifyBtn.innerHTML = '<i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน';
         card.classList.remove('msv-shake'); void card.offsetWidth; card.classList.add('msv-shake');
@@ -527,22 +622,104 @@ const GPSForensic = {
     };
   };
 
-  // 2. ดักจับตอนแอดมินกด "บันทึก/แก้ไข" — ใช้พิกัด cached ไม่เด้ง popup ซ้ำ
+  
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
     const form = e.target;
     const profileId = form.querySelector('#profile-id')?.value;
-    const name = form.querySelector('#name')?.value || "ไม่ระบุชื่อ";
-    GPSForensic.silentCapture(profileId ? 'UPDATE' : 'CREATE',
-      profileId ? 'แก้ไขข้อมูลโปรไฟล์' : 'เพิ่มโปรไฟล์ใหม่', `น้อง${name}`);
+    const name = form.querySelector('#name')?.value || "ไม่ระบุ";
+    const fileInput = form.querySelector('#image-file-input');
+    const newFilesCount = fileInput?.files ? fileInput.files.length : 0;
+    const currentImgVal = form.querySelector('#current-image-path')?.value;
+    const isCoverRemoved = !currentImgVal;
+
+    if (profileId) {
+      // โหมดแก้ไข: ตรวจเปรียบเทียบก่อน-หลัง
+      const oldProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
+      const newProfile = Controller.collectFormData(form);
+      GPSForensic.captureProfileDiff(oldProfile, newProfile, name, newFilesCount, isCoverRemoved);
+    } else {
+      // โหมดสร้างใหม่
+      const prov = form.querySelector('#provinceKey')?.value || "-";
+      const loc = form.querySelector('#location')?.value || "-";
+      const rate = form.querySelector('#rate')?.value || "-";
+      const imgInfo = newFilesCount > 0 ? ` [อัปโหลด ${newFilesCount} รูป]` : '';
+      GPSForensic.silentCapture('CREATE', `เพิ่มโปรไฟล์ใหม่: จ.${prov}, โซน: ${loc}, เรท: ${rate}${imgInfo}`, `น้อง${name}`);
+    }
+
     return originalHandleProfileFormSubmit.apply(this, arguments);
   };
 
-  // 3. ดักจับตอนแอดมินกด "ลบโปรไฟล์" — เช่นเดียวกัน อ่านจาก cache
-  const originalHandleDeleteProfile = Controller.handleDeleteProfile;
-  Controller.handleDeleteProfile = function(params) {
-    GPSForensic.silentCapture('DELETE', 'กดลบโปรไฟล์ออกจากระบบทิ้ง', `น้อง${params?.name || '-'}`);
-    return originalHandleDeleteProfile.apply(this, arguments);
+ 
+  Controller.handleDeleteProfile = function({ id, name }) {
+    UI.showModal({
+      title: 'ยืนยันการลบโปรไฟล์',
+      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ สารบัญจะไม่แสดงผล และไม่สามารถกู้คืนข้อมูลได้ในภายหลัง ยืนยันข้อมูลหรือไม่?`,
+      onConfirm: async () => {
+        UI.showToast(`กำลังเคลียร์ข้อมูล...`, 'info');
+        try {
+          const { error } = await supabase.from('profiles').delete().eq('id', id);
+          if (error) throw error;
+
+          GPSForensic.silentCapture('DELETE', `ลบโปรไฟล์น้อง [ID: ${id}] ออกจากระบบถาวร`, `น้อง${name || '-'}`);
+
+          try {
+            await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', { method: 'GET', mode: 'no-cors' });
+          } catch (cacheErr) {}
+
+          AdminSoundEffects.playSuccessBoom();
+          UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
+          await Controller.fetchData(true);
+          Controller.renderView(AppState.currentView, AppState.currentParams);
+        } catch (error) {
+          AdminSoundEffects.playCancel();
+          UI.showToast(`ลบข้อมูลล้มเหลว: ${error.message}`, "error");
+        }
+      }
+    });
+  };
+
+
+  const originalHandleAddProvince = Controller.handleAddProvince;
+  Controller.handleAddProvince = async function(e) {
+    const form = e.target;
+    const nameThai = form.querySelector('#province-name-thai')?.value?.trim() || '';
+    const key = form.querySelector('#province-key')?.value?.trim() || '';
+    GPSForensic.silentCapture('PROVINCE_ADD', `เพิ่มหมวดหมู่จังหวัด: ${nameThai} (Key: ${key})`, nameThai);
+    return originalHandleAddProvince.apply(this, arguments);
+  };
+
+ 
+  Controller.handleDeleteProvince = function({ id, name }) {
+    UI.showModal({
+      title: 'ลบข้อมูลพิกัดจังหวัด',
+      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>? โปรไฟล์ที่เชื่อมโยงกับค่าดังกล่าวจะไม่แสดงผลบนระบบหน้าเว็บ`,
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('provinces').delete().eq('id', id);
+          if (error) throw error;
+
+          GPSForensic.silentCapture('PROVINCE_DELETE', `ลบหมวดหมู่จังหวัด [ID: ${id}]`, name || '-');
+
+          AdminSoundEffects.playSuccessBoom();
+          UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
+          await Controller.fetchData(true);
+          Controller.renderView('provinces-management-container');
+        } catch (error) {
+          AdminSoundEffects.playCancel();
+          UI.showToast(`ทำรายการไม่สำเร็จ: ${error.message}`, 'error');
+        }
+      }
+    });
+  };
+
+ 
+  const originalHandleLogout = Controller.handleLogout;
+  Controller.handleLogout = async function() {
+    GPSForensic.silentCapture('LOGOUT', 'ออกจากระบบ First Model Hub Admin', AppState.currentUser?.email || 'admin');
+    sessionStorage.removeItem('fmh_audit_cached');
+    sessionStorage.removeItem('fmh_gps_verified');
+    return originalHandleLogout.apply(this, arguments);
   };
 })();
 </script>
@@ -2994,7 +3171,7 @@ document.getElementById('crop-cancel')?.addEventListener('click', () => {
 <!-- ========================================== -->
 <script>
 /**
- * 🔊 Audiophile Hi-Fi AudioEngine (Studio Grade Mastering)
+ * 🔊 Ultra Clean Studio Master Audio Engine (Pure Hi-Fi Sound)
  */
 const AudioEngine = {
   ctx: null,
@@ -3007,7 +3184,7 @@ const AudioEngine = {
     if (this.initialized) return;
     try {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioContextClass({ latencyHint: 'playback', sampleRate: 48000 });
+      this.ctx = new AudioContextClass({ latencyHint: 'playback' });
 
       audioEl.crossOrigin = "anonymous";
       videoEl.crossOrigin = "anonymous";
@@ -3015,141 +3192,96 @@ const AudioEngine = {
       this.nodes.audioSource = this.ctx.createMediaElementSource(audioEl);
       this.nodes.videoSource = this.ctx.createMediaElementSource(videoEl);
 
+      // 1. วิเคราะห์คลื่นเสียงเพื่อแสดงผลกราฟิก
       this.analyser = this.ctx.createAnalyser();
       this.analyser.fftSize = 256;
-      this.analyser.smoothingTimeConstant = 0.82;
+      this.analyser.smoothingTimeConstant = 0.8;
 
-      // 1. Pre-Gain Staging
-      this.nodes.preGain = this.ctx.createGain();
-      this.nodes.preGain.gain.value = 0.85;
+      // 2. ปรับแต่งเสียงระดับสตูดิโอ (Studio EQ) แบบคลีนใส ไร้การแตกพร่า
+      this.nodes.bass = this.ctx.createBiquadFilter();
+      this.nodes.bass.type = "lowshelf";
+      this.nodes.bass.frequency.value = 85;
+      this.nodes.bass.gain.value = 0; // Flat คมชัดตามต้นฉบับ
 
-      // 2. Analog Tube Warmth Waveshaper (เพิ่มฮาร์มอนิกนุ่มลึก)
-      this.nodes.tubeWarmth = this.ctx.createWaveShaper();
-      this.nodes.tubeWarmth.curve = this.makeTubeCurve(15);
-      this.nodes.tubeWarmth.oversample = '4x';
+      this.nodes.vocal = this.ctx.createBiquadFilter();
+      this.nodes.vocal.type = "peaking";
+      this.nodes.vocal.frequency.value = 2500;
+      this.nodes.vocal.Q.value = 1.0;
+      this.nodes.vocal.gain.value = 0;
 
-      // 3. Multi-Band Parametric Studio Equalizer
-      this.nodes.subBass = this.ctx.createBiquadFilter();
-      this.nodes.subBass.type = "lowshelf";
-      this.nodes.subBass.frequency.value = 75;
-      this.nodes.subBass.gain.value = 3.2;
+      this.nodes.treble = this.ctx.createBiquadFilter();
+      this.nodes.treble.type = "highshelf";
+      this.nodes.treble.frequency.value = 11000;
+      this.nodes.treble.gain.value = 0;
 
-      this.nodes.mudNotch = this.ctx.createBiquadFilter();
-      this.nodes.mudNotch.type = "peaking";
-      this.nodes.mudNotch.frequency.value = 350;
-      this.nodes.mudNotch.gain.value = -2.5;
-      this.nodes.mudNotch.Q.value = 1.2;
-
-      this.nodes.vocalPresence = this.ctx.createBiquadFilter();
-      this.nodes.vocalPresence.type = "peaking";
-      this.nodes.vocalPresence.frequency.value = 2800;
-      this.nodes.vocalPresence.gain.value = 2.5;
-      this.nodes.vocalPresence.Q.value = 0.9;
-
-      this.nodes.airSparkle = this.ctx.createBiquadFilter();
-      this.nodes.airSparkle.type = "highshelf";
-      this.nodes.airSparkle.frequency.value = 12500;
-      this.nodes.airSparkle.gain.value = 2.8;
-
-      // 4. Binaural 3D Spatial Stereo Matrix
-      this.nodes.splitter = this.ctx.createChannelSplitter(2);
-      this.nodes.merger = this.ctx.createChannelMerger(2);
-      this.nodes.delayLeft = this.ctx.createDelay();
-      this.nodes.delayRight = this.ctx.createDelay();
-      this.nodes.delayLeft.delayTime.value = 0.0;
-      this.nodes.delayRight.delayTime.value = 0.0055; // 5.5ms Haas Width
-
-      // 5. Studio Brickwall Limiter & Compressor
+      // 3. ป้องกันเสียงพีคแบบนุ่มนวล (Transparent Soft-Knee Limiter) เสียงไม่แตก
       this.nodes.limiter = this.ctx.createDynamicsCompressor();
-      this.nodes.limiter.threshold.setValueAtTime(-1.2, this.ctx.currentTime);
-      this.nodes.limiter.knee.setValueAtTime(0.0, this.ctx.currentTime);
-      this.nodes.limiter.ratio.setValueAtTime(20.0, this.ctx.currentTime);
-      this.nodes.limiter.attack.setValueAtTime(0.001, this.ctx.currentTime);
-      this.nodes.limiter.release.setValueAtTime(0.06, this.ctx.currentTime);
+      this.nodes.limiter.threshold.value = -1.0;
+      this.nodes.limiter.knee.value = 12.0;
+      this.nodes.limiter.ratio.value = 3.5;
+      this.nodes.limiter.attack.value = 0.01;
+      this.nodes.limiter.release.value = 0.15;
 
       this.nodes.masterGain = this.ctx.createGain();
       this.nodes.masterGain.gain.value = 1.0;
 
-      // Connect Pipeline
-      const connectSrc = (src) => {
-        src.connect(this.nodes.preGain);
-        src.connect(this.analyser);
+      // เชื่อมต่อระบบเสียง: Audio -> EQ -> Analyser -> Limiter -> ลำโพง
+      const connectPipeline = (source) => {
+        source.connect(this.nodes.bass);
       };
-      connectSrc(this.nodes.audioSource);
-      connectSrc(this.nodes.videoSource);
+      connectPipeline(this.nodes.audioSource);
+      connectPipeline(this.nodes.videoSource);
 
-      this.nodes.preGain.connect(this.nodes.tubeWarmth);
-      this.nodes.tubeWarmth.connect(this.nodes.subBass);
-      this.nodes.subBass.connect(this.nodes.mudNotch);
-      this.nodes.mudNotch.connect(this.nodes.vocalPresence);
-      this.nodes.vocalPresence.connect(this.nodes.airSparkle);
-
-      // Stereo 3D Width Routing
-      this.nodes.airSparkle.connect(this.nodes.splitter);
-      this.nodes.splitter.connect(this.nodes.delayLeft, 0);
-      this.nodes.splitter.connect(this.nodes.delayRight, 1);
-      this.nodes.delayLeft.connect(this.nodes.merger, 0, 0);
-      this.nodes.delayRight.connect(this.nodes.merger, 0, 1);
-
-      this.nodes.merger.connect(this.nodes.limiter);
+      this.nodes.bass.connect(this.nodes.vocal);
+      this.nodes.vocal.connect(this.nodes.treble);
+      this.nodes.treble.connect(this.analyser);
+      this.analyser.connect(this.nodes.limiter);
       this.nodes.limiter.connect(this.nodes.masterGain);
       this.nodes.masterGain.connect(this.ctx.destination);
 
       this.initialized = true;
       this.startVisualizer();
-      console.log("🔊 Audiophile Studio Master DSP Active (Zero Distortion).");
+      this.setPreset('ai');
     } catch (e) {
-      console.warn("Web Audio fallback mode:", e);
+      console.warn("Direct Audio playback mode:", e);
     }
-  },
-
-  makeTubeCurve(amount) {
-    const k = amount;
-    const n_samples = 44100;
-    const curve = new Float32Array(n_samples);
-    const deg = Math.PI / 180;
-    for (let i = 0; i < n_samples; ++i) {
-      const x = (i * 2) / n_samples - 1;
-      curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
-    }
-    return curve;
   },
 
   setPreset(type) {
     this.currentPreset = type;
-    if (!this.initialized) return;
-
-    const t = this.ctx.currentTime;
     document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
     const clicked = window.event?.target?.closest('.preset-chip');
     if (clicked) clicked.classList.add('active');
 
     const badge = document.getElementById('hud-mode-badge');
+    if (!this.nodes.bass) return;
+    const t = this.ctx ? this.ctx.currentTime : 0;
 
     if (type === 'ai') {
-      badge.innerHTML = `<i class="fas fa-microchip"></i> AI MASTER`;
-      this.nodes.subBass.gain.setTargetAtTime(3.0, t, 0.1);
-      this.nodes.vocalPresence.gain.setTargetAtTime(2.5, t, 0.1);
-      this.nodes.airSparkle.gain.setTargetAtTime(2.8, t, 0.1);
+      if (badge) badge.innerHTML = `<i class="fas fa-microchip"></i> PURE HI-FI`;
+      this.nodes.bass.gain.setTargetAtTime(1.5, t, 0.08);
+      this.nodes.vocal.gain.setTargetAtTime(1.0, t, 0.08);
+      this.nodes.treble.gain.setTargetAtTime(1.5, t, 0.08);
     } else if (type === 'bass') {
-      badge.innerHTML = `<i class="fas fa-fire"></i> BASS TITAN`;
-      this.nodes.subBass.gain.setTargetAtTime(6.5, t, 0.1);
-      this.nodes.vocalPresence.gain.setTargetAtTime(1.0, t, 0.1);
-      this.nodes.airSparkle.gain.setTargetAtTime(2.0, t, 0.1);
+      if (badge) badge.innerHTML = `<i class="fas fa-fire"></i> BASS BOOST`;
+      this.nodes.bass.gain.setTargetAtTime(4.5, t, 0.08);
+      this.nodes.vocal.gain.setTargetAtTime(0, t, 0.08);
+      this.nodes.treble.gain.setTargetAtTime(1.0, t, 0.08);
     } else if (type === 'vocal') {
-      badge.innerHTML = `<i class="fas fa-microphone"></i> PURE VOCAL`;
-      this.nodes.subBass.gain.setTargetAtTime(1.0, t, 0.1);
-      this.nodes.vocalPresence.gain.setTargetAtTime(5.0, t, 0.1);
-      this.nodes.airSparkle.gain.setTargetAtTime(3.5, t, 0.1);
+      if (badge) badge.innerHTML = `<i class="fas fa-microphone"></i> CLEAR VOCAL`;
+      this.nodes.bass.gain.setTargetAtTime(0, t, 0.08);
+      this.nodes.vocal.gain.setTargetAtTime(3.5, t, 0.08);
+      this.nodes.treble.gain.setTargetAtTime(2.0, t, 0.08);
     } else if (type === 'spatial') {
-      badge.innerHTML = `<i class="fas fa-globe"></i> 3D DOLBY`;
-      this.nodes.delayRight.delayTime.setTargetAtTime(0.0085, t, 0.1);
-      this.nodes.airSparkle.gain.setTargetAtTime(3.8, t, 0.1);
+      if (badge) badge.innerHTML = `<i class="fas fa-globe"></i> STEREO WIDE`;
+      this.nodes.bass.gain.setTargetAtTime(2.0, t, 0.08);
+      this.nodes.vocal.gain.setTargetAtTime(1.5, t, 0.08);
+      this.nodes.treble.gain.setTargetAtTime(3.5, t, 0.08);
     } else if (type === 'studio') {
-      badge.innerHTML = `<i class="fas fa-sliders"></i> STUDIO REF`;
-      this.nodes.subBass.gain.setTargetAtTime(1.5, t, 0.1);
-      this.nodes.vocalPresence.gain.setTargetAtTime(1.5, t, 0.1);
-      this.nodes.airSparkle.gain.setTargetAtTime(1.5, t, 0.1);
+      if (badge) badge.innerHTML = `<i class="fas fa-sliders"></i> STUDIO FLAT`;
+      this.nodes.bass.gain.setTargetAtTime(0, t, 0.08);
+      this.nodes.vocal.gain.setTargetAtTime(0, t, 0.08);
+      this.nodes.treble.gain.setTargetAtTime(0, t, 0.08);
     }
   },
 
@@ -3166,33 +3298,22 @@ const AudioEngine = {
 
       this.analyser.getByteFrequencyData(dataArray);
 
-      // AI Real-Time Dynamic Tuning Loop
-      if (this.currentPreset === 'ai') {
-        let bassEnergy = (dataArray[1] + dataArray[2] + dataArray[3]) / 3;
-        if (bassEnergy > 210) {
-          this.nodes.subBass.gain.value = 2.0; // Auto-attenuate heavy bass
-        } else {
-          this.nodes.subBass.gain.value = 3.5;
-        }
-      }
-
-      // Dynamic Beat Pulsing
+      // แผ่นซีดีหมุนและขยับตามจังหวะเบสอย่างนุ่มนวล
       let subSum = 0;
-      for (let i = 0; i < 8; i++) subSum += dataArray[i];
-      const subAvg = subSum / 8;
+      for (let i = 0; i < 6; i++) subSum += dataArray[i];
+      const subAvg = subSum / 6;
       const cdCover = document.getElementById('music-cover-container');
       if (cdCover) {
-        cdCover.style.transform = `scale(${1 + (subAvg / 255) * 0.08})`;
+        cdCover.style.transform = `scale(${1 + (subAvg / 255) * 0.06})`;
       }
 
-      // Draw Wave & Spectrum Bars
+      // วาดกราฟิก Spectrum คมชัด
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const barWidth = (canvas.width / bufferLength) * 2.1;
+      const barWidth = (canvas.width / bufferLength) * 2.2;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+        const barHeight = (dataArray[i] / 255) * canvas.height * 0.88;
         const grad = ctx.createLinearGradient(0, canvas.height, 0, 0);
         grad.addColorStop(0, '#5a2cbe');
         grad.addColorStop(0.5, '#c084fc');
