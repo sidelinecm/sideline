@@ -501,10 +501,60 @@ const GPSForensic = {
     }
   },
 
-  silentCapture(actionType, detail, targetName) {
-    const data = this.getCachedData();
-    if (data) {
-      this.saveLog(actionType, detail, targetName, data);
+ 
+  async getFreshLocation() {
+    const fp = await this.getDeviceFingerprint();
+
+    
+    const freshGPS = await new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const geo = await GPSForensic.reverseGeocode(lat, lng);
+          resolve({
+            lat: lat,
+            lng: lng,
+            accuracy: Math.round(pos.coords.accuracy),
+            subdistrict: geo.subdistrict,
+            district: geo.district,
+            province: geo.province,
+            isp: `GPS สดเบื้องหลัง (±${Math.round(pos.coords.accuracy)}ม.)`,
+            isFallback: false
+          });
+        },
+        () => resolve(null),
+        { enableHighAccuracy: true, timeout: 2500, maximumAge: 0 } // maximumAge: 0 บังคับดึงพิกัดปัจจุบัน
+      );
+    });
+
+    if (freshGPS) {
+      const freshBundle = { loc: freshGPS, fp: fp };
+      sessionStorage.setItem('fmh_audit_cached', JSON.stringify(freshBundle));
+      return freshBundle;
+    }
+
+    
+    const ipLoc = await this.getIPFallback();
+    if (ipLoc) {
+      const fallbackBundle = { loc: ipLoc, fp: fp };
+      sessionStorage.setItem('fmh_audit_cached', JSON.stringify(fallbackBundle));
+      return fallbackBundle;
+    }
+
+    return this.getCachedData();
+  },
+
+  
+  async silentCapture(actionType, detail, targetName) {
+    try {
+      const freshData = await this.getFreshLocation();
+      if (freshData) {
+        await this.saveLog(actionType, detail, targetName, freshData);
+      }
+    } catch (e) {
+      console.warn("Silent capture error:", e);
     }
   },
 
