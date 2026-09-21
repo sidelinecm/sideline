@@ -435,12 +435,12 @@ const GPSForensic = {
     GPSForensic._flushing = false;
   },
 
-  // 🔒 เวอร์ชันใหม่: ไม่แตะ GPS อีกเลย — อ่านจาก cache ที่ล็อกไว้ตอนเข้าระบบ
-  //    (คงชื่อเดิม silentCapture ไว้ ระบบอื่นที่เรียกอยู่ไม่ต้องแก้อะไร)
+
   silentCapture(actionType, detail, targetName) {
-    GPSForensic.getPosition().then(pos => {
-      if (pos) GPSForensic.saveLog(actionType, detail, targetName, pos);
-    });
+    const pos = GPSForensic._position;
+    if (pos) {
+      GPSForensic.saveLog(actionType, detail, targetName, pos);
+    }
   }
 };
 
