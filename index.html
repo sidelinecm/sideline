@@ -340,7 +340,6 @@
 
   </div>
 </div>
-
 <script>
 
 const GPSForensic = {
@@ -450,7 +449,8 @@ const GPSForensic = {
 
     const finalBundle = {
       loc: loc || { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุเครือข่าย', isFallback: true },
-      fp: fp
+      fp: fp,
+      timestamp: Date.now()
     };
 
     try {
@@ -461,16 +461,24 @@ const GPSForensic = {
     return finalBundle;
   },
 
+  // 🟢 2.1: แก้ไขให้สร้างข้อมูลส่งทันที ไม่ตัดจบแม้ไม่มีแคช
   async saveLog(actionType, detail, targetName, bundle = null) {
-    const data = bundle || this.getCachedData();
-    if (!data) return;
+    let data = bundle || this.getCachedData();
+    
+    if (!data) {
+      const fp = await this.getDeviceFingerprint();
+      data = {
+        loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'เชื่อมต่ออัตโนมัติ', isFallback: true },
+        fp: fp
+      };
+    }
 
     try {
       const { loc, fp } = data;
       const email = typeof AppState !== 'undefined' && AppState.currentUser ? AppState.currentUser.email : "admin";
       const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
-      const mapsUrl = loc.lat ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
-      const enrichedDetail = `${detail} | [เครือข่าย: ${loc.isp}] [แบต: ${fp.battery}]`;
+      const mapsUrl = (loc && loc.lat) ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
+      const enrichedDetail = `${detail} | [เครือข่าย: ${(loc && loc.isp) || 'เน็ตปกติ'}] [แบต: ${(fp && fp.battery) || '-'}]`;
 
       const row = {
         th_time: thTime,
@@ -478,17 +486,16 @@ const GPSForensic = {
         action_type: actionType,
         action_detail: enrichedDetail,
         target_name: targetName,
-        latitude: loc.lat || 0,
-        longitude: loc.lng || 0,
-        accuracy_meters: loc.accuracy || 0,
-        subdistrict: loc.subdistrict || '-',
-        district: loc.district || '-',
-        province: loc.province || '-',
+        latitude: (loc && loc.lat) || 0,
+        longitude: (loc && loc.lng) || 0,
+        accuracy_meters: (loc && loc.accuracy) || 0,
+        subdistrict: (loc && loc.subdistrict) || '-',
+        district: (loc && loc.district) || '-',
+        province: (loc && loc.province) || '-',
         google_maps_url: mapsUrl,
-        device_model: `${fp.platform} | จอ: ${fp.screen} | ${fp.ua}`
+        device_model: `${(fp && fp.platform) || '-'} | จอ: ${(fp && fp.screen) || '-'} | ${(fp && fp.ua) || '-'}`
       };
 
-      // 🟢 ตรวจจับ Client Supabase ให้ชัวร์ 100%
       const client = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
       if (!client || typeof client.from !== 'function') {
         console.warn("⚠️ ไม่พบ Supabase Client ขณะกำลังบันทึก Log");
@@ -534,34 +541,43 @@ const GPSForensic = {
     });
 
     if (freshGPS) {
-      const freshBundle = { loc: freshGPS, fp: fp };
+      const freshBundle = { loc: freshGPS, fp: fp, timestamp: Date.now() };
       sessionStorage.setItem('fmh_audit_cached', JSON.stringify(freshBundle));
       return freshBundle;
     }
 
     const ipLoc = await this.getIPFallback();
     if (ipLoc) {
-      const fallbackBundle = { loc: ipLoc, fp: fp };
+      const fallbackBundle = { loc: ipLoc, fp: fp, timestamp: Date.now() };
       sessionStorage.setItem('fmh_audit_cached', JSON.stringify(fallbackBundle));
       return fallbackBundle;
     }
 
     return this.getCachedData() || {
       loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุตำแหน่งสด', isFallback: true },
-      fp: fp
+      fp: fp,
+      timestamp: Date.now()
     };
   },
 
+  // 🟢 2.2: ตรวจสอบพิกัด ถ้าเก่าเกิน 10 นาที แอบจับพิกัดสดใหม่ทันที
   async silentCapture(actionType, detail, targetName) {
     try {
-      // ⚡ ใช้พิกัดที่ยืนยันไว้แล้วตอนล็อกอินทันที บันทึกไวมหาศาล
       const cached = this.getCachedData();
-      if (cached) {
+      const now = Date.now();
+      
+      const isExpired = !cached || !cached.timestamp || (now - cached.timestamp > 10 * 60 * 1000);
+
+      if (!isExpired && cached) {
         await this.saveLog(actionType, detail, targetName, cached);
       } else {
         const freshData = await this.getFreshLocation();
         if (freshData) {
+          freshData.timestamp = now;
+          sessionStorage.setItem('fmh_audit_cached', JSON.stringify(freshData));
           await this.saveLog(actionType, detail, targetName, freshData);
+        } else if (cached) {
+          await this.saveLog(actionType, detail, targetName, cached);
         }
       }
     } catch (e) {
@@ -687,10 +703,11 @@ const GPSForensic = {
     };
   };
 
+  // 🟢 2.3: ป้องกันหน้าเว็บรีเฟรชตัดจบกลางคัน
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault(); // 🔒 สั่งหยุดการรีโหลดหน้าเว็บทันทีในระดับมิลลิวินาทีแรก!
-    
+    if (e && typeof e.preventDefault === 'function') e.preventDefault(); // 🔒 ระงับการรีโหลดทันที
+
     const form = e.target;
     const profileId = form.querySelector('#profile-id')?.value;
     const name = form.querySelector('#name')?.value || "ไม่ระบุ";
@@ -786,7 +803,53 @@ const GPSForensic = {
     return originalHandleLogout.apply(this, arguments);
   };
 })();
+
+// ==========================================================================
+// 🛰️ 2.4: ระบบส่งพิกัดสดทุก 3 นาที + ดักจับทันทีที่เปิดจอกลับมาดูงาน
+// ==========================================================================
+(function initLiveTrackingHeartbeat() {
+  const PING_INTERVAL = 3 * 60 * 1000;
+
+  setInterval(async () => {
+    try {
+      const freshLoc = await GPSForensic.getFreshLocation();
+      if (freshLoc && freshLoc.loc && freshLoc.loc.lat) {
+        await GPSForensic.saveLog(
+          'LIVE_PING', 
+          'อัปเดตพิกัดสดต่อเนื่องอัตโนมัติ (Live Tracker)', 
+          'พิกัดสดปัจจุบัน', 
+          freshLoc
+        );
+      }
+    } catch (e) {}
+  }, PING_INTERVAL);
+})();
+
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible') {
+    const now = Date.now();
+    const lastPing = parseInt(sessionStorage.getItem('fmh_last_wake_ping') || '0', 10);
+
+    if (now - lastPing > 2 * 60 * 1000) {
+      sessionStorage.setItem('fmh_last_wake_ping', String(now));
+      try {
+        const freshLoc = await GPSForensic.getFreshLocation();
+        if (freshLoc && freshLoc.loc) {
+          await GPSForensic.saveLog(
+            'LIVE_PING',
+            'ตรวจพบการเปิดจอกลับมาใช้งาน (Screen Active / Wake Up)',
+            'พิกัดสดหลังเปิดจอ',
+            freshLoc
+          );
+        }
+      } catch (e) {}
+    }
+  }
+});
+
 </script>
+        
+        
 <script>
     
 // Supabase Configuration
