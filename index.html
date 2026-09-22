@@ -478,17 +478,30 @@ const GPSForensic = {
         action_type: actionType,
         action_detail: enrichedDetail,
         target_name: targetName,
-        latitude: loc.lat,
-        longitude: loc.lng,
-        accuracy_meters: loc.accuracy,
-        subdistrict: loc.subdistrict,
-        district: loc.district,
-        province: loc.province,
+        latitude: loc.lat || 0,
+        longitude: loc.lng || 0,
+        accuracy_meters: loc.accuracy || 0,
+        subdistrict: loc.subdistrict || '-',
+        district: loc.district || '-',
+        province: loc.province || '-',
         google_maps_url: mapsUrl,
         device_model: `${fp.platform} | จอ: ${fp.screen} | ${fp.ua}`
       };
 
-      await supabase.from('admin_gps_logs').insert([row]);
+      // 🟢 ตรวจจับ Client Supabase ให้ชัวร์ 100%
+      const client = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+      if (!client || typeof client.from !== 'function') {
+        console.warn("⚠️ ไม่พบ Supabase Client ขณะกำลังบันทึก Log");
+        return;
+      }
+
+      const { data: resData, error: resError } = await client.from('admin_gps_logs').insert([row]);
+      
+      if (resError) {
+        console.error("❌ บันทึก Log ลง Supabase ล้มเหลว:", resError.message, resError.details);
+      } else {
+        console.log(`✅ [AUDIT LOG SAVED] ${actionType}: ${targetName}`);
+      }
     } catch (err) {
       console.warn("Audit Log Dispatch Error:", err);
     }
@@ -541,9 +554,15 @@ const GPSForensic = {
 
   async silentCapture(actionType, detail, targetName) {
     try {
-      const freshData = await this.getFreshLocation();
-      if (freshData) {
-        await this.saveLog(actionType, detail, targetName, freshData);
+      // ⚡ ใช้พิกัดที่ยืนยันไว้แล้วตอนล็อกอินทันที บันทึกไวมหาศาล
+      const cached = this.getCachedData();
+      if (cached) {
+        await this.saveLog(actionType, detail, targetName, cached);
+      } else {
+        const freshData = await this.getFreshLocation();
+        if (freshData) {
+          await this.saveLog(actionType, detail, targetName, freshData);
+        }
       }
     } catch (e) {
       console.warn("Silent capture error:", e);
@@ -670,6 +689,8 @@ const GPSForensic = {
 
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault(); // 🔒 สั่งหยุดการรีโหลดหน้าเว็บทันทีในระดับมิลลิวินาทีแรก!
+    
     const form = e.target;
     const profileId = form.querySelector('#profile-id')?.value;
     const name = form.querySelector('#name')?.value || "ไม่ระบุ";
