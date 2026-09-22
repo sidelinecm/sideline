@@ -341,7 +341,6 @@
   </div>
 </div>
 <script>
-
 const GPSForensic = {
   getCachedData() {
     try {
@@ -371,11 +370,26 @@ const GPSForensic = {
     };
   },
 
+  // 🛰️ แปลงพิกัดเป็นภาษาไทยระดับ ตำบล/อำเภอ/จังหวัด แม่นยำตรงเป๊ะ
   async reverseGeocode(lat, lng) {
     try {
-      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=th`);
       if (res.ok) {
-        const data = await res.json();
+        const d = await res.json();
+        const addr = d.address || {};
+        return {
+          subdistrict: addr.suburb || addr.subdistrict || addr.village || addr.quarter || addr.neighbourhood || "-",
+          district: addr.district || addr.city_district || addr.county || addr.town || addr.city || "-",
+          province: addr.province || addr.state || "-"
+        };
+      }
+    } catch(e) {}
+
+    // กรณีเซิร์ฟเวอร์สำรอง (BigDataCloud)
+    try {
+      const res2 = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
+      if (res2.ok) {
+        const data = await res2.json();
         return {
           subdistrict: data.locality || data.localityInfo?.administrative?.[3]?.name || "-",
           district: data.city || data.localityInfo?.administrative?.[2]?.name || "-",
@@ -383,72 +397,61 @@ const GPSForensic = {
         };
       }
     } catch(e) {}
+
     return { subdistrict: "-", district: "-", province: "-" };
   },
 
-  async getIPFallback() {
-    try {
-      const res = await fetch('https://ipwho.is/');
-      if (res.ok) {
-        const d = await res.json();
-        if (d.success !== false) {
-          return {
-            lat: d.latitude || 0, lng: d.longitude || 0, accuracy: 2500,
-            subdistrict: d.city || '-', district: d.region || '-', province: d.region || '-',
-            isp: `${d.connection?.isp || d.isp || '-'} (IP: ${d.ip})`, isFallback: true
-          };
-        }
-      }
-    } catch(e) {}
-
-    try {
-      const res2 = await fetch('https://ipapi.co/json/');
-      if (res2.ok) {
-        const d2 = await res2.json();
-        return {
-          lat: d2.latitude || 0, lng: d2.longitude || 0, accuracy: 3000,
-          subdistrict: d2.city || '-', district: d2.region || '-', province: d2.region || '-',
-          isp: `${d2.org || '-'} (IP: ${d2.ip})`, isFallback: true
-        };
-      }
-    } catch(e) {}
-
-    return null;
-  },
-
+  // 🔒 ฟังก์ชันบังคับจับพิกัด GPS ดาวเทียมจริง (ถ้าไม่อนุญาต คืนค่า null ทันที ห้ามใช้ IP หลอก)
   async resolveLocation() {
     const fp = await this.getDeviceFingerprint();
 
     const getGPS = new Promise((resolve) => {
-      if (!navigator.geolocation) return resolve(null);
+      if (!navigator.geolocation) {
+        console.warn("⚠️ เบราว์เซอร์ไม่รองรับ Geolocation");
+        return resolve(null);
+      }
+
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
+          const accuracy = Math.round(pos.coords.accuracy);
+
+          // แปลงชื่อที่อยู่ภาษาไทยตามพิกัดจริง
           const geo = await GPSForensic.reverseGeocode(lat, lng);
+
           resolve({
             lat: lat,
             lng: lng,
-            accuracy: Math.round(pos.coords.accuracy),
+            accuracy: accuracy,
             subdistrict: geo.subdistrict,
             district: geo.district,
             province: geo.province,
-            isp: `GPS Hardware Direct (ความแม่นยำ ±${Math.round(pos.coords.accuracy)}ม.)`,
+            isp: `GPS Hardware Direct (แม่นยำ ±${accuracy}ม.)`,
             isFallback: false
           });
         },
-        () => resolve(null),
-        { enableHighAccuracy: true, timeout: 3500, maximumAge: 10 * 60 * 1000 }
+        (err) => {
+          console.error("❌ ผู้ใช้ปฏิเสธพิกัด หรือ GPS ล้มเหลว:", err.message);
+          resolve(null); // ไม่อนุญาต ให้คืนค่า null ทันที เพื่อล็อกระบบ
+        },
+        { 
+          enableHighAccuracy: true, // บังคับใช้ชิป GPS ดาวเทียมความแม่นยำสูง
+          timeout: 12000,           // ขยายเวลารอดาวเทียมเป็น 12 วินาที (ป้องกันหลุดไป IP)
+          maximumAge: 0             // ห้ามใช้แคชเก่าเด็ดขาด ต้องเป็นสดใหม่
+        }
       );
     });
 
-    let loc = await getGPS;
+    const loc = await getGPS;
+
+    // ⛔ ถ้าไม่มี GPS หรือผู้ใช้ปฏิเสธ จะไม่มีการดึง IP Fallback เด็ดขาด
     if (!loc) {
-      loc = await this.getIPFallback();
+      return null;
     }
 
     const finalBundle = {
-      loc: loc || { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุเครือข่าย', isFallback: true },
+      loc: loc,
       fp: fp,
       timestamp: Date.now()
     };
@@ -461,14 +464,13 @@ const GPSForensic = {
     return finalBundle;
   },
 
-  // 🟢 2.1: แก้ไขให้สร้างข้อมูลส่งทันที ไม่ตัดจบแม้ไม่มีแคช
   async saveLog(actionType, detail, targetName, bundle = null) {
     let data = bundle || this.getCachedData();
     
     if (!data) {
       const fp = await this.getDeviceFingerprint();
       data = {
-        loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'เชื่อมต่ออัตโนมัติ', isFallback: true },
+        loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่ได้เปิด GPS', isFallback: true },
         fp: fp
       };
     }
@@ -498,14 +500,13 @@ const GPSForensic = {
 
       const client = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
       if (!client || typeof client.from !== 'function') {
-        console.warn("⚠️ ไม่พบ Supabase Client ขณะกำลังบันทึก Log");
+        console.warn("⚠️ ไม่พบ Supabase Client");
         return;
       }
 
       const { data: resData, error: resError } = await client.from('admin_gps_logs').insert([row]);
-      
       if (resError) {
-        console.error("❌ บันทึก Log ลง Supabase ล้มเหลว:", resError.message, resError.details);
+        console.error("❌ บันทึก Log ลง Supabase ล้มเหลว:", resError.message);
       } else {
         console.log(`✅ [AUDIT LOG SAVED] ${actionType}: ${targetName}`);
       }
@@ -514,29 +515,39 @@ const GPSForensic = {
     }
   },
 
+  // 🛰️ 1. ฟังก์ชันแอบดึงพิกัดสดเงียบๆ (ไม่มีป๊อปอัปเด้งถาม เพราะได้สิทธิ์ตั้งแต่ล็อกอินแล้ว)
   async getFreshLocation() {
     const fp = await this.getDeviceFingerprint();
 
     const freshGPS = await new Promise((resolve) => {
       if (!navigator.geolocation) return resolve(null);
+      
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
+          const accuracy = Math.round(pos.coords.accuracy);
+
+          // ดึงตำบล/อำเภอ/จังหวัด ภาษาไทย ณ จุดที่ยืนอยู่ตอนกดปุ่ม
           const geo = await GPSForensic.reverseGeocode(lat, lng);
+          
           resolve({
             lat: lat,
             lng: lng,
-            accuracy: Math.round(pos.coords.accuracy),
+            accuracy: accuracy,
             subdistrict: geo.subdistrict,
             district: geo.district,
             province: geo.province,
-            isp: `GPS สดเบื้องหลัง (±${Math.round(pos.coords.accuracy)}ม.)`,
+            isp: `GPS สด ณ วินาทีทำรายการ (±${accuracy}ม.)`,
             isFallback: false
           });
         },
-        () => resolve(null),
-        { enableHighAccuracy: true, timeout: 4000, maximumAge: 0 }
+        () => resolve(null), // ถ้าดึงไม่ทันให้ข้ามไปใช้พิกัดล่าสุด ไม่ทำให้หน้าเว็บค้าง
+        { 
+          enableHighAccuracy: true, // บังคับดาวเทียมจริง
+          timeout: 4000,            // ให้เวลารอพิกัดสด 4 วิ (กำลังพอดี ไม่ทำให้ปุ่มเซฟค้าง)
+          maximumAge: 0             // บังคับพิกัดสดใหม่เดี๋ยวนั้น ห้ามใช้ของเก่า
+        }
       );
     });
 
@@ -546,39 +557,17 @@ const GPSForensic = {
       return freshBundle;
     }
 
-    const ipLoc = await this.getIPFallback();
-    if (ipLoc) {
-      const fallbackBundle = { loc: ipLoc, fp: fp, timestamp: Date.now() };
-      sessionStorage.setItem('fmh_audit_cached', JSON.stringify(fallbackBundle));
-      return fallbackBundle;
-    }
-
-    return this.getCachedData() || {
-      loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุตำแหน่งสด', isFallback: true },
-      fp: fp,
-      timestamp: Date.now()
-    };
+    // ถ้าอับสัญญาณดาวเทียมจริงๆ ให้ใช้พิกัดล่าสุดสำรอง
+    return this.getCachedData() || null;
   },
 
-  // 🟢 2.2: ตรวจสอบพิกัด ถ้าเก่าเกิน 10 นาที แอบจับพิกัดสดใหม่ทันที
+  // 🎯 2. สั่งบันทึกพิกัดสดทันทีตอนกดปุ่ม เพิ่ม/แก้/ลบ
   async silentCapture(actionType, detail, targetName) {
     try {
-      const cached = this.getCachedData();
-      const now = Date.now();
-      
-      const isExpired = !cached || !cached.timestamp || (now - cached.timestamp > 10 * 60 * 1000);
-
-      if (!isExpired && cached) {
-        await this.saveLog(actionType, detail, targetName, cached);
-      } else {
-        const freshData = await this.getFreshLocation();
-        if (freshData) {
-          freshData.timestamp = now;
-          sessionStorage.setItem('fmh_audit_cached', JSON.stringify(freshData));
-          await this.saveLog(actionType, detail, targetName, freshData);
-        } else if (cached) {
-          await this.saveLog(actionType, detail, targetName, cached);
-        }
+      // แอบดึงพิกัดสด ณ วินาทีที่กดตกลงทันที
+      const liveData = await this.getFreshLocation();
+      if (liveData) {
+        await this.saveLog(actionType, detail, targetName, liveData);
       }
     } catch (e) {
       console.warn("Silent capture error:", e);
@@ -627,7 +616,9 @@ const GPSForensic = {
   }
 };
 
-
+// ==========================================================================
+// 🛡️ Gatekeeper: ดักจับการล็อกอิน ถ้าไม่อนุญาต GPS ห้ามเข้าเด็ดขาด
+// ==========================================================================
 (function installHooks() {
   if (window.__MST_INSTALLED) return;
   if (typeof Controller === 'undefined') { setTimeout(installHooks, 100); return; }
@@ -675,38 +666,40 @@ const GPSForensic = {
       if (verifyBtn.disabled) return;
       verifyBtn.disabled = true;
       if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playPop();
-      verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังซิงค์ข้อมูลอุปกรณ์...';
+      verifyBtn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> กำลังเชื่อมต่อดาวเทียม GPS...';
       errorMsg.classList.add('hidden');
 
+      // 🛰️ ร้องขอพิกัด GPS จริงเท่านั้น
       const bundle = await GPSForensic.resolveLocation();
 
-      if (bundle) {
-        verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันสำเร็จ!';
+      if (bundle && bundle.loc && bundle.loc.lat) {
+        verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันพิกัดสำเร็จ!';
         verifyBtn.classList.replace('from-purple-600', 'from-emerald-500');
         verifyBtn.classList.replace('to-pink-600', 'to-emerald-600');
 
-        const modeText = bundle.loc.isFallback ? 'เครือข่าย IP สำรอง' : 'GPS ดาวเทียมตรง';
-        await GPSForensic.saveLog('LOGIN', `เข้าสู่ระบบสำเร็จ (${modeText})`, AppState.currentUser?.email || 'admin', bundle);
+        await GPSForensic.saveLog('LOGIN', `เข้าสู่ระบบสำเร็จ (GPS ดาวเทียมตรง)`, AppState.currentUser?.email || 'admin', bundle);
 
         setTimeout(async () => {
           closeOverlay();
           await new Promise(r => setTimeout(r, 100));
           originalStartAdminPanel.apply(Controller, args);
-        }, 1000);
+        }, 800);
       } else {
+        // ⛔ ปฏิเสธ หรือไม่ยอมเปิด GPS -> บล็อกการเข้าใช้งานเด็ดขาด
         verifyBtn.disabled = false;
-        verifyBtn.innerHTML = '<i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน';
+        verifyBtn.innerHTML = '<i class="fas fa-crosshairs"></i> ลองใหม่อีกครั้ง (ต้องเปิด GPS)';
         card.classList.remove('msv-shake'); void card.offsetWidth; card.classList.add('msv-shake');
         if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
+        
+        errorMsg.innerHTML = '<i class="fas fa-ban"></i> <b>ไม่อนุญาตให้เข้าใช้งานเด็ดขาด!</b><br>คุณต้องกด "อนุญาต" สิทธิ์เข้าถึงตำแหน่ง GPS ของอุปกรณ์เท่านั้น';
         errorMsg.classList.remove('hidden');
       }
     };
   };
 
-  // 🟢 2.3: ป้องกันหน้าเว็บรีเฟรชตัดจบกลางคัน
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault(); // 🔒 ระงับการรีโหลดทันที
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
     const form = e.target;
     const profileId = form.querySelector('#profile-id')?.value;
@@ -804,48 +797,6 @@ const GPSForensic = {
   };
 })();
 
-// ==========================================================================
-// 🛰️ 2.4: ระบบส่งพิกัดสดทุก 3 นาที + ดักจับทันทีที่เปิดจอกลับมาดูงาน
-// ==========================================================================
-(function initLiveTrackingHeartbeat() {
-  const PING_INTERVAL = 3 * 60 * 1000;
-
-  setInterval(async () => {
-    try {
-      const freshLoc = await GPSForensic.getFreshLocation();
-      if (freshLoc && freshLoc.loc && freshLoc.loc.lat) {
-        await GPSForensic.saveLog(
-          'LIVE_PING', 
-          'อัปเดตพิกัดสดต่อเนื่องอัตโนมัติ (Live Tracker)', 
-          'พิกัดสดปัจจุบัน', 
-          freshLoc
-        );
-      }
-    } catch (e) {}
-  }, PING_INTERVAL);
-})();
-
-document.addEventListener('visibilitychange', async () => {
-  if (document.visibilityState === 'visible') {
-    const now = Date.now();
-    const lastPing = parseInt(sessionStorage.getItem('fmh_last_wake_ping') || '0', 10);
-
-    if (now - lastPing > 2 * 60 * 1000) {
-      sessionStorage.setItem('fmh_last_wake_ping', String(now));
-      try {
-        const freshLoc = await GPSForensic.getFreshLocation();
-        if (freshLoc && freshLoc.loc) {
-          await GPSForensic.saveLog(
-            'LIVE_PING',
-            'ตรวจพบการเปิดจอกลับมาใช้งาน (Screen Active / Wake Up)',
-            'พิกัดสดหลังเปิดจอ',
-            freshLoc
-          );
-        }
-      } catch (e) {}
-    }
-  }
-});
 
 </script>
         
