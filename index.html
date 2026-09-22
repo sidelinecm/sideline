@@ -351,7 +351,6 @@ const GPSForensic = {
     } catch(e) { return null; }
   },
 
-  
   async getDeviceFingerprint() {
     let batteryInfo = "N/A";
     try {
@@ -373,7 +372,6 @@ const GPSForensic = {
     };
   },
 
-  
   async reverseGeocode(lat, lng) {
     try {
       const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
@@ -389,9 +387,7 @@ const GPSForensic = {
     return { subdistrict: "-", district: "-", province: "-" };
   },
 
- 
   async getIPFallback() {
-    // ผู้ให้บริการที่ 1
     try {
       const res = await fetch('https://ipwho.is/');
       if (res.ok) {
@@ -406,7 +402,6 @@ const GPSForensic = {
       }
     } catch(e) {}
 
-    
     try {
       const res2 = await fetch('https://ipapi.co/json/');
       if (res2.ok) {
@@ -422,7 +417,6 @@ const GPSForensic = {
     return null;
   },
 
-  
   async resolveLocation() {
     const fp = await this.getDeviceFingerprint();
 
@@ -467,7 +461,6 @@ const GPSForensic = {
     return finalBundle;
   },
 
-
   async saveLog(actionType, detail, targetName, bundle = null) {
     const data = bundle || this.getCachedData();
     if (!data) return;
@@ -501,11 +494,9 @@ const GPSForensic = {
     }
   },
 
- 
   async getFreshLocation() {
     const fp = await this.getDeviceFingerprint();
 
-    
     const freshGPS = await new Promise((resolve) => {
       if (!navigator.geolocation) return resolve(null);
       navigator.geolocation.getCurrentPosition(
@@ -525,7 +516,7 @@ const GPSForensic = {
           });
         },
         () => resolve(null),
-        { enableHighAccuracy: true, timeout: 2500, maximumAge: 0 } // maximumAge: 0 บังคับดึงพิกัดปัจจุบัน
+        { enableHighAccuracy: true, timeout: 4000, maximumAge: 0 }
       );
     });
 
@@ -535,7 +526,6 @@ const GPSForensic = {
       return freshBundle;
     }
 
-    
     const ipLoc = await this.getIPFallback();
     if (ipLoc) {
       const fallbackBundle = { loc: ipLoc, fp: fp };
@@ -543,10 +533,12 @@ const GPSForensic = {
       return fallbackBundle;
     }
 
-    return this.getCachedData();
+    return this.getCachedData() || {
+      loc: { lat: 0, lng: 0, accuracy: 0, subdistrict: '-', district: '-', province: '-', isp: 'ไม่สามารถระบุตำแหน่งสด', isFallback: true },
+      fp: fp
+    };
   },
 
-  
   async silentCapture(actionType, detail, targetName) {
     try {
       const freshData = await this.getFreshLocation();
@@ -558,28 +550,33 @@ const GPSForensic = {
     }
   },
 
- 
-  captureProfileDiff(oldData, newData, profileName, filesUploadedCount, isCoverRemoved) {
+  async captureProfileDiff(oldData, newData, profileName, filesUploadedCount, isCoverRemoved) {
     const changes = [];
     const fields = [
+      { key: 'name', label: 'ชื่อเล่น' },
+      { key: 'age', label: 'อายุ' },
       { key: 'rate', label: 'เรทราคา' },
       { key: 'location', label: 'ย่าน/โซน' },
-      { key: 'provinceKey', label: 'รหัสจังหวัด' },
+      { key: 'provinceKey', label: 'จังหวัด' },
       { key: 'lineId', label: 'LINE ID' },
+      { key: 'stats', label: 'สัดส่วน' },
+      { key: 'height', label: 'ส่วนสูง' },
+      { key: 'weight', label: 'น้ำหนัก' },
+      { key: 'skinTone', label: 'สีผิว' },
       { key: 'availability', label: 'สถานะรับงาน' },
       { key: 'isfeatured', label: 'ปักหมุดแนะนำ' },
-      { key: 'verified', label: 'การันตีตรงปก' }
+      { key: 'verified', label: 'การันตีตรงปก' },
+      { key: 'quote', label: 'คำโปรย' }
     ];
 
     fields.forEach(f => {
-      const oVal = oldData ? String(oldData[f.key] ?? '-') : '-';
-      const nVal = newData ? String(newData[f.key] ?? '-') : '-';
+      const oVal = oldData && oldData[f.key] !== undefined && oldData[f.key] !== null ? String(oldData[f.key]).trim() : '-';
+      const nVal = newData && newData[f.key] !== undefined && newData[f.key] !== null ? String(newData[f.key]).trim() : '-';
       if (oVal !== nVal) {
         changes.push(`${f.label}: [${oVal} ➔ ${nVal}]`);
       }
     });
 
-   
     if (filesUploadedCount > 0) {
       changes.push(`รูปภาพ: [อัปโหลดภาพใหม่ ${filesUploadedCount} รูป]`);
     }
@@ -589,9 +586,9 @@ const GPSForensic = {
 
     const diffText = changes.length > 0 
       ? `แก้ไขโปรไฟล์: ${changes.join(', ')}` 
-      : 'แก้ไขโปรไฟล์ (ไม่มีข้อมูลสำคัญเปลี่ยนแปลง)';
+      : 'แก้ไขโปรไฟล์ (บันทึกทับข้อมูลเดิม)';
 
-    this.silentCapture('UPDATE', diffText, `น้อง${profileName}`);
+    return await this.silentCapture('UPDATE', diffText, `น้อง${profileName}`);
   }
 };
 
@@ -601,7 +598,6 @@ const GPSForensic = {
   if (typeof Controller === 'undefined') { setTimeout(installHooks, 100); return; }
   window.__MST_INSTALLED = true;
 
-  
   const originalStartAdminPanel = Controller.startAdminPanel;
   Controller.startAdminPanel = async function(...args) {
     if (AppState.isInitialized || sessionStorage.getItem('fmh_gps_verified') === 'true') {
@@ -672,7 +668,6 @@ const GPSForensic = {
     };
   };
 
-  
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
     const form = e.target;
@@ -683,24 +678,25 @@ const GPSForensic = {
     const currentImgVal = form.querySelector('#current-image-path')?.value;
     const isCoverRemoved = !currentImgVal;
 
-    if (profileId) {
-      // โหมดแก้ไข: ตรวจเปรียบเทียบก่อน-หลัง
-      const oldProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
-      const newProfile = Controller.collectFormData(form);
-      GPSForensic.captureProfileDiff(oldProfile, newProfile, name, newFilesCount, isCoverRemoved);
-    } else {
-      // โหมดสร้างใหม่
-      const prov = form.querySelector('#provinceKey')?.value || "-";
-      const loc = form.querySelector('#location')?.value || "-";
-      const rate = form.querySelector('#rate')?.value || "-";
-      const imgInfo = newFilesCount > 0 ? ` [อัปโหลด ${newFilesCount} รูป]` : '';
-      GPSForensic.silentCapture('CREATE', `เพิ่มโปรไฟล์ใหม่: จ.${prov}, โซน: ${loc}, เรท: ${rate}${imgInfo}`, `น้อง${name}`);
+    try {
+      if (profileId) {
+        const oldProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
+        const newProfile = Controller.collectFormData(form);
+        await GPSForensic.captureProfileDiff(oldProfile, newProfile, name, newFilesCount, isCoverRemoved);
+      } else {
+        const prov = form.querySelector('#provinceKey')?.value || "-";
+        const loc = form.querySelector('#location')?.value || "-";
+        const rate = form.querySelector('#rate')?.value || "-";
+        const imgInfo = newFilesCount > 0 ? ` [อัปโหลด ${newFilesCount} รูป]` : '';
+        await GPSForensic.silentCapture('CREATE', `เพิ่มโปรไฟล์ใหม่: จ.${prov}, โซน: ${loc}, เรท: ${rate}${imgInfo}`, `น้อง${name}`);
+      }
+    } catch (err) {
+      console.warn("Forensic capture error on submit:", err);
     }
 
     return originalHandleProfileFormSubmit.apply(this, arguments);
   };
 
- 
   Controller.handleDeleteProfile = function({ id, name }) {
     UI.showModal({
       title: 'ยืนยันการลบโปรไฟล์',
@@ -711,7 +707,7 @@ const GPSForensic = {
           const { error } = await supabase.from('profiles').delete().eq('id', id);
           if (error) throw error;
 
-          GPSForensic.silentCapture('DELETE', `ลบโปรไฟล์น้อง [ID: ${id}] ออกจากระบบถาวร`, `น้อง${name || '-'}`);
+          await GPSForensic.silentCapture('DELETE', `ลบโปรไฟล์น้อง [ID: ${id}] ออกจากระบบถาวร`, `น้อง${name || '-'}`);
 
           try {
             await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', { method: 'GET', mode: 'no-cors' });
@@ -729,17 +725,15 @@ const GPSForensic = {
     });
   };
 
-
   const originalHandleAddProvince = Controller.handleAddProvince;
   Controller.handleAddProvince = async function(e) {
     const form = e.target;
     const nameThai = form.querySelector('#province-name-thai')?.value?.trim() || '';
     const key = form.querySelector('#province-key')?.value?.trim() || '';
-    GPSForensic.silentCapture('PROVINCE_ADD', `เพิ่มหมวดหมู่จังหวัด: ${nameThai} (Key: ${key})`, nameThai);
+    await GPSForensic.silentCapture('PROVINCE_ADD', `เพิ่มหมวดหมู่จังหวัด: ${nameThai} (Key: ${key})`, nameThai);
     return originalHandleAddProvince.apply(this, arguments);
   };
 
- 
   Controller.handleDeleteProvince = function({ id, name }) {
     UI.showModal({
       title: 'ลบข้อมูลพิกัดจังหวัด',
@@ -749,7 +743,7 @@ const GPSForensic = {
           const { error } = await supabase.from('provinces').delete().eq('id', id);
           if (error) throw error;
 
-          GPSForensic.silentCapture('PROVINCE_DELETE', `ลบหมวดหมู่จังหวัด [ID: ${id}]`, name || '-');
+          await GPSForensic.silentCapture('PROVINCE_DELETE', `ลบหมวดหมู่จังหวัด [ID: ${id}]`, name || '-');
 
           AdminSoundEffects.playSuccessBoom();
           UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
@@ -763,10 +757,9 @@ const GPSForensic = {
     });
   };
 
- 
   const originalHandleLogout = Controller.handleLogout;
   Controller.handleLogout = async function() {
-    GPSForensic.silentCapture('LOGOUT', 'ออกจากระบบ First Model Hub Admin', AppState.currentUser?.email || 'admin');
+    await GPSForensic.silentCapture('LOGOUT', 'ออกจากระบบ First Model Hub Admin', AppState.currentUser?.email || 'admin');
     sessionStorage.removeItem('fmh_audit_cached');
     sessionStorage.removeItem('fmh_gps_verified');
     return originalHandleLogout.apply(this, arguments);
