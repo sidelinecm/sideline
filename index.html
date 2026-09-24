@@ -450,7 +450,7 @@
         </p>
       </div>
 
-      <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Audio/Devicee) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
+      <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Location/Device) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
 
       <button id="verify-music-btn" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2">
         <i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน
@@ -2775,8 +2775,10 @@ const AudioEngine = {
   }
 };
 
+// แก้ไขตรง AdminOS
 const AdminOS = {
   myAlbum: [
+    { title: "วอนวาย - MAIYARAP", url: "https://youtu.be/6YBnHEQwaMs", type: "youtube" }, // 👈 เพิ่มบรรทัดนี้ไว้บนสุด
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
     { title: "ถูกที่ผิดเวลา", url: "./songs/ถูกที่ผิดเวลา.mp4", type: "audio" },
     { title: "wawai (MP3)", url: "./songs/wawai.mp3", type: "audio" },
@@ -2786,6 +2788,7 @@ const AdminOS = {
     { title: "misscall", url: "./songs/misscall.mp3", type: "audio" },
     { title: "คำถามโง่ๆR&B", url: "./songs/คำถามโง่ๆR&B.mp3", type: "audio" }
   ],
+ 
   
   currentIndex: 0,
   root: document.getElementById('admin-assistive-root'),
