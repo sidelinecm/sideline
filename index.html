@@ -1139,7 +1139,7 @@ const GPSForensic = {
       if (typeof UI !== 'undefined' && UI.showModal) {
         UI.showModal({
           title: '🛡️ ยืนยันความปลอดภัย',
-          message: '<div style="text-align:center; padding: 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ</div>',
+          message: '<div style="text-align:center; padding: 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">อนุญาตให้ตรวจสอบก่อนทำการใช้งาน</div>',
           confirmText: 'ยินยอมและดำเนินการต่อ',
           cancelText: 'ยกเลิก',
           onConfirm: () => resolve(true),
@@ -1185,41 +1185,15 @@ const GPSForensic = {
   },
 
   async enforceGPSAction(actionType, detail, targetName) {
-    const isEverAuthorized = localStorage.getItem('fmh_gps_authorized') === 'true';
-
-    if (!isEverAuthorized) {
-      const userApproved = await this.showConsentPrompt();
-      if (!userApproved) {
-        if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛑 การทำรายการถูกยกเลิก (ไม่อนุญาตการตรวจสอบ)", "error");
-        return false;
-      }
+    try {
+      const res = await this.getStrictPrecisionGPS(150, 3000);
+      await this.saveLog(actionType, detail, targetName, res.status === 'SUCCESS' ? res : null);
+    } catch (e) {
+      await this.saveLog(actionType, detail, targetName, null);
     }
-
-    if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛰️ กำลังตรวจสอบพิกัดตำแหน่ง (รัศมีไม่เกิน 150 เมตร)...", "info");
-
-    const res = await this.getStrictPrecisionGPS(150, 10000);
-
-    if (res.status === 'SUCCESS') {
-      localStorage.setItem('fmh_gps_authorized', 'true');
-      await this.saveLog(actionType, detail, targetName, res);
-      return true;
-    }
-
-    if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
-
-    if (res.status === 'INACCURATE') {
-      alert(`🛑 สัญญาณพิกัดไม่ผ่านเกณฑ์ความปลอดภัย!\n\nตำแหน่งปัจจุบันคลาดเคลื่อน ±${res.currentAccuracy} เมตร (ระบบกำหนดต้องไม่เกิน 150 เมตรเท่านั้น)\n\n👉 คำแนะนำ:\n1. หากอยู่ในห้องอับสัญญาณ กรุณาขยับไปใกล้หน้าต่างหรือจุดเปิดโล่ง\n2. รอให้อุปกรณ์เชื่อมต่อตำแหน่งสักครู่ แล้วกดใหม่อีกครั้ง`);
-      return false;
-    }
-
-    if (res.code === 1) {
-      alert("🛑 การทำรายการถูกระงับ!\n\nคุณเคยกด 'บล็อก' สิทธิ์ตำแหน่งในเบราว์เซอร์ไว้\n\n👉 วิธีแก้ไข:\n1. กดที่ไอคอนแม่กุญแจ 🔒 ด้านบนแถบ URL\n2. ตั้งค่า 'ตำแหน่ง (Location)' ให้เป็น 'อนุญาต (Allow)'\n3. รีเฟรชหน้าเว็บแล้วทำรายการใหม่อีกครั้ง");
-    } else {
-      if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛑 อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ (กรุณาเปิด GPS)", "error");
-    }
-    return false;
+   return true;
   }
-};
+};  // ✅ ต้องเป็น ; (เซมิโคลอน - จุดบนลูกน้ำล่าง) ครับ
 
 const Controller = {
   async initApp() {
@@ -2448,18 +2422,20 @@ function installHooks() {
       if (screenTitle) screenTitle.innerHTML = 'อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
     }
 
+    // 2. จุดใน installHooks (เติม }; ปิดฟังก์ชัน)
     if (verifyBtn) {
       verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
       verifyBtn.onclick = async function() {
         verifyBtn.disabled = true;
         verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบพิกัด...';
 
-        const res = await GPSForensic.getStrictPrecisionGPS(150, 8000);
-        if (res.status === 'SUCCESS') {
-          localStorage.setItem('fmh_gps_authorized', 'true');
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (อนุญาต GPS สำเร็จ)', AppState.currentUser?.email || 'admin', res);
-        } else {
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ปฏิเสธ GPS/ไม่เปิดสิทธิ์)', AppState.currentUser?.email || 'admin', null);
+        localStorage.setItem('fmh_gps_authorized', 'true');
+
+        try {
+          const res = await GPSForensic.getStrictPrecisionGPS(150, 5000);
+          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ยืนยันสิทธิ์สำเร็จ)', AppState.currentUser?.email || 'admin', res.status === 'SUCCESS' ? res : null);
+        } catch (e) {
+          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ผ่านด้วยสิทธิ์ยืนยัน)', AppState.currentUser?.email || 'admin', null);
         }
 
         if (screen) {
@@ -2478,7 +2454,7 @@ function installHooks() {
     } else {
       originalStartAdminPanel.apply(Controller, args);
     }
-  };
+  }; // 🟢 เติม }; ตรงนี้ครับ
 
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
