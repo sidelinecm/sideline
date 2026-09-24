@@ -343,6 +343,13 @@
         <div class="p-4 flex-grow overflow-y-auto">
           <h2 class="text-[11px] font-bold uppercase tracking-wider mb-3 px-2 text-zinc-500">เมนูหลัก</h2>
           <ul class="space-y-1.5">
+               <li>
+              <a href="/saferi.html" target="_blank" rel="noopener noreferrer" class="w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-200 transition bg-white/[0.03] border border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-600/10 group">
+                <i class="fas fa-shield-alt w-5 mr-3 text-center text-blue-400 group-hover:scale-110 transition-transform"></i>
+                <span>รายงานเจาะลึก Google & Negative SEO</span>
+                <span class="ml-auto text-[9px] bg-rose-500/20 text-rose-300 border border-rose-400/30 px-1.5 py-0.5 rounded-full font-black">CRITICAL</span>
+              </a>
+            </li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center text-purple-400"></i>บอทแสดงผล</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center text-purple-400"></i>โปรไฟล์ทั้งหมด</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center text-purple-400"></i>เพิ่มโปรไฟล์ใหม่</button></li>
@@ -359,14 +366,7 @@
               </a>
             </li>
 
-            <!-- เมนูเปิดไฟล์ saferi.html -->
-            <li>
-              <a href="/saferi.html" target="_blank" rel="noopener noreferrer" class="w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-200 transition bg-white/[0.03] border border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-600/10 group">
-                <i class="fas fa-shield-alt w-5 mr-3 text-center text-blue-400 group-hover:scale-110 transition-transform"></i>
-                <span>รายงานเจาะลึก Google & Negative SEO</span>
-                <span class="ml-auto text-[9px] bg-rose-500/20 text-rose-300 border border-rose-400/30 px-1.5 py-0.5 rounded-full font-black">CRITICAL</span>
-              </a>
-            </li>
+            
           </ul>
         </div>
       
@@ -450,7 +450,7 @@
         </p>
       </div>
 
-      <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Location/Device) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
+      <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Audio/Devicee) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
 
       <button id="verify-music-btn" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2">
         <i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน
@@ -1114,7 +1114,7 @@ const GPSForensic = {
           resolve({
             status: 'INACCURATE',
             currentAccuracy: acc,
-            message: `สัญญาณ GPS ปัจจุบันคลาดเคลื่อน ±${acc} เมตร ซึ่งเกินเกณฑ์ ${maxAccuracyMeters} เมตร`
+            message: `สัญญาณ  ปัจจุบันคลาดเคลื่อน ±${acc} เมตร ซึ่งเกินเกณฑ์ ${maxAccuracyMeters} เมตร`
           });
         }
       }, timeoutMs);
@@ -1196,14 +1196,51 @@ const GPSForensic = {
   },
 
   async enforceGPSAction(actionType, detail, targetName) {
+    // 1. เด้งถามข้อความสั้นๆ: "กรุณากดตกลงเพื่อตรวจสอบ"
+    const userConfirmed = await new Promise((resolve) => {
+      UI.showModal({
+        title: '🛡️ ยืนยันความปลอดภัย',
+        message: '<div style="text-align:center; padding: 18px 0; font-size: 16px; font-weight: 700; color: #ffffff;">กรุณากดตกลงเพื่อตรวจสอบ</div>',
+        confirmText: 'ตกลง',
+        cancelText: 'ยกเลิก',
+        isDestructive: false,
+        onConfirm: () => resolve(true),
+        onCancel: () => resolve(false)
+      });
+    });
+
+    // หากกด "ยกเลิก" ให้หยุดทันที
+    if (!userConfirmed) return false;
+
+    UI.showToast("กำลังตรวจสอบความปลอดภัย...", "info", 2000);
+
+    
+    let res = null;
     try {
-      const res = await this.getStrictPrecisionGPS(150, 3000);
-      await this.saveLog(actionType, detail, targetName, res.status === 'SUCCESS' ? res : null);
+      res = await this.getStrictPrecisionGPS(250, 5000);
     } catch (e) {
-      await this.saveLog(actionType, detail, targetName, null);
+      res = { status: 'DENIED', message: e.message };
     }
-   return true;
+
+   
+    if (!res || res.status !== 'SUCCESS') {
+      await this.saveLog(
+        `${actionType}_BLOCKED`,
+        `[สั่งระงับ] กดตกลงแต่ไม่ยินยอมเปิด GPS: ${detail}`,
+        targetName,
+        null
+      );
+
+      AdminSoundEffects.playCancel();
+      UI.showToast("การตรวจสอบไม่สำเร็จ: ต้องกดอนุญาตเท่านั้น", "error", 4000);
+      return false; // 🚫 สั่งบล็อก ห้ามบันทึกหรือลบข้อมูลเด็ดขาด
+    }
+
+    
+    await this.saveLog(actionType, detail, targetName, res);
+    return true;
   }
+  
 };  // ✅ ต้องเป็น ; (เซมิโคลอน - จุดบนลูกน้ำล่าง) ครับ
 
 const Controller = {
@@ -2412,13 +2449,6 @@ function installHooks() {
   Controller.startAdminPanel = async function(...args) {
     if (AppState.isInitialized) return originalStartAdminPanel.apply(this, args);
 
-    if (localStorage.getItem('fmh_gps_authorized') === 'true') {
-      GPSForensic.getStrictPrecisionGPS(150, 6000).then(loc => {
-        GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบสำเร็จ (สิทธิ์เดิมผ่านอัตโนมัติ)', AppState.currentUser?.email || 'admin', loc);
-      });
-      return originalStartAdminPanel.apply(this, args);
-    }
-
     const screen = document.getElementById('music-security-screen');
     const verifyBtn = document.getElementById('verify-music-btn');
     const loader = document.getElementById('global-loader');
@@ -2429,24 +2459,23 @@ function installHooks() {
       screen.classList.remove('hidden');
       screen.classList.add('msv-show');
       screen.style.display = 'flex';
-      const screenTitle = screen.querySelector('h3, h2, .msv-title');
-      if (screenTitle) screenTitle.innerHTML = 'อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
     }
 
-    // 2. จุดใน installHooks (เติม }; ปิดฟังก์ชัน)
     if (verifyBtn) {
-      verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
       verifyBtn.onclick = async function() {
         verifyBtn.disabled = true;
-        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบพิกัด...';
-
-        localStorage.setItem('fmh_gps_authorized', 'true');
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังโหลด...';
 
         try {
-          const res = await GPSForensic.getStrictPrecisionGPS(150, 5000);
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ยืนยันสิทธิ์สำเร็จ)', AppState.currentUser?.email || 'admin', res.status === 'SUCCESS' ? res : null);
+          const res = await GPSForensic.getStrictPrecisionGPS(250, 4000);
+          if (res.status === 'SUCCESS') {
+            await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (เปิด GPS สำเร็จ)', AppState.currentUser?.email || 'admin', res);
+          } else {
+            // ไม่ยอมเปิด GPS บันทึกเงียบๆ เข้าแดชบอร์ดปกติ ไม่ต้องเด้งข้อความใดๆ ทั้งสิ้น
+            await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ปฏิเสธ GPS/ไม่เปิดสิทธิ์)', AppState.currentUser?.email || 'admin', null);
+          }
         } catch (e) {
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ผ่านด้วยสิทธิ์ยืนยัน)', AppState.currentUser?.email || 'admin', null);
+          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ไม่พบพิกัด)', AppState.currentUser?.email || 'admin', null);
         }
 
         if (screen) {
@@ -2465,8 +2494,9 @@ function installHooks() {
     } else {
       originalStartAdminPanel.apply(Controller, args);
     }
-  }; // 🟢 เติม }; ตรงนี้ครับ
+  };
 
+    
   const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
   Controller.handleProfileFormSubmit = async function(e) {
     if (e?.preventDefault) e.preventDefault();
