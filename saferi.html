@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงานวิเคราะห์เชิงลึก: อัลกอริทึม Google และกลไก Negative SEO</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-page: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --border-color: #E2E8F0;
+      --border-dark: #CBD5E1;
+      
+      --text-title: #0F172A;
+      --text-body: #334155;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      
+      --primary: #0F172A;
+      --accent-blue: #0284C7;
+      --accent-emerald: #059669;
+      --accent-rose: #E11D48;
+      --accent-amber: #D97706;
+      
+      --font-th: 'IBM Plex Sans Thai', -apple-system, sans-serif;
+      --font-en: 'Inter', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-th);
+      font-size: 16px;
+      line-height: 1.85;
+      letter-spacing: -0.01em;
+      padding: 3rem 1.5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .document-wrapper {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* แถบนำทางกลับหน้าแรก / ย้อนกลับ */
+    .doc-nav-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .btn-nav-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: #F8FAFC;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .btn-nav-action:hover {
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      background: #F0F9FF;
+    }
+
+    /* Meta & Document Header */
+    .doc-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+      font-family: var(--font-en);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .doc-meta span.divider {
+      color: var(--border-dark);
+    }
+
+    h1.doc-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-title);
+      line-height: 1.35;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    p.doc-intro {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2.5rem;
+    }
+
+    /* Section Hierarchy */
+    .section-block {
+      margin-bottom: 3rem;
+    }
+
+    h2.section-heading {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-title);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    h2.section-heading span.num {
+      font-family: var(--font-en);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+
+    h3.sub-heading {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-title);
+      margin: 1.5rem 0 0.75rem 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Key Insights Box / Executive Summary */
+    .executive-summary {
+      background-color: #F8FAFC;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .executive-summary-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-title);
+      margin-bottom: 0.5rem;
+      font-family: var(--font-en);
+    }
+
+    ul.bullet-list {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    ul.bullet-list li {
+      margin-bottom: 0.5rem;
+      color: var(--text-body);
+    }
+
+    /* Clean Comparison Table */
+    .table-container {
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background-color: #F1F5F9;
+      color: var(--text-title);
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table.data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Section 3 Threat Matrix */
+    .section-block.featured-threats {
+      background: #FAFAFA;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 14px;
+      padding: 2rem 2rem 1.5rem 2rem;
+    }
+
+    .threat-card-refined {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .threat-card-refined.critical { border-top: 4px solid var(--accent-rose); }
+    .threat-card-refined.high { border-top: 4px solid var(--accent-amber); }
+    .threat-card-refined.structural { border-top: 4px solid var(--accent-blue); }
+
+    .threat-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .threat-heading-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-title);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .impact-callout {
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .impact-callout.red {
+      background-color: #FFF1F2;
+      border-left: 4px solid var(--accent-rose);
+      color: #881337;
+    }
+
+    .impact-callout.amber {
+      background-color: #FFFBEB;
+      border-left: 4px solid var(--accent-amber);
+      color: #78350F;
+    }
+
+    .impact-callout.blue {
+      background-color: #F0F9FF;
+      border-left: 4px solid var(--accent-blue);
+      color: #0C4A6E;
+    }
+
+    .note-block {
+      background-color: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+
+    .doc-footer {
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-family: var(--font-en);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem 0.5rem; }
+      .document-wrapper { padding: 2rem 1.25rem; }
+      .section-block.featured-threats { padding: 1.5rem 1rem; }
+      h1.doc-title { font-size: 1.6rem; }
+      .threat-title-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .doc-nav-top { flex-direction: column; align-items: stretch; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <article class="document-wrapper">
+    
+    <!-- แถบปุ่มนำทาง (เพิ่มใหม่) -->
+    <nav class="doc-nav-top" aria-label="แถบนำทาง">
+      <a href="/" class="btn-nav-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>กลับหน้าแรกเว็บไซต์</span>
+      </a>
+
+      <button type="button" onclick="if(window.opener || window.history.length <= 1){ window.close(); } else { window.history.back(); }" class="btn-nav-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>ย้อนกลับ / ปิดหน้านี้</span>
+      </button>
+    </nav>
+
+    <!-- Document Header -->
+    <header>
+      <div class="doc-meta">
+        <span>Engineering Analysis</span>
+        <span class="divider">/</span>
+        <span>SEO Architecture & Security</span>
+      </div>
+      <h1 class="doc-title">ถอดรหัสอัลกอริทึม Google และกลไก Negative SEO ยุคใหม่</h1>
+      <p class="doc-intro">
+        บทวิเคราะห์เจาะลึก 2 มิติสำคัญทางวิศวกรรมการค้นหา: ความเข้าใจผิดเรื่องขอบเขตอัลกอริทึม (Algorithmic Boundaries) และความจริงเกี่ยวกับความอยู่รอดของเว็บไซต์ต่อการโจมตีทาง SEO ในปัจจุบัน
+      </p>
+    </header>
+
+    <!-- Executive Summary Box -->
+    <div class="executive-summary">
+      <div class="executive-summary-title">Executive Summary</div>
+      <ul class="bullet-list" style="margin-bottom: 0;">
+        <li><strong>Google ไม่ได้ปล่อยผ่านเพราะอ่อนหัด:</strong> แต่ถูกจำกัดด้วยการป้องกัน False Positive ต่อธุรกิจถูกกฎหมาย และมุ่งเน้นความปลอดภัยจากมิจฉาชีพมากกว่าการตัดสินทางศีลธรรม</li>
+        <li><strong>การยิงสแปมลิงก์แบบเดิมไร้ผล:</strong> ระบบ SpamBrain ปัจจุบันใช้ระบบ Nullify (เพิกเฉยทิ้งเป็น 0) ไม่มีการหักคะแนนเว็บไซต์เป้าหมาย</li>
+        <li><strong>ภัยคุกคามจริงคือภายใน (UGC):</strong> ความเสี่ยงสูงสุดคือการถูกวางยาภาพล่อแหลมบนหน้าเว็บเพื่อเรียก SafeSearch Penalty ให้เข้ามาแบนโดเมน</li>
+      </ul>
+    </div>
+
+    <!-- Section 1 -->
+    <section class="section-block">
+      <h2 class="section-heading">
+        <span class="num">01.</span>
+        <span>ทำไม Google ถึงดูเหมือนปล่อยให้เว็บไซต์ทรงนี้ติดอันดับ?</span>
+      </h2>
+      
+      <p>
+        ข้อสังเกตที่ว่า Google มีความหย่อนยานหรือ “อ่อนหัด” ในการจัดอันดับเว็บไซต์สายงานนี้นั้น ในทางวิศวกรรมการค้นหาถือว่าไม่ถูกต้อง อัลกอริทึมไม่ได้ถูกหลอก แต่ระบบทำงานอยู่ภายใต้ <strong>ขอบเขตทางตรรกะ (Algorithmic Boundaries)</strong> ที่ถูกตั้งขึ้นอย่างมีเหตุผล 2 ข้อ:
+      </p>
+
+      <h3 class="sub-heading">1.1 ความเสี่ยงด้าน False Positive (การลงโทษผิดกลุ่ม)</h3>
+      <p>
+        หาก Google เลือกตัดสิทธิ์ทุกหน้าเว็บที่มีคำว่า <em>"ฟิวแฟน", "เพื่อนเที่ยว"</em> หรือหน้าที่มีรูปบุคคล อัลกอริทึมจะทำลายระบบค้นหาของธุรกิจบริการอื่นที่ถูกต้องตามกฎหมายไปด้วยทันที เช่น:
+      </p>
+      <ul class="bullet-list">
+        <li>ธุรกิจบริการเพื่อนร่วมเดินทาง ไกด์นำเที่ยวส่วนตัว หรือพี่เลี้ยงสันทนาการ</li>
+        <li>ธุรกิจแฟนเช่าตามกฎหมาย (เช่น โมเดล Rental Girlfriend ในประเทศญี่ปุ่น)</li>
+        <li>แพลตฟอร์มจัดหานักแสดง นางแบบ พริตตี้ หรือพิธีกรงานอีเวนต์</li>
+      </ul>
+      <p>
+        อัลกอริทึมจึงถูกสั่งให้ยึด <strong>"หลักฐานเชิงประจักษ์ (Hard Evidence)"</strong> ตราบใดที่หน้าเว็บไม่มีภาพลามกอนาจารโจ่งแจ้งผ่านเกณฑ์ของ Vision AI และไม่มีคีย์เวิร์ดที่ขัดต่อกฎหมายสากล Google มีหน้าที่ต้องแสดงผลลัพธ์ที่ตรงกับเจตนาค้นหา (Search Intent) ของผู้ใช้
+      </p>
+
+      <h3 class="sub-heading">1.2 ให้ความสำคัญต่อ "การป้องกันมิจฉาชีพ" มากกว่าการตัดสินทางศีลธรรม</h3>
+      <p>
+        เป้าหมายสูงสุดของ Google Search คือการส่งผู้ใช้งานไปยังผลลัพธ์ที่มีความเสี่ยงต่ำที่สุด ในคำค้นหากลุ่มเสี่ยงสูง ปัญหาใหญ่ที่สุดของผู้ใช้คือ <strong>"การถูกหลอกให้โอนเงินมัดจำล่วงหน้าแล้วปิดช่องทางติดต่อ"</strong>
+      </p>
+      <p>
+        เมื่อเว็บไซต์ถูกออกแบบระบบให้ไม่มีมัลแวร์ ไม่ดักจับข้อมูล (Clean Code) และมีข้อความระบุชัดเจนว่า <em>"เจอตัวจริง ตรวจสอบความตรงปก แล้วจึงชำระเงินหน้างาน"</em> อัลกอริทึมอย่าง <strong>NavBoost</strong> จะมองว่าเว็บนี้ช่วยลดความเสี่ยงจากการถูกฉ้อโกงของผู้ใช้ได้ดีที่สุดในกลุ่มคำค้นหาดังกล่าว จึงให้คะแนนความพึงพอใจและดันอันดับขึ้นมา
+      </p>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="section-block">
+      <h2 class="section-heading">
+        <span class="num">02.</span>
+        <span>Negative SEO ด้วยการยิงสแปมลิงก์ ยังได้ผลอยู่หรือไม่?</span>
+      </h2>
+      
+      <p>
+        ในอดีต (ก่อนปี 2020) การส่ง Backlinks คุณภาพต่ำ เช่น ลิงก์จากเว็บโป๊ เว็บพนัน หรือฟาร์มลิงก์รัสเซีย ในปริมาณมหาศาล เคยกระตุ้นให้อัลกอริทึม Google Penguin ลงโทษเว็บไซต์คู่แข่งได้จริง <strong>แต่ปัจจุบันพฤติกรรมของอัลกอริทึมเปลี่ยนไปอย่างสิ้นเชิง</strong>
+      </p>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">มิติ</th>
+              <th style="width: 37%;">ยุคอดีต (Penguin Era)</th>
+              <th style="width: 38%;">ยุคปัจจุบัน (SpamBrain AI)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>พฤติกรรมระบบ</strong></td>
+              <td>หักคะแนนความน่าเชื่อถือเมื่อพบลิงก์ผิดปกติ</td>
+              <td><strong>เพิกเฉย (Nullify / Ignore)</strong> โดยไม่นำมาคิดคะแนน</td>
+            </tr>
+            <tr>
+              <td><strong>ผลกระทบต่อเป้าหมาย</strong></td>
+              <td>อันดับร่วงลง หรือโดนใบเหลือง (Manual Action)</td>
+              <td><strong>แทบไม่มีผลกระทบ</strong> อันดับคงเดิม</td>
+            </tr>
+            <tr>
+              <td><strong>ผลลัพธ์ของผู้โจมตี</strong></td>
+              <td>ล้มคู่แข่งได้สำเร็จ</td>
+              <td>เสียต้นทุนค่าเครื่องมือและเวลาไปโดยเปล่าประโยชน์</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Google ตระหนักดีว่าเจ้าของเว็บไซต์ไม่สามารถควบคุมได้ว่าใครจะสร้างลิงก์มาหาตนเอง อัลกอริทึม <strong>SpamBrain</strong> จึงปรับมาใช้หลักการตัดค่าคะแนนของลิงก์ต้องสงสัยให้มีค่าเท่ากับศูนย์โดยอัตโนมัติ ทำให้การโจมตีประเภท Link-blasting ขยะ ทำร้ายเว็บที่มีโครงสร้างแข็งแรงไม่ได้อีกต่อไป
+      </p>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="section-block featured-threats">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+        <span style="display: inline-flex; align-items: center; gap: 6px; background: #FEE2E2; border: 1px solid #FECACA; color: #991B1B; font-size: 0.8rem; font-weight: 700; font-family: var(--font-en); padding: 4px 12px; border-radius: 9999px; text-transform: uppercase;">
+          CRITICAL THREAT MATRIX
+        </span>
+        <span style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-en); font-weight: 500;">
+          Status: Real-World Vulnerability Audit
+        </span>
+      </div>
+
+      <h2 class="section-heading" style="margin-bottom: 0.5rem; font-size: 1.45rem;">
+        <span class="num">03.</span>
+        <span>3 รูปแบบ Negative SEO ใต้ดินที่ "อันตรายและล้มแชมป์ได้จริง"</span>
+      </h2>
+      
+      <p style="color: var(--text-muted); margin-bottom: 1.75rem; font-size: 1rem;">
+        หากเว็บไซต์ที่ขึ้นเป็นเบอร์ 1 จะสูญเสียอันดับ ความเสียหายจะไม่ได้เกิดจากการถูกยิงลิงก์สแปมภายนอก (ซึ่ง SpamBrain ตัดทิ้งได้) แต่จะมาจาก <strong>3 ยุทธวิธีใต้ดินระดับสูง</strong> ที่เจาะจงเล่นงานจุดเปราะบางภายในระบบโดยตรง:
+      </p>
+
+      <!-- Threat 1 -->
+      <div class="threat-card-refined critical">
+        <div class="threat-title-row">
+          <div class="threat-heading-text">
+            <span style="background: #FFE4E6; color: #E11D48; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 16px;">01</span>
+            <span>UGC Poisoning & ช่องโหว่ "หลังบ้านตรวจไม่ทัน"</span>
+          </div>
+          <span style="font-family: var(--font-en); font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: #FFE4E6; color: #9F1239; border: 1px solid #FDA4AF; text-transform: uppercase;">
+            ความเสี่ยงระดับวิกฤต (Critical 9.9/10)
+          </span>
+        </div>
+
+        <p style="font-size: 0.98rem; line-height: 1.8; margin-bottom: 1rem;">
+          กรณีที่แพลตฟอร์มเปิดให้ผู้ใช้หรือผู้รับงานสมัครและอัปโหลดภาพได้เอง คู่แข่งจะส่งบัญชีปลอมเข้ามา <strong>"จงใจอัปโหลดภาพที่มีสรีระวาบหวามสูงเกินเกณฑ์ความปลอดภัยของ Google"</strong> เพื่อฝังระเบิดเวลาไว้บนหน้าเว็บ
+        </p>
+
+        <div style="background: #FFF5F5; border: 1px solid #FECACA; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem;">
+          <div style="font-weight: 700; color: #991B1B; font-size: 0.95rem; margin-bottom: 0.5rem;">
+            ⚠️ ไทม์ไลน์หายนะเมื่อหลังบ้านตรวจไม่ทัน (The Moderation Bottleneck):
+          </div>
+          <ul class="bullet-list" style="margin-bottom: 0; padding-left: 1.25rem; color: #7F1D1D; font-size: 0.92rem;">
+            <li><strong>ช่องว่างเวลาทอง (Exposure Window):</strong> เพียงปล่อยภาพหลุดขึ้นหน้าเว็บสด 1–2 ชั่วโมง Googlebot-Image จะดูดภาพเข้า Vision AI ทันทีโดยไม่รอรอบอนุมัติของแอดมิน</li>
+            <li><strong>การลงโทษที่ไม่สมมาตร (Recovery Lag):</strong> การติด Flag ใช้เวลาเพียงไม่กี่ชั่วโมง แต่อัลกอริทึม SafeSearch จะ <strong>"แช่แข็งการฟื้นฟู 14–30 วัน"</strong> แม้คุณจะลบภาพทิ้งใน 5 นาทีถัดมา อันดับก็ไม่กลับมาทันที</li>
+            <li><strong>พังทั้งโฟลเดอร์ (Folder Contamination):</strong> ภาพผิดเกณฑ์เพียง 1 รูปบนหน้ารวมจังหวัด จะลากคะแนนความปลอดภัยของ Landing Page ทั้งหน้านั้นให้ร่วงลงไปด้วยพร้อมกัน</li>
+          </ul>
+        </div>
+
+        <div class="impact-callout red">
+          <strong style="color: #9F1239; font-family: var(--font-en); text-transform: uppercase;">[ ผลกระทบชี้ขาด ]:</strong>
+          <span style="margin-left: 6px;">อันดับหายจากหน้า 1 ของโหมดค้นหาปกติ <strong>100%</strong> ทันที ทราฟฟิกธรรมชาติหาย 70–80% กลายเป็นเว็บล่องหนสำหรับผู้ใช้งานทั่วไป</span>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.92rem; margin-top: 1rem;">
+          <strong style="color: #0F172A;">🛠️ ทางออกเชิงระบบ (ไม่ต้องเพิ่มคนตรวจ):</strong>
+          <span style="color: #334155;"> ปิดระบบ "โพสต์สดทันที" แล้วใช้ <strong>Zero-Trust Quarantine</strong> โดยภาพที่ยังไม่อนุมัติ บังคับให้แสดงผลผ่านคำสั่ง Cloudinary <code>c_thumb,g_face</code> (ตัดเฉพาะใบหน้าท่อนบนอัตโนมัติ) เพื่อให้ Google Vision AI สแกนผ่าน 100% เสมอ</span>
+        </div>
+      </div>
+
+      <!-- Threat 2 -->
+      <div class="threat-card-refined high">
+        <div class="threat-title-row">
+          <div class="threat-heading-text">
+            <span style="background: #FEF3C7; color: #D97706; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 16px;">02</span>
+            <span>Anchor Text Contamination (การปนเปื้อนคำต้องห้ามร้ายแรง)</span>
+          </div>
+          <span style="font-family: var(--font-en); font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; text-transform: uppercase;">
+            ความเสี่ยงสูง (High Risk 8.5/10)
+          </span>
+        </div>
+
+        <p style="font-size: 0.98rem; line-height: 1.8; margin-bottom: 1rem;">
+          แม้ SpamBrain จะสามารถตัดลิงก์สแปมเว็บพนันหรือฟาร์มลิงก์ทั่วไปทิ้งได้ (Nullify) แต่หากคู่แข่งเปลี่ยนแผน โดยการ <strong>"ระดมยิง Anchor Text ที่เป็นคีย์เวิร์ดละเมิดกฎหมายสากลอย่างรุนแรง"</strong> พุ่งตรงมายังหน้าเป้าหมาย
+        </p>
+
+        <ul class="bullet-list" style="margin-bottom: 1rem; font-size: 0.93rem;">
+          <li><strong>ทำไม SpamBrain ถึงไม่ตัดทิ้งเฉยๆ:</strong> คำค้นหาที่มีความอ่อนไหวสูงมากจะถูกส่งเข้า <em>Security & Legal Protocol</em> ของ Google แทนระบบสแปมปกติ</li>
+          <li><strong>กลไกการแช่แข็ง (Algorithmic Freeze):</strong> ระบบความปลอดภัยจะระงับการจัดอันดับของหน้าเว็บนั้นชั่วคราวเพื่อประเมินว่า เว็บไซต์มีส่วนพัวพันกับพฤติกรรมผิดกฎหมายร้ายแรงหรือไม่</li>
+        </ul>
+
+        <div class="impact-callout amber">
+          <strong style="color: #92400E; font-family: var(--font-en); text-transform: uppercase;">[ ผลกระทบชี้ขาด ]:</strong>
+          <span style="margin-left: 6px;">หน้า Landing Page เป้าหมายถูก <strong>"แช่แข็งการแสดงผล (Security Review Freeze)"</strong> หลุดจากกระดานทันทีจนกว่าระบบจะตรวจสอบเสร็จสิ้น</span>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.92rem; margin-top: 1rem;">
+          <strong style="color: #0F172A;">🛠️ มาตรการป้องกัน:</strong>
+          <span style="color: #334155;"> ติดตั้งระบบเฝ้าระวังโปรไฟล์แบคลิงก์ผ่าน Google Search Console และ Ahrefs/Semrush รายสัปดาห์ หากพบคลัสเตอร์ Anchor ผิดปกติให้เตรียมใช้ <strong>Disavow Tool</strong> ตัดวงจรทันที</span>
+        </div>
+      </div>
+
+      <!-- Threat 3 -->
+      <div class="threat-card-refined structural" style="margin-bottom: 0;">
+        <div class="threat-title-row">
+          <div class="threat-heading-text">
+            <span style="background: #E0F2FE; color: #0284C7; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 16px;">03</span>
+            <span>Manual Action Targeted Strike (การร้องเรียนทีมตรวจสอบมนุษย์)</span>
+          </div>
+          <span style="font-family: var(--font-en); font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; text-transform: uppercase;">
+            ความเสี่ยงเชิงโครงสร้าง (Structural 9.0/10)
+          </span>
+        </div>
+
+        <p style="font-size: 0.98rem; line-height: 1.8; margin-bottom: 1rem;">
+          ยุทธวิธีที่อันตรายที่สุดต่อเว็บที่พรางตัวเก่ง คือการที่คู่แข่ง <strong>"รวบรวมหลักฐานพฤติกรรมจริงแล้วยื่นคำร้องต่อทีม Google Webspam Manual Review"</strong> เพื่อบังคับให้เจ้าหน้าที่ที่เป็นมนุษย์เข้ามาตรวจสอบแทนการพึ่งพา AI
+        </p>
+
+        <ul class="bullet-list" style="margin-bottom: 1rem; font-size: 0.93rem;">
+          <li><strong>ทำไมมนุษย์ถึงอันตรายกว่าบอท:</strong> อัลกอริทึมของ Google อ่านแค่โค้ดและรูปพรีวิว แต่เจ้าหน้าที่มนุษย์สามารถ <em>"คลิกลิงก์ไลน์, ตรวจสอบข้อความแชท, และอ่านเจตนาแอบแฝง"</em> ออกทั้งหมด</li>
+          <li><strong>การทะลวงเกราะ Semantic Camouflage:</strong> การพรางคำว่า "เพื่อนเที่ยว/ฟิวแฟน" จะไร้ความหมายทันทีเมื่อมนุษย์ตรวจสอบพบว่าบริการจริงขัดต่อนโยบาย Google Search Console</li>
+        </ul>
+
+        <div class="impact-callout blue">
+          <strong style="color: #075985; font-family: var(--font-en); text-transform: uppercase;">[ ผลกระทบชี้ขาด ]:</strong>
+          <span style="margin-left: 6px;">ถูกลงโทษด้วย <strong>Manual Action (ใบแดงถอดทั้งโดเมน)</strong> โดเมนหลุดออกจาก Google ทั้งหมด และไม่สามารถยื่นอุทธรณ์กลับมาได้ง่ายๆ</span>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.92rem; margin-top: 1rem;">
+          <strong style="color: #0F172A;">🛠️ มาตรการป้องกัน:</strong>
+          <span style="color: #334155;"> วางโครงสร้าง <strong>Plausible Deniability</strong> ให้รัดกุมที่สุด ทำหน้า Terms of Service และ Anti-Scam Policy ให้ชัดเจน และต้องไม่มีคอนเทนต์หรือข้อความโจ่งแจ้งที่ผูกมัดตัวตนบนหน้าเพจสาธารณะเด็ดขาด</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="section-block" style="margin-bottom: 0; margin-top: 3rem;">
+      <h2 class="section-heading">
+        <span class="num">04.</span>
+        <span>บทสรุปเชิงยุทธศาสตร์ & กฎเหล็กการรักษาแชมป์</span>
+      </h2>
+
+      <div style="background: #0F172A; color: #F8FAFC; border-radius: 12px; padding: 1.75rem 2rem; margin-bottom: 1.75rem; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-blue); font-family: var(--font-en); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem;">
+          THE GOLDEN RULE OF GREY-NICHE SEO
+        </div>
+        <p style="font-size: 1.15rem; font-weight: 500; line-height: 1.7; margin-bottom: 0.75rem; color: #FFFFFF;">
+          "Google ยุคนี้ไม่ได้แบนศีลธรรม แต่แบนความประมาทเลินเล่อ — ความอยู่รอดของเบอร์ 1 ไม่ได้ขึ้นอยู่กับการหลอกบอท แต่ขึ้นอยู่กับความมีวินัยในการคุมความสะอาดของระบบ"
+        </p>
+        <p style="font-size: 0.92rem; color: #94A3B8; margin-bottom: 0;">
+          ตราบใดที่โครงสร้างทางเทคนิคสะอาด มีระบบกันมิจฉาชีพ และไม่ทำรูปหลุดเกณฑ์ SafeSearch อัลกอริทึมจะปกป้องอันดับของคุณไว้เอง
+        </p>
+      </div>
+
+      <div class="note-block" style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin-bottom: 0.85rem;">
+          📋 เช็กลิสต์ 3 มาตรการป้องกันหลังบ้านพัง (Defense Playbook):
+        </h3>
+        
+        <div style="display: grid; gap: 1rem;">
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="background: #E2E8F0; color: #0F172A; font-weight: 700; font-size: 0.85rem; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">1</span>
+            <div>
+              <strong style="color: var(--text-title);">เปลี่ยนจาก "โพสต์ก่อน-ตรวจทีหลัง" เป็น "กักกันก่อนขึ้นเว็บ":</strong>
+              <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 0;">รูปทุกรูปต้องผ่านตัวกรอง AI ครอปเฉพาะใบหน้า (Face-Crop) ทันทีตั้งแต่ตอนอัปโหลด เพื่อให้ Googlebot-Image มองเห็นเฉพาะส่วนที่ปลอดภัยเสมอ ไม่ว่าหลังบ้านจะตรวจช้าแค่ไหน</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="background: #E2E8F0; color: #0F172A; font-weight: 700; font-size: 0.85rem; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">2</span>
+            <div>
+              <strong style="color: var(--text-title);">ไม่ต้องกลัวสแปมลิงก์ขยะ แต่ให้กลัวคำต้องห้ามร้ายแรง:</strong>
+              <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 0;">SpamBrain ช่วยตัดคะแนนลิงก์ขยะทิ้งให้ฟรี ไม่ต้องกังวลเรื่องลิงก์รัสเซียหรือเว็บพนัน แต่ต้องคอยมอนิเตอร์ Search Console เสมอเพื่อดักจับ Anchor Text ต้องห้ามระดับสากล</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="background: #E2E8F0; color: #0F172A; font-weight: 700; font-size: 0.85rem; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">3</span>
+            <div>
+              <strong style="color: var(--text-title);">รักษาหัวใจ NavBoost (นโยบายจ่ายหน้างาน):</strong>
+              <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 0;">ชูนโยบาย "นัดเจอจ่ายหน้างาน ปลอดภัย 100%" ไว้บนจุดเด่นที่สุดของหน้าเว็บเสมอ เพราะสัญญาณนี้ทำให้คนไม่กดปุ่ม Back หนีออกจากเว็บ และเป็นแรงขับเคลื่อนหลักที่ดันเว็บขึ้นสู่อันดับ 1 ตัวจริง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Document Footer -->
+    <footer class="doc-footer">
+      <span>Security & SEO Intelligence Report</span>
+      <a href="/" style="color: var(--accent-blue); text-decoration: none; font-weight: 600; font-family: var(--font-th);">← กลับสู่หน้าแรกเว็บไซต์</a>
+    </footer>
+
+  </article>
+
+</body>
+</html>
