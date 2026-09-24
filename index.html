@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th" data-theme="dark">
 <head>
@@ -17,14 +16,17 @@
   <link rel="shortcut icon" href="/images/favicon.ico">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
   
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-  /* Critical CSS */
   html, body {
     height: 100%; margin: 0; padding: 0;
     font-family: 'Sarabun', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
   
-  /* THEME "Lavender Dusk & S-Tier Royal Purple" */
   :root {
     --color-primary: 90 44 190;
     --color-text-main: #2E2E2E;
@@ -152,22 +154,158 @@
     border-top-color: rgb(var(--color-primary));
     border-radius: 50%; animation: spin 1s linear infinite;
   }
+
+  #music-security-screen {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(7,4,16,.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    opacity: 0; pointer-events: none; transition: opacity .45s ease;
+    overflow-y: auto; padding: 24px 16px;
+  }
+  #music-security-screen.msv-show { opacity: 1; pointer-events: auto; }
+  #music-security-screen > div { animation: msv-rise .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes msv-rise { from { transform: translateY(26px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes msv-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+  .msv-shake { animation: msv-shake .45s ease; }
+
+  #cropper-modal {
+    position: fixed; inset: 0; z-index: 10003;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+    padding: 20px;
+  }
+  #cropper-modal.hidden { display: none; }
+
+  #admin-assistive-root {
+    position: fixed; bottom: 90px; right: 20px; z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #admin-assistive-root:hover { transform: scale(1.08); }
+  .assistive-btn {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 26px; cursor: pointer;
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+    position: relative; border: 2px solid rgba(255,255,255,0.25);
+  }
+  .playing-pulse { animation: luxuryPulse 2s infinite ease-in-out; }
+  @keyframes luxuryPulse {
+    0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6), 0 0 35px rgba(236, 72, 153, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.9), 0 0 55px rgba(236, 72, 153, 0.8); }
+    100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6), 0 0 35px rgba(236, 72, 153, 0.4); }
+  }
+
+  .control-center-panel {
+    position: fixed; bottom: 100px; right: 20px; width: 375px; max-width: calc(100vw - 40px);
+    background: rgba(12, 9, 26, 0.92); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(192, 132, 252, 0.25); border-radius: 28px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.2);
+    padding: 20px; display: none; flex-direction: column; z-index: 9999;
+    font-family: 'Sarabun', system-ui, sans-serif; color: #f3f4f6;
+    animation: panelPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes panelPop {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .control-center-panel.active { display: flex; }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .audio-badge {
+    font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 99px;
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+    color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); letter-spacing: 0.8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .close-btn {
+    cursor: pointer; color: #9ca3af; width: 28px; height: 28px; display: flex;
+    align-items: center; justify-content: center; background: rgba(255,255,255,0.06);
+    border-radius: 50%; transition: all 0.2s;
+  }
+  .close-btn:hover { color: #fff; background: rgba(255,255,255,0.2); transform: rotate(90deg); }
+  .tab-bar { display: flex; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 14px; gap: 4px; margin-bottom: 14px; }
+  .tab-btn {
+    flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    background: transparent; border: none; border-radius: 10px; color: #9ca3af; cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.6), rgba(192, 132, 252, 0.3));
+    color: #ffffff; box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3); border: 1px solid rgba(192, 132, 252, 0.3);
+  }
+  .dsp-preset-container { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: none; margin-bottom: 8px; }
+  .dsp-preset-container::-webkit-scrollbar { display: none; }
+  .preset-chip {
+    flex-shrink: 0; padding: 5px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1); font-size: 10px; font-weight: 700; color: #c084fc;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px;
+  }
+  .preset-chip.active {
+    background: linear-gradient(90deg, #9333ea, #c084fc); color: white; border-color: #e9d5ff;
+    box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
+  }
+  .music-cover {
+    width: 96px; height: 96px; margin: 4px auto 8px; border-radius: 50%; overflow: hidden;
+    position: relative; border: 3px solid rgba(192, 132, 252, 0.4);
+    box-shadow: 0 0 30px rgba(147, 51, 234, 0.45); transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .music-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .music-cover.spinning img { animation: spinCD 12s linear infinite; }
+  @keyframes spinCD { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .music-cover::after {
+    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 20px; height: 20px; background: #090514; border: 3px solid rgba(255,255,255,0.4); border-radius: 50%;
+  }
+  .visualizer-container {
+    width: 100%; height: 56px; background: rgba(0, 0, 0, 0.4); border-radius: 14px;
+    overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.08); position: relative;
+  }
+  #audio-visualizer { width: 100%; height: 100%; display: block; }
+  .player-timeline { display: flex; align-items: center; gap: 8px; font-size: 10px; color: #a8a0b5; margin-bottom: 8px; font-weight: 600; }
+  .custom-range { flex-grow: 1; -webkit-appearance: none; appearance: none; height: 5px; border-radius: 5px; background: rgba(255, 255, 255, 0.12); outline: none; cursor: pointer; }
+  .custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: #c084fc; box-shadow: 0 0 10px #c084fc; cursor: pointer;
+  }
+  .player-btn-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+  .control-icon-btn { background: none; border: none; color: #e5e7eb; font-size: 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .control-icon-btn:hover { color: #c084fc; transform: scale(1.15); }
+  .play-pause-circle {
+    width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #9333ea, #ec4899);
+    color: white; font-size: 18px; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.5); border: 1px solid rgba(255,255,255,0.3);
+  }
+  .media-input-box {
+    display: flex; gap: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px; padding: 3px 6px 3px 12px; margin-bottom: 10px; transition: all 0.2s;
+  }
+  .media-input-box:focus-within { border-color: #c084fc; box-shadow: 0 0 12px rgba(192, 132, 252, 0.3); background: rgba(255,255,255,0.08); }
+  .media-input-clean { flex-grow: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #fff; font-family: inherit; }
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .action-btn {
+    padding: 9px 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e5e7eb; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .action-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: translateY(-1px); }
+  .action-btn-primary { background: linear-gradient(135deg, #9333ea, #c084fc); border: none; color: #fff; }
+  .action-btn-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+  #video-display-area {
+    display: none; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px;
+    overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  }
+  .playlist-view { display: flex; flex-direction: column; gap: 6px; max-height: 270px; overflow-y: auto; }
+  .playlist-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .playlist-item:hover, .playlist-item.active-item { background: rgba(147, 51, 234, 0.25); border-color: rgba(192, 132, 252, 0.5); }
+  .playlist-title { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .playlist-type { font-size: 9px; color: #c084fc; text-transform: uppercase; font-weight: 600; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
 </style>
-
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Vidstack Player -->
-<link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
-<link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
-<script type="module" src="https://cdn.vidstack.io/player"></script>
-
 </head>
 <body>
   <div id="app-wrapper">
-    <!-- Global Loader -->
     <div class="fixed inset-0 flex flex-col items-center justify-center z-[9999]" id="global-loader" style="background-color: #07070a;">
       <div class="loader-lg"></div>
       <p class="mt-4 text-base font-bold text-purple-300" id="loader-text">กำลังเตรียมระบบ First Model Hub...</p>
@@ -176,7 +314,6 @@
     <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10001;"></div>
     <div id="modal-root"></div>
     
-    <!-- Login Container -->
     <div class="hidden min-h-screen flex items-center justify-center p-4" id="login-container">
       <div class="max-w-md w-full p-8 card-surface">
         <div class="text-center mb-8">
@@ -192,13 +329,9 @@
       </div>
     </div>
     
-    <!-- Admin Content Wrapper -->
     <div class="hidden" id="admin-content">
-      
-      <!-- Backdrop Overlay -->
       <div id="sidebar-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
 
-      <!-- Sidebar Navigation -->
       <aside class="fixed top-0 left-0 h-full w-64 shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 bg-[#0c081d] border-r border-white/10 flex flex-col" id="sidebar">
         <div class="p-5 border-b border-white/10 flex items-center justify-between">
           <div class="kissmodel-logo">First Model Hub<span class="star">🌟</span></div>
@@ -251,7 +384,6 @@
         </div>
       </aside>
       
-<!-- Header Bar -->
       <header class="lg:pl-64 sticky top-0 z-30 bg-[#070410]/90 backdrop-blur-md border-b border-white/10" id="header">
         <div class="p-4 flex justify-between items-center max-w-7xl mx-auto">
           <div class="flex items-center gap-3">
@@ -262,7 +394,6 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <!-- ปุ่มสลับธีม -->
             <button id="theme-toggle" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white transition active:scale-95 flex items-center gap-1.5">
               <i class="fas fa-moon text-purple-400"></i> <span>สลับธีม</span>
             </button>
@@ -270,7 +401,6 @@
         </div>
       </header>
       
-      <!-- Main Content View Area -->
       <main class="p-4 sm:p-6 lg:p-8 lg:ml-64 max-w-7xl">
         <div class="flex justify-between items-center mb-6">
           <h1 class="text-2xl sm:text-3xl font-bold dashboard-title" id="view-title">First Model Hub<span class="star">🌟</span></h1>
@@ -284,552 +414,174 @@
     </div>
   </div>
 
-<style>
-  #music-security-screen{
-    position:fixed; inset:0; z-index:99999;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(7,4,16,.95); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-    opacity:0; pointer-events:none; transition:opacity .45s ease;
-    overflow-y:auto; padding:24px 16px;           /* จอเล็กเนื้อหาล้นก็ scroll ได้ */
-  }
-  #music-security-screen.msv-show{opacity:1; pointer-events:auto;}
-  #music-security-screen > div{animation:msv-rise .5s cubic-bezier(.16,1,.3,1) both;}
-  @keyframes msv-rise{from{transform:translateY(26px) scale(.97);opacity:0}to{transform:none;opacity:1}}
-  @keyframes msv-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-  .msv-shake{animation:msv-shake .45s ease;}
-</style>
+  <div id="music-security-screen" class="hidden font-sans">
+    <div id="msv-card" class="max-w-md w-full px-8 py-10 bg-zinc-950/80 border border-purple-500/30 rounded-3xl shadow-[0_0_40px_rgba(147,51,234,0.15)] relative overflow-hidden text-center my-auto">
+      <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-40 h-40 bg-purple-600/30 rounded-full blur-[50px] pointer-events-none"></div>
 
-<div id="music-security-screen" class="hidden font-sans">
-  <div id="msv-card" class="max-w-md w-full px-8 py-10 bg-zinc-950/80 border border-purple-500/30 rounded-3xl shadow-[0_0_40px_rgba(147,51,234,0.15)] relative overflow-hidden text-center my-auto">
-
-    <!-- แสงตกแต่งพื้นหลัง -->
-    <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-40 h-40 bg-purple-600/30 rounded-full blur-[50px] pointer-events-none"></div>
-
-    <!-- ไอคอนเครื่องเล่นเพลง -->
-    <div class="mb-6 flex justify-center relative">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 p-1 animate-[spin_10s_linear_infinite]">
-        <div class="w-full h-full bg-zinc-950 rounded-full flex items-center justify-center border-4 border-zinc-900">
-          <i class="fas fa-music text-2xl text-purple-400"></i>
+      <div class="mb-6 flex justify-center relative">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 p-1 animate-[spin_10s_linear_infinite]">
+          <div class="w-full h-full bg-zinc-950 rounded-full flex items-center justify-center border-4 border-zinc-900">
+            <i class="fas fa-music text-2xl text-purple-400"></i>
+          </div>
+        </div>
+        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 border-2 border-zinc-950 rounded-full flex items-center justify-center">
+          <i class="fas fa-shield-alt text-white text-xs"></i>
         </div>
       </div>
-      <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 border-2 border-zinc-950 rounded-full flex items-center justify-center">
-        <i class="fas fa-shield-alt text-white text-xs"></i>
+
+      <h2 class="text-xl font-extrabold text-white mb-2">Kissmodel Audio System</h2>
+      <p class="text-sm text-purple-300 font-bold mb-6">ระบบตรวจสอบความปลอดภัยการเข้าใช้งาน</p>
+
+      <div class="bg-purple-950/30 border border-purple-500/20 rounded-xl p-4 mb-8">
+        <p class="text-xs text-zinc-300 leading-relaxed">
+          เพื่อประสิทธิภาพสูงสุดในการสตรีมมิ่ง <strong>Hi-Fi Studio Master</strong> และป้องกันการดึงสัญญาณจากอุปกรณ์ที่ไม่ได้รับอนุญาต
+          กรุณากดยืนยันเพื่อตรวจสอบความปลอดภัยก่อนเข้าใช้งาน
+        </p>
+      </div>
+
+      <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Location/Device) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
+
+      <button id="verify-music-btn" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2">
+        <i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน
+      </button>
+
+      <div id="music-error-msg" class="hidden mt-4 text-xs text-red-400 font-bold bg-red-950/30 border border-red-500/20 py-2.5 px-3 rounded-lg leading-relaxed">
+        <i class="fas fa-exclamation-circle"></i> การยืนยันล้มเหลว: กรุณากด "อนุญาต" เพื่อเข้าใช้งาน
+      </div>
+    </div>
+  </div>
+
+  <div id="cropper-modal" class="hidden">
+    <div id="cropper-box" class="card-surface bg-zinc-950 text-white border border-white/10 p-6 rounded-2xl max-w-lg w-full text-center">
+      <h3 class="text-lg font-semibold mb-2">ครอปรูปภาพให้ตรงสัดส่วน</h3>
+      <canvas id="crop-canvas" class="max-w-full mx-auto rounded-lg bg-black"></canvas>
+      <div class="flex flex-wrap gap-2 mt-4 justify-center">
+        <button class="btn-primary text-xs" data-aspect="1">1:1</button>
+        <button class="btn-primary text-xs" data-aspect="0.75">3:4 (แนะนำ)</button>
+        <button class="btn-primary text-xs" data-aspect="1.7777777778">16:9</button>
+        <button id="crop-apply" class="btn-primary bg-purple-600 hover:bg-purple-700 text-xs">ใช้รูปภาพนี้</button>
+        <button id="crop-cancel" class="btn-primary bg-zinc-800 hover:bg-zinc-700 text-xs">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-assistive-root">
+    <div class="assistive-btn" id="assistive-main-btn">
+      <i class="fas fa-compact-disc"></i>
+    </div>
+  </div>
+
+  <div class="control-center-panel" id="admin-control-panel">
+    <div class="panel-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 0.5px;">Hi-Fi Studio Master</span>
+        <span class="audio-badge" id="hud-mode-badge"><i class="fas fa-microchip"></i> AI MASTER</span>
+      </div>
+      <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="AdminOS.switchTab('player')">ผู้เล่น</button>
+      <button class="tab-btn" onclick="AdminOS.switchTab('search')">ค้นหาออนไลน์</button>
+      <button class="tab-btn" onclick="AdminOS.switchTab('playlist')">คลังเพลง</button>
+    </div>
+
+    <div id="tab-player" class="tab-pane active">
+      <div class="dsp-preset-container">
+        <div class="preset-chip active" onclick="AudioEngine.setPreset('ai')">🌟 AI Auto-Master</div>
+        <div class="preset-chip" onclick="AudioEngine.setPreset('bass')">🔥 Bass Titan</div>
+        <div class="preset-chip" onclick="AudioEngine.setPreset('vocal')">🎙️ Pure Vocal</div>
+        <div class="preset-chip" onclick="AudioEngine.setPreset('spatial')">🌌 3D Dolby Stage</div>
+        <div class="preset-chip" onclick="AudioEngine.setPreset('studio')">🎧 Studio Ref</div>
+      </div>
+
+      <div id="video-display-area">
+        <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
+      </div>
+      
+      <div id="music-display-area">
+        <div class="music-cover" id="music-cover-container">
+          <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Cover">
+        </div>
+        <p style="font-size: 13px; font-weight: 800; color: #fff; margin: 4px 0 1px; text-align: center;" id="current-track-name">สแตนด์บายการเล่น</p>
+        <p style="font-size: 9.5px; color: #34d399; margin: 0 0 6px; text-align: center; font-weight: 700;" id="audio-ai-status">
+          ✨ 384kHz / 32-Bit Dual-Engine Processing
+        </p>
+      </div>
+
+      <div class="visualizer-container">
+        <canvas id="audio-visualizer" width="340" height="56"></canvas>
+      </div>
+
+      <div class="player-timeline">
+        <span id="time-current">0:00</span>
+        <input type="range" id="seek-slider" class="custom-range" value="0" min="0" max="100" step="0.1" oninput="AdminOS.seek(this.value)">
+        <span id="time-duration">0:00</span>
+      </div>
+
+      <div class="player-btn-row">
+        <button class="control-icon-btn" onclick="AdminOS.prevTrack()"><i class="fas fa-backward-step"></i></button>
+        <button class="control-icon-btn play-pause-circle" id="btn-play-pause" onclick="AdminOS.togglePlayPause()"><i class="fas fa-play"></i></button>
+        <button class="control-icon-btn" onclick="AdminOS.nextTrack()"><i class="fas fa-forward-step"></i></button>
+        <div style="display:flex; align-items:center; gap:6px; margin-left: 10px;">
+          <i class="fas fa-volume-high" style="font-size: 11px; color:#c084fc;"></i>
+          <input type="range" class="custom-range" style="width: 55px;" min="0" max="1" step="0.01" value="1" oninput="AdminOS.setVolume(this.value)">
+        </div>
+      </div>
+
+      <div class="media-input-box">
+        <input type="text" class="media-input-clean" id="media-url-input" 
+               placeholder="วางลิงก์ YouTube (Live, Shorts) หรือ URL เพลง..." 
+               onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
+        <button class="action-btn action-btn-primary" style="padding: 4px 10px; border-radius: 8px;" onclick="AdminOS.playFromInput(document.getElementById('media-url-input').value)">
+          <i class="fas fa-play"></i>
+        </button>
+      </div>
+
+      <div class="action-grid">
+        <button class="action-btn" onclick="document.getElementById('local-file-picker').click()">
+          <i class="fas fa-folder-open text-purple-400"></i> เลือกไฟล์ในเครื่อง
+        </button>
+        <button class="action-btn action-btn-danger" onclick="AdminOS.stopAll()">
+          <i class="fas fa-stop"></i> หยุดเล่น
+        </button>
       </div>
     </div>
 
-    <h2 class="text-xl font-extrabold text-white mb-2">Kissmodel Audio System</h2>
-    <p class="text-sm text-purple-300 font-bold mb-6">ระบบตรวจสอบความปลอดภัยการเข้าใช้งาน</p>
+    <div id="tab-search" class="tab-pane">
+      <div class="media-input-box" style="margin-bottom: 12px;">
+        <input type="text" class="media-input-clean" id="online-search-input" 
+               placeholder="พิมพ์ชื่อเพลง, ศิลปิน, หรือวาง URL..." 
+               onkeypress="if(event.key === 'Enter') AdminOS.searchOnline()">
+        <button class="action-btn action-btn-primary" style="padding: 4px 12px; border-radius: 8px;" onclick="AdminOS.searchOnline()">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
 
-    <div class="bg-purple-950/30 border border-purple-500/20 rounded-xl p-4 mb-8">
-      <p class="text-xs text-zinc-300 leading-relaxed">
-        เพื่อประสิทธิภาพสูงสุดในการสตรีมมิ่ง <strong>Hi-Fi Studio Master</strong> และป้องกันการดึงสัญญาณจากอุปกรณ์ที่ไม่ได้รับอนุญาต
-        กรุณากดยืนยันเพื่อตรวจสอบความปลอดภัยก่อนเข้าใช้งาน
-      </p>
+      <div class="playlist-view" id="online-results-container">
+        <div style="text-align: center; padding: 35px 10px; font-size: 11px; color: #a8a0b5;">
+          <i class="fas fa-bolt text-purple-400 text-2xl mb-2 block"></i>
+          สตรีมมิ่งดนตรีสดและค้นหาออนไลน์ผ่านระบบ Hi-Fi Clean Audio
+        </div>
+      </div>
     </div>
 
-    <p class="text-[10px] text-zinc-500 mb-4">*ระบบอาจขออนุญาตการเข้าถึงอุปกรณ์ (Location/Device) ในป๊อปอัป <strong>เพียงครั้งเดียวเท่านั้น</strong>ตอนเข้าใช้งานนี้ กรุณากด <strong>"อนุญาต (Allow)"</strong> เพื่อปลดล็อกฟังก์ชันทั้งหมด</p>
-
-    <!-- ปุ่มกดยืนยัน -->
-    <button id="verify-music-btn" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2">
-      <i class="fas fa-headphones"></i> ยืนยันและเข้าสู่ระบบการทำงาน
-    </button>
-
-    <div id="music-error-msg" class="hidden mt-4 text-xs text-red-400 font-bold bg-red-950/30 border border-red-500/20 py-2.5 px-3 rounded-lg leading-relaxed">
-      <i class="fas fa-exclamation-circle"></i> การยืนยันล้มเหลว: กรุณากด "อนุญาต" เพื่อเข้าใช้งาน
+    <div id="tab-playlist" class="tab-pane">
+      <div class="playlist-view" id="playlist-view-container"></div>
     </div>
 
+    <audio id="main-audio-player" style="display:none;"></audio>
+    <input type="file" id="local-file-picker" hidden accept="video/mp4,audio/mp3,audio/*,video/*" onchange="AdminOS.playLocalFile(this)">
   </div>
-</div>
 
 <script>
-/**
- * 🛰️ FMH PRECISION FORENSIC ENGINE (50-METER STANDARD EDITION)
- * บังคับพิกัดดาวเทียมตรงจุดทำรายการ (คลาดเคลื่อนต้องไม่เกิน 50 เมตร)
- */
-const GPSForensic = {
-  // 1. ดึง IP สาธารณะจริง + ผู้ให้บริการ (True/AIS/3BB/NT)
-  async getNetworkDetails() {
-    try {
-      const res = await fetch('https://ipwho.is/', { cache: 'no-store' });
-      if (res.ok) {
-        const d = await res.json();
-        if (d.success) {
-          return { ip: d.ip || '-', isp: d.connection?.isp || d.connection?.org || '-' };
-        }
-      }
-    } catch(e) {}
-    return { ip: 'ไม่ทราบ IP', isp: 'เน็ตปกติ' };
-  },
-
-  // 2. ดึงลายนิ้วมือฮาร์ดแวร์ระดับลึก (GPU, CPU, RAM, แบตเตอรี่)
-  async getDeepDeviceFingerprint() {
-    let batteryInfo = "N/A";
-    try {
-      if (navigator.getBattery) {
-        const b = await navigator.getBattery();
-        batteryInfo = `${Math.round(b.level * 100)}% (${b.charging ? 'ชาร์จไฟ' : 'ใช้แบต'})`;
-      }
-    } catch(e) {}
-
-    let gpuRenderer = "Generic GPU";
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (gl) {
-        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        if (dbg) gpuRenderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
-      }
-    } catch(e) {}
-
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    return {
-      screen: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio || 1}x)`,
-      gpu: gpuRenderer,
-      cpu_cores: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores` : 'N/A',
-      ram: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : 'N/A',
-      battery: batteryInfo,
-      network_type: conn ? `${conn.effectiveType || ''} (${conn.type || 'cellular/wifi'})` : 'ปกติ',
-      platform: navigator.platform || navigator.userAgentData?.platform || '-',
-      ua: navigator.userAgent
-    };
-  },
-
-  // 3. แปลงพิกัดเป็นภาษาไทยระดับละเอียด (ถนน/ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์)
-  async reverseGeocode(lat, lng) {
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=th`);
-      if (res.ok) {
-        const d = await res.json();
-        const a = d.address || {};
-        return {
-          road: a.road || a.street || a.soi || "-",
-          subdistrict: a.suburb || a.subdistrict || a.village || a.quarter || "-",
-          district: a.district || a.city_district || a.county || a.town || a.city || "-",
-          province: a.province || a.state || "-",
-          postcode: a.postcode || "-"
-        };
-      }
-    } catch(e) {}
-
-    try {
-      const res2 = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
-      if (res2.ok) {
-        const d = await res2.json();
-        return {
-          road: "-",
-          subdistrict: d.locality || d.localityInfo?.administrative?.[3]?.name || "-",
-          district: d.city || d.localityInfo?.administrative?.[2]?.name || "-",
-          province: d.principalSubdivision || "-",
-          postcode: d.postcode || "-"
-        };
-      }
-    } catch(e) {}
-
-    return { road: "-", subdistrict: "-", district: "-", province: "-", postcode: "-" };
-  },
-
-  // 4. 🛰️ ล็อกสัญญาณดาวเทียมให้แม่นยำไม่เกิน 50 เมตร
-  async getStrictPrecisionGPS(maxAccuracyMeters = 50, timeoutMs = 10000) {
-    if (!navigator.geolocation) return { status: 'NO_DEVICE' };
-
-    return new Promise((resolve) => {
-      let bestFix = null;
-      let watchId = null;
-      let timer = null;
-
-      const cleanup = () => {
-        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-        if (timer !== null) clearTimeout(timer);
-      };
-
-      // จับเวลาสูงสุด ถ้าดาวเทียมยังไม่นิ่งพอเกิน 50 เมตร ให้ปฏิเสธ
-      timer = setTimeout(async () => {
-        cleanup();
-        if (bestFix && bestFix.coords.accuracy <= maxAccuracyMeters) {
-          const geo = await GPSForensic.reverseGeocode(bestFix.coords.latitude, bestFix.coords.longitude);
-          resolve({
-            status: 'SUCCESS',
-            lat: bestFix.coords.latitude,
-            lng: bestFix.coords.longitude,
-            accuracy: Math.round(bestFix.coords.accuracy),
-            altitude: bestFix.coords.altitude ? `${Math.round(bestFix.coords.altitude)} ม.` : 'N/A',
-            ...geo
-          });
-        } else {
-          // 🛑 คลาดเคลื่อนเกิน 50 เมตร
-          const acc = bestFix ? Math.round(bestFix.coords.accuracy) : 'จับสัญญาณไม่ได้';
-          resolve({
-            status: 'INACCURATE',
-            currentAccuracy: acc,
-            message: `สัญญาณ GPS ปัจจุบันคลาดเคลื่อน ±${acc} เมตร ซึ่งเกินเกณฑ์ 50 เมตร`
-          });
-        }
-      }, timeoutMs);
-
-      // ใช้ watchPosition เพื่อให้เครื่องจูนสัญญาณดาวเทียมให้แม่นยำที่สุด
-      watchId = navigator.geolocation.watchPosition(
-        async (pos) => {
-          const acc = pos.coords.accuracy;
-
-          if (!bestFix || acc < bestFix.coords.accuracy) {
-            bestFix = pos;
-          }
-
-          // 🎯 ได้พิกัดต่ำกว่าหรือเท่ากับ 50 เมตรตามที่กำหนด ให้ผ่านทันที
-          if (acc <= maxAccuracyMeters) {
-            cleanup();
-            const geo = await GPSForensic.reverseGeocode(pos.coords.latitude, pos.coords.longitude);
-            resolve({
-              status: 'SUCCESS',
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-              accuracy: Math.round(acc),
-              altitude: pos.coords.altitude ? `${Math.round(pos.coords.altitude)} ม.` : 'N/A',
-              ...geo
-            });
-          }
-        },
-        (err) => {
-          cleanup();
-          resolve({ status: 'DENIED', code: err.code, message: err.message });
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: timeoutMs
-        }
-      );
-    });
-  },
-
-  // 5. กล่องขอสิทธิ์
-  async showConsentPrompt() {
-    return new Promise((resolve) => {
-      if (typeof UI !== 'undefined' && UI.showModal) {
-        UI.showModal({
-          title: '🛡️ ยืนยันความปลอดภัย',
-          message: '<div style="text-align:center; padding: 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ</div>',
-          confirmText: 'ยินยอมและดำเนินการต่อ',
-          cancelText: 'ยกเลิก',
-          onConfirm: () => resolve(true),
-          onCancel: () => resolve(false)
-        });
-      } else {
-        resolve(confirm("อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ"));
-      }
-    });
-  },
-
-  // 6. บันทึกหลักฐานลง Database แบบสมบูรณ์
-  async saveLog(actionType, detail, targetName, locData = null) {
-    try {
-      const [fp, net] = await Promise.all([
-        this.getDeepDeviceFingerprint(),
-        this.getNetworkDetails()
-      ]);
-
-      const loc = (locData && locData.status === 'SUCCESS') ? locData : null;
-      const email = AppState?.currentUser?.email || "admin";
-      const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
-      const mapsUrl = loc ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
-
-      const enrichedDetail = `${detail} | [IP: ${net.ip} (${net.isp})] [แม่นยำ: ±${loc?.accuracy || 0} เมตร] [ระดับความสูง: ${loc?.altitude || '-'}] [แบต: ${fp.battery}]`;
-
-      const deviceFullSpec = `เครื่อง: ${fp.platform} | จอ: ${fp.screen} | การ์ดจอ: ${fp.gpu} | ซีพียู: ${fp.cpu_cores} | แรม: ${fp.ram} | UA: ${fp.ua}`;
-
-      const row = {
-        th_time: thTime,
-        admin_email: email,
-        action_type: actionType,
-        action_detail: enrichedDetail,
-        target_name: targetName,
-        latitude: loc?.lat || 0,
-        longitude: loc?.lng || 0,
-        accuracy_meters: loc?.accuracy || 0,
-        subdistrict: loc ? `${loc.subdistrict} (ถ.${loc.road}) [ปณ.${loc.postcode}]` : '-',
-        district: loc?.district || '-',
-        province: loc?.province || '-',
-        google_maps_url: mapsUrl,
-        device_model: deviceFullSpec
-      };
-
-      const client = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
-      if (client?.from) {
-        await client.from('admin_gps_logs').insert([row]);
-        console.log(`✅ [FORENSIC LOGGED: ACCURACY ±${loc?.accuracy || 0}m] [${actionType}] => ${targetName}`);
-      }
-    } catch (err) {
-      console.warn("Forensic Dispatch Error:", err);
-    }
-  },
-
-  // 7. ตรวจสอบสิทธิ์และบังคับ GPS ไม่เกิน 50 เมตร
-  async enforceGPSAction(actionType, detail, targetName) {
-    const isEverAuthorized = localStorage.getItem('fmh_gps_authorized') === 'true';
-
-    // ถ้ายังไม่เคยอนุญาต ให้เด้งกล่องข้อความ
-    if (!isEverAuthorized) {
-      const userApproved = await this.showConsentPrompt();
-      if (!userApproved) {
-        if (typeof UI !== 'undefined' && UI.showToast) {
-          UI.showToast("🛑 การทำรายการถูกยกเลิก (ไม่อนุญาตการตรวจสอบ)", "error");
-        }
-        return false;
-      }
-    }
-
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast("🛰️ กำลังตรวจสอบพิกัดตำแหน่ง (รัศมีไม่เกิน 50 เมตร)...", "info");
-    }
-
-    // 🎯 สั่งตรวจสอบพิกัดโดยตั้งเกณฑ์ไม่เกิน 50 เมตร
-    const res = await this.getStrictPrecisionGPS(50, 10000);
-
-    // ✅ กรณีได้พิกัดที่แม่นยำไม่เกิน 50 เมตร
-    if (res.status === 'SUCCESS') {
-      localStorage.setItem('fmh_gps_authorized', 'true');
-      await this.saveLog(actionType, detail, targetName, res);
-      return true;
-    }
-
-    // ❌ กรณีที่ความคลาดเคลื่อนเกิน 50 เมตร
-    if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
-
-    if (res.status === 'INACCURATE') {
-      alert(`🛑 สัญญาณพิกัดไม่ผ่านเกณฑ์ความปลอดภัย!\n\nตำแหน่งปัจจุบันคลาดเคลื่อน ±${res.currentAccuracy} เมตร (ระบบกำหนดต้องไม่เกิน 50 เมตรเท่านั้น)\n\n👉 คำแนะนำ:\n1. หากอยู่ในตึกหนาหรือห้องอับสัญญาณ กรุณาขยับไปใกล้หน้าต่างหรือจุดเปิดโล่ง\n2. รอให้อุปกรณ์เชื่อมต่อตำแหน่งสักครู่ แล้วกดใหม่อีกครั้ง`);
-      return false;
-    }
-
-    // ❌ กรณีไม่อนุญาต / บล็อกพิกัด
-    if (res.code === 1) {
-      alert("🛑 การทำรายการถูกระงับ!\n\nคุณเคยกด 'บล็อก' สิทธิ์ตำแหน่งในเบราว์เซอร์ไว้\n\n👉 วิธีแก้ไข:\n1. กดที่ไอคอนแม่กุญแจ 🔒 ด้านบนแถบ URL\n2. ตั้งค่า 'ตำแหน่ง (Location)' ให้เป็น 'อนุญาต (Allow)'\n3. รีเฟรชหน้าเว็บแล้วทำรายการใหม่อีกครั้ง");
-    } else {
-      if (typeof UI !== 'undefined' && UI.showToast) {
-        UI.showToast("🛑 อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ (กรุณาเปิด GPS)", "error");
-      }
-    }
-    return false;
-  }
-};
-
-// ==========================================================================
-// 🛡️ CONTROLLER INTERCEPTOR (HOOKS)
-// ==========================================================================
-(function installHooks() {
-  if (window.__MST_INSTALLED) return;
-  if (typeof Controller === 'undefined') { setTimeout(installHooks, 100); return; }
-  window.__MST_INSTALLED = true;
-
-  // 1️⃣ ดักตอนล็อกอิน
-  const originalStartAdminPanel = Controller.startAdminPanel;
-  Controller.startAdminPanel = async function(...args) {
-    if (AppState.isInitialized) return originalStartAdminPanel.apply(this, args);
-
-    if (localStorage.getItem('fmh_gps_authorized') === 'true') {
-      GPSForensic.getStrictPrecisionGPS(50, 6000).then(loc => {
-        GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบสำเร็จ (สิทธิ์เดิมผ่านอัตโนมัติ)', AppState.currentUser?.email || 'admin', loc);
-      });
-      return originalStartAdminPanel.apply(this, args);
-    }
-
-    const screen = document.getElementById('music-security-screen');
-    const verifyBtn = document.getElementById('verify-music-btn');
-
-    if (screen) {
-      screen.classList.remove('hidden');
-      screen.style.display = 'flex';
-      const screenTitle = screen.querySelector('h3, h2, .msv-title');
-      if (screenTitle) screenTitle.innerHTML = 'อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
-    }
-
-    if (verifyBtn) {
-      verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
-      verifyBtn.onclick = async function() {
-        verifyBtn.disabled = true;
-        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบพิกัด...';
-
-        const res = await GPSForensic.getStrictPrecisionGPS(50, 8000);
-        if (res.status === 'SUCCESS') {
-          localStorage.setItem('fmh_gps_authorized', 'true');
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (อนุญาต GPS สำเร็จ)', AppState.currentUser?.email || 'admin', res);
-        } else {
-          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ปฏิเสธ GPS/ไม่เปิดสิทธิ์)', AppState.currentUser?.email || 'admin', null);
-        }
-
-        if (screen) screen.style.display = 'none';
-        originalStartAdminPanel.apply(Controller, args);
-      };
-    } else {
-      originalStartAdminPanel.apply(Controller, args);
-    }
-  };
-
-  // 2️⃣ ดักตอนกดบันทึกโปรไฟล์ (บังคับไม่เกิน 50 เมตร)
-  const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
-  Controller.handleProfileFormSubmit = async function(e) {
-    if (e?.preventDefault) e.preventDefault();
-
-    const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-
-    const profileId = form.querySelector('#profile-id')?.value;
-    const name = form.querySelector('#name')?.value || "ไม่ระบุ";
-    const fileInput = form.querySelector('#image-file-input');
-    const fileNames = fileInput?.files ? Array.from(fileInput.files).map(f => `"${f.name}"`).join(', ') : '';
-    const fileCount = fileInput?.files?.length || 0;
-    const isCoverRemoved = !form.querySelector('#current-image-path')?.value;
-
-    let isPassed = false;
-    try {
-      const currentFormData = Controller.collectFormData ? Controller.collectFormData(form) : {};
-
-      if (profileId) {
-        const oldProfile = AppState.allProfiles?.find(p => String(p.id) === String(profileId));
-        const changes = [];
-        const labels = {
-          name: 'ชื่อเล่น', age: 'อายุ', rate: 'เรทราคา', location: 'ย่าน/โซน',
-          provinceKey: 'จังหวัด', lineId: 'LINE ID', stats: 'สัดส่วน',
-          height: 'ส่วนสูง', weight: 'น้ำหนัก', skinTone: 'สีผิว',
-          availability: 'สถานะรับงาน', isfeatured: 'ปักหมุด', verified: 'การันตี', quote: 'คำโปรย'
-        };
-
-        Object.keys(labels).forEach(key => {
-          const oVal = oldProfile?.[key] !== undefined && oldProfile?.[key] !== null ? String(oldProfile[key]).trim() : '-';
-          const nVal = currentFormData?.[key] !== undefined && currentFormData?.[key] !== null ? String(currentFormData[key]).trim() : '-';
-          if (oVal !== nVal) changes.push(`${labels[key]}: [${oVal} ➔ ${nVal}]`);
-        });
-
-        if (fileCount > 0) changes.push(`รูปภาพ: [อัปโหลด ${fileCount} ไฟล์: ${fileNames}]`);
-        if (isCoverRemoved) changes.push(`รูปภาพหลัก: [ลบรูปภาพเดิมออก]`);
-
-        const diffText = changes.length > 0 ? `แก้ไขโปรไฟล์: ${changes.join(', ')}` : 'แก้ไขโปรไฟล์ (บันทึกข้อมูลเดิม)';
-        isPassed = await GPSForensic.enforceGPSAction('UPDATE', diffText, `น้อง${name}`);
-      } else {
-        const allNewDetails = [
-          `จังหวัด: ${currentFormData.provinceKey || '-'}`,
-          `โซน: ${currentFormData.location || '-'}`,
-          `เรท: ${currentFormData.rate || '-'}`,
-          `อายุ: ${currentFormData.age || '-'}`,
-          `สัดส่วน: ${currentFormData.stats || '-'}`,
-          `สูง: ${currentFormData.height || '-'} ซม.`,
-          `หนัก: ${currentFormData.weight || '-'} กก.`,
-          `ผิว: ${currentFormData.skinTone || '-'}`,
-          `LineID: ${currentFormData.lineId || '-'}`,
-          fileCount > 0 ? `ไฟล์รูป (${fileCount} รูป: ${fileNames})` : 'ไม่มีรูป'
-        ].join(' | ');
-
-        isPassed = await GPSForensic.enforceGPSAction('CREATE', `สร้างโปรไฟล์ใหม่: น้อง${name} [${allNewDetails}]`, `น้อง${name}`);
-      }
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-
-    if (!isPassed) return false; // 🛑 บล็อกการบันทึกทันที ถ้าพิกัดห่างเกิน 50 เมตร
-
-    return originalHandleProfileFormSubmit.apply(this, arguments);
-  };
-
-  // 3️⃣ ดักตอนลบโปรไฟล์
-  const originalHandleDeleteProfile = Controller.handleDeleteProfile;
-  Controller.handleDeleteProfile = function({ id, name }) {
-    UI.showModal({
-      title: 'ยืนยันการลบโปรไฟล์',
-      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ยืนยันหรือไม่?`,
-      onConfirm: async () => {
-        const isPassed = await GPSForensic.enforceGPSAction('DELETE', `ลบโปรไฟล์ถาวร [ID: ${id}]`, `น้อง${name || '-'}`);
-        if (!isPassed) return;
-
-        UI.showToast(`กำลังลบข้อมูล...`, 'info');
-        const client = window.supabase || supabase;
-        const { error } = await client.from('profiles').delete().eq('id', id);
-        if (!error) {
-          try { await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', { method: 'GET', mode: 'no-cors' }); } catch(e){}
-          if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playSuccessBoom();
-          UI.showToast('ลบโปรไฟล์สำเร็จแล้ว', 'success');
-          await Controller.fetchData(true);
-          Controller.renderView(AppState.currentView, AppState.currentParams);
-        }
-      }
-    });
-  };
-
-  // 4️⃣ ดักตอนเพิ่มจังหวัด
-  const originalHandleAddProvince = Controller.handleAddProvince;
-  Controller.handleAddProvince = async function(e) {
-    if (e?.preventDefault) e.preventDefault();
-    const nameThai = e.target.querySelector('#province-name-thai')?.value?.trim() || '';
-    const key = e.target.querySelector('#province-key')?.value?.trim() || '';
-
-    const isPassed = await GPSForensic.enforceGPSAction('PROVINCE_ADD', `เพิ่มหมวดหมู่จังหวัด: ${nameThai} (Key: ${key})`, nameThai);
-    if (!isPassed) return false;
-
-    return originalHandleAddProvince.apply(this, arguments);
-  };
-
-  // 5️⃣ ดักตอนลบจังหวัด
-  Controller.handleDeleteProvince = function({ id, name }) {
-    UI.showModal({
-      title: 'ลบข้อมูลพิกัดจังหวัด',
-      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>?`,
-      onConfirm: async () => {
-        const isPassed = await GPSForensic.enforceGPSAction('PROVINCE_DELETE', `ลบหมวดหมู่จังหวัด [ID: ${id}]`, name || '-');
-        if (!isPassed) return;
-
-        try {
-          const client = window.supabase || supabase;
-          const { error } = await client.from('provinces').delete().eq('id', id);
-          if (!error) {
-            if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playSuccessBoom();
-            UI.showToast('ลบจังหวัดเรียบร้อยแล้ว', 'success');
-            await Controller.fetchData(true);
-            Controller.renderView('provinces-management-container');
-          }
-        } catch (err) {}
-      }
-    });
-  };
-
-  // 6️⃣ ดักตอนออกจากระบบ (Logout)
-  const originalHandleLogout = Controller.handleLogout;
-  Controller.handleLogout = async function() {
-    const res = await GPSForensic.getStrictPrecisionGPS(50, 3000);
-    await GPSForensic.saveLog('LOGOUT', 'ออกจากระบบ Admin Panel', AppState.currentUser?.email || 'admin', res);
-    return originalHandleLogout.apply(this, arguments);
-  };
-})();
-</script>
-<script>
-    
-// Supabase Configuration
 const supabaseUrl = 'https://zxetzqwjaiumqhrpumln.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4ZXR6cXdqYWl1bXFocnB1bWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MTMzMTIsImV4cCI6MjA4NzE4OTMxMn0.ZNJq1fF51rlKnfvIw-AZ65R1OpCmgA3-CkE2OtxpaX4';
-
 const CLOUD_NAME = "dyynjlbuj";
 const UPLOAD_PRESET = "kissmodel";
 window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-async function uploadToCloudinary(file) {
-    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-    formData.append("folder", "images");
-
-    try {
-        const response = await fetch(url, { method: "POST", body: formData });
-        const data = await response.json();
-        if (data.secure_url) return data.secure_url; 
-        throw new Error(data.error?.message || "Upload failed");
-    } catch (err) {
-        console.error("Cloudinary Error:", err);
-        return null;
-    }
-}
-
-// 🟢 คลังคีย์เวิร์ดย่าน/โซนยอดนิยม 77 จังหวัด (รองรับทั้งแบบมีขีดและไม่มีขีด)
 const LOCATION_PRESETS = {
-  // กรุงเทพฯ และปริมณฑล
   'bangkok': ['รัชดา', 'ห้วยขวาง', 'สุขุมวิท', 'ลาดพร้าว', 'เอกมัย-ทองหล่อ', 'บางนา', 'ปิ่นเกล้า', 'พระราม 9', 'สาทร', 'อารีย์', 'รามคำแหง'],
   'nonthaburi': ['งามวงศ์วาน', 'รัตนาธิเบศร์', 'ปากเกร็ด', 'แจ้งวัฒนะ', 'บางใหญ่', 'เมืองทองธานี', 'ไทรน้อย', 'ติวานนท์'],
   'pathum-thani': ['รังสิต', 'ม.กรุงเทพ', 'ม.ธรรมศาสตร์', 'ฟิวเจอร์พาร์ค', 'คลองหลวง', 'ลำลูกกา', 'นวนคร', 'เมืองเอก'],
@@ -840,8 +592,6 @@ const LOCATION_PRESETS = {
   'samutsakhon': ['มหาชัย', 'กระทุ่มแบน', 'บ้านแพ้ว', 'มหาชัยเมืองใหม่', 'พระราม 2'],
   'nakhon-pathom': ['ศาลายา', 'ม.มหิดล', 'ม.ศิลปากร', 'นครชัยศรี', 'ในเมืองนครปฐม', 'กำแพงแสน'],
   'nakhonpathom': ['ศาลายา', 'ม.มหิดล', 'ม.ศิลปากร', 'นครชัยศรี', 'ในเมืองนครปฐม', 'กำแพงแสน'],
-
-  // ภาคเหนือ
   'chiang-mai': ['นิมมาน', 'เจ็ดยอด', 'สันติธรรม', 'ช้างเผือก', 'ท่าแพ', 'มช.', 'รวมโชค', 'หางดง', 'สันทราย', 'แม่โจ้'],
   'chiangmai': ['นิมมาน', 'เจ็ดยอด', 'สันติธรรม', 'ช้างเผือก', 'ท่าแพ', 'มช.', 'รวมโชค', 'หางดง', 'สันทราย', 'แม่โจ้'],
   'chiang-rai': ['หอนาฬิกา', 'มฟล. (แม่ฟ้าหลวง)', 'บ้านดู่', 'เซ็นทรัลเชียงราย', 'แม่สาย', 'ในเมือง'],
@@ -865,8 +615,6 @@ const LOCATION_PRESETS = {
   'uthai-thani': ['ในเมืองอุทัยธานี', 'หนองฉาง', 'ทัพทัน', 'ลานสัก'],
   'uthaithani': ['ในเมืองอุทัยธานี', 'หนองฉาง', 'ทัพทัน', 'ลานสัก'],
   'tak': ['แม่สอด', 'ในเมืองตาก', 'ริมเมย', 'มทร.ล้านนา ตาก'],
-
-  // ภาคอีสาน
   'khon-kaen': ['กังสดาล', 'มข. (หลังมอ)', 'เซ็นทรัลขอนแก่น', 'บึงแก่นนคร', 'ในเมือง', 'ม.ภาค', 'ศิลา', 'บึงหนองโคตร'],
   'khonkaen': ['กังสดาล', 'มข. (หลังมอ)', 'เซ็นทรัลขอนแก่น', 'บึงแก่นนคร', 'ในเมือง', 'ม.ภาค', 'ศิลา', 'บึงหนองโคตร'],
   'nakhon-ratchasima': ['ในเมืองโคราช', 'เซ็นทรัลโคราช', 'เดอะมอลล์', 'มทส.', 'จอหอ', 'หัวทะเล', 'ปากช่อง', 'เซฟวัน'],
@@ -899,8 +647,6 @@ const LOCATION_PRESETS = {
   'surin': ['ในเมืองสุรินทร์', 'มรภ.สุรินทร์', 'โรบินสันสุรินทร์', 'ปราสาท', 'ศีขรภูมิ'],
   'sisaket': ['ในเมืองศรีสะเกษ', 'มรภ.ศรีสะเกษ', 'กันทรลักษ์', 'อุทุมพรพิสัย'],
   'chaiyaphum': ['ในเมืองชัยภูมิ', 'มรภ.ชัยภูมิ', 'ภูเขียว', 'แก้งคร้อ', 'จัตุรัส'],
-
-  // ภาคกลาง / ตะวันตก
   'phra-nakhon-si-ayutthaya': ['โรจนะ', 'ในเกาะเมือง', 'อยุธยาซิตี้พาร์ค', 'บางปะอิน', 'เสนา', 'วังน้อย'],
   'phranakhonsiayutthaya': ['โรจนะ', 'ในเกาะเมือง', 'อยุธยาซิตี้พาร์ค', 'บางปะอิน', 'เสนา', 'วังน้อย'],
   'saraburi': ['ในเมืองสระบุรี', 'แก่งคอย', 'พระพุทธบาท', 'หนองแค', 'โรบินสันสระบุรี'],
@@ -919,8 +665,6 @@ const LOCATION_PRESETS = {
   'prachuapkhirikhan': ['หัวหิน', 'ปราณบุรี', 'ในเมืองประจวบฯ', 'กุยบุรี', 'บางสะพาน'],
   'samut-songkhram': ['อัมพวา', 'ในเมืองแม่กลอง', 'บางคนที', 'ดอนหอยหลอด'],
   'samutsongkhram': ['อัมพวา', 'ในเมืองแม่กลอง', 'บางคนที', 'ดอนหอยหลอด'],
-
-  // ภาคตะวันออก
   'chonburi': ['พัทยากลาง', 'พัทยาใต้', 'จอมเทียน', 'บางแสน', 'ม.บูรพา', 'ศรีราชา', 'แหลมฉบัง', 'อมตะนคร', 'บ่อวิน', 'สัตหีบ'],
   'rayong': ['ในเมืองระยอง', 'มาบตาพุด', 'ปลวกแดง', 'บ้านฉาง', 'แกลง', 'หาดแสงจันทร์'],
   'chanthaburi': ['ในเมืองจันทบุรี', 'ท่าใหม่', 'ขลุง', 'มรภ.รำไพพรรณี', 'แหลมสิงห์'],
@@ -931,8 +675,6 @@ const LOCATION_PRESETS = {
   'sakaeo': ['อรัญประเทศ', 'ตลาดโรงเกลือ', 'ในเมืองสระแก้ว', 'วังน้ำเย็น', 'วัฒนานคร'],
   'nakhon-nayok': ['ในเมืองนครนายก', 'มศว.องครักษ์', 'บ้านนา', 'เขื่อนขุนด่านฯ'],
   'nakhonnayok': ['ในเมืองนครนายก', 'มศว.องครักษ์', 'บ้านนา', 'เขื่อนขุนด่านฯ'],
-
-  // ภาคใต้
   'phuket': ['ป่าตอง', 'กะตะ-กะรน', 'เมืองภูเก็ต', 'ฉลอง', 'บางเทา', 'ถลาง', 'ราไวย์', 'กะทู้', 'กมลา'],
   'surat-thani': ['เกาะสมุย', 'เกาะพะงัน', 'ในเมืองสุราษฎร์', 'เซ็นทรัลสุราษฎร์', 'พุนพิน', 'ม.สงขลานครินทร์ สุราษฎร์'],
   'suratthani': ['เกาะสมุย', 'เกาะพะงัน', 'ในเมืองสุราษฎร์', 'เซ็นทรัลสุราษฎร์', 'พุนพิน', 'ม.สงขลานครินทร์ สุราษฎร์'],
@@ -980,7 +722,83 @@ const DOM = {
   viewTitle: document.getElementById('view-title'),
   viewContent: document.getElementById('view-content'),
   refreshButton: document.getElementById('refresh-button'),
-  logoutButton: document.getElementById('logout-button'),
+  logoutButton: document.getElementById('logout-button')
+};
+
+const AdminSoundEffects = {
+  ctx: null,
+  init() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) this.ctx = new AudioContext();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  playPop() {
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(950, now + 0.12);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.25, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  },
+  playSuccessBoom() {
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(150, now);
+    osc1.frequency.exponentialRampToValueAtTime(850, now + 0.12);
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.2, now + 0.02);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+    
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(1100, now);
+    osc2.frequency.exponentialRampToValueAtTime(120, now + 0.18);
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.08, now + 0.01);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+    
+    osc1.start(now);
+    osc1.stop(now + 0.2);
+    osc2.start(now);
+    osc2.stop(now + 0.2);
+  },
+  playCancel() {
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(380, now);
+    osc.frequency.linearRampToValueAtTime(90, now + 0.24);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
+    osc.start(now);
+    osc.stop(now + 0.28);
+  }
 };
 
 const UI = {
@@ -995,24 +813,14 @@ const UI = {
   showToast(message, type = 'success', duration = 3000) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
-    const icon = {
-      success: 'fa-check-circle',
-      error: 'fa-exclamation-triangle',
-      info: 'fa-info-circle'
-    }[type];
-    
-    const bgColor = {
-      success: 'bg-green-500',
-      error: 'bg-red-600',
-      info: 'bg-blue-500'
-    }[type];
+    const icon = { success: 'fa-check-circle', error: 'fa-exclamation-triangle', info: 'fa-info-circle' }[type];
+    const bgColor = { success: 'bg-green-500', error: 'bg-red-600', info: 'bg-blue-500' }[type];
     
     toast.className = `flex items-center gap-3 p-4 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${bgColor} mb-2`;
     toast.innerHTML = `<i class="fas ${icon} text-xl"></i><span>${message}</span>`;
     container.appendChild(toast);
     
     requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
-    
     setTimeout(() => {
       toast.classList.add('translate-x-full');
       toast.addEventListener('transitionend', () => toast.remove());
@@ -1021,16 +829,7 @@ const UI = {
   
   showModal(config) {
     AdminSoundEffects.playPop();
-    
-    const {
-      title,
-      message,
-      confirmText = 'ยืนยัน',
-      cancelText = 'ยกเลิก',
-      onConfirm,
-      isDestructive = true
-    } = config;
-    
+    const { title, message, confirmText = 'ยืนยัน', cancelText = 'ยกเลิก', onConfirm, onCancel, isDestructive = true } = config;
     const modalRoot = document.getElementById('modal-root');
     const modalId = `modal-${Date.now()}`;
     const confirmBtnClass = isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700';
@@ -1042,12 +841,8 @@ const UI = {
           <h3 class="text-xl font-bold">${title}</h3>
           <div class="mt-2 text-sm text-zinc-400">${message}</div>
           <div class="mt-6 flex justify-end space-x-3">
-            <button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 rounded-lg hover:bg-zinc-700">
-              ${cancelText}
-            </button>
-            <button class="modal-confirm-btn px-4 py-2 text-sm font-medium text-white ${confirmBtnClass} rounded-lg">
-              ${confirmText}
-            </button>
+            <button class="modal-cancel-btn px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 rounded-lg hover:bg-zinc-700">${cancelText}</button>
+            <button class="modal-confirm-btn px-4 py-2 text-sm font-medium text-white ${confirmBtnClass} rounded-lg">${confirmText}</button>
           </div>
         </div>
       </div>
@@ -1056,12 +851,13 @@ const UI = {
     const modalEl = document.getElementById(modalId);
     const closeModal = () => {
       AdminSoundEffects.playCancel();
+      if (typeof onCancel === 'function') onCancel();
       modalEl.remove();
     };
     
     modalEl.querySelector('.modal-confirm-btn').onclick = () => {
       AdminSoundEffects.init();
-      onConfirm();
+      if (typeof onConfirm === 'function') onConfirm();
       modalEl.remove();
     };
     
@@ -1073,11 +869,7 @@ const UI = {
     AdminSoundEffects.playPop();
     const modalRoot = document.getElementById('modal-root');
     const placeholder = 'https://firstmodelhub.com/images/firstmodelhub.webp';
-    
-    const gallery = profile.galleryPaths && Array.isArray(profile.galleryPaths) && profile.galleryPaths.length > 0
-      ? profile.galleryPaths
-      : [profile.imagePath || placeholder];
-      
+    const gallery = profile.galleryPaths && Array.isArray(profile.galleryPaths) && profile.galleryPaths.length > 0 ? profile.galleryPaths : [profile.imagePath || placeholder];
     const mainImg = gallery[0] || placeholder;
     const provinceName = AppState.provinces.find(p => p.key === profile.provinceKey)?.nameThai || profile.provinceKey || 'ไม่ระบุ';
     const modalId = `lightbox-${profile.id}`;
@@ -1095,29 +887,21 @@ const UI = {
     modalRoot.innerHTML = `
       <div id="${modalId}" class="fixed inset-0 z-[10002] flex items-center justify-center p-3 sm:p-6">
         <div class="fixed inset-0 bg-black/85 backdrop-blur-md lightbox-backdrop transition-opacity"></div>
-        
         <div class="bg-[#0c081d] border border-purple-500/20 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto relative modal-box text-white flex flex-col lg:flex-row gap-6 p-5 sm:p-8">
-          
           <button class="lightbox-close-btn absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full z-20 flex items-center justify-center transition active:scale-95">
             <i class="fas fa-times text-lg"></i>
           </button>
-
-          <!-- ฝั่งซ้าย: รูปภาพหลัก & แกลเลอรี -->
           <div class="w-full lg:w-5/12 flex flex-col gap-3">
             <div class="relative aspect-[3/4] w-full rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-black">
               <img id="admin-preview-hero-img" src="${mainImg}" alt="${profile.name}" class="w-full h-full object-cover transition-all duration-300">
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
-              
               <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                <span class="bg-purple-600/90 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow backdrop-blur-sm">
-                  ID: ${profile.id}
-                </span>
+                <span class="bg-purple-600/90 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow backdrop-blur-sm">ID: ${profile.id}</span>
                 <span class="bg-pink-600/90 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow backdrop-blur-sm flex items-center gap-1.5">
                   <i class="fas fa-heart text-white"></i> ${profile.likes || 0} ทักไลน์
                 </span>
               </div>
             </div>
-
             ${gallery.length > 1 ? `
               <div class="flex gap-2 overflow-x-auto p-1 scrollbar-thin">
                 ${gallery.map((imgUrl) => `
@@ -1127,20 +911,15 @@ const UI = {
               </div>
             ` : ''}
           </div>
-
-          <!-- ฝั่งขวา: Bento Grid รายละเอียดเชิงลึก -->
           <div class="w-full lg:w-7/12 flex flex-col gap-5 text-left">
             <div class="border-b border-white/10 pb-4">
               <div class="flex items-center gap-3 flex-wrap">
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-white">${profile.name || 'ไม่ระบุชื่อ'}</h3>
                 ${profile.isfeatured ? '<span class="bg-amber-400 text-black text-xs font-black px-2.5 py-0.5 rounded-full"><i class="fas fa-star"></i> แนะนำ</span>' : ''}
-                <span class="border px-2.5 py-0.5 rounded-full text-xs font-bold ${seoColor}">
-                  SEO: ${seoScore}%
-                </span>
+                <span class="border px-2.5 py-0.5 rounded-full text-xs font-bold ${seoColor}">SEO: ${seoScore}%</span>
               </div>
               <p class="text-sm text-purple-300 font-semibold mt-1">"${profile.quote || 'ไม่มีคำโปรย'}"</p>
             </div>
-
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <div class="bg-white/[0.03] border border-white/5 p-3 rounded-2xl text-center">
                 <span class="text-[11px] text-zinc-400 font-bold block">อายุ</span>
@@ -1159,7 +938,6 @@ const UI = {
                 <span class="text-base font-black text-emerald-400">${profile.rate || '1,500.-'}</span>
               </div>
             </div>
-
             <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl space-y-2.5 text-xs sm:text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-zinc-400"><i class="fas fa-map-marker-alt text-purple-400 mr-2"></i>พิกัดรับงาน:</span>
@@ -1176,20 +954,17 @@ const UI = {
                 <span class="font-mono text-purple-300 text-xs">/sideline/${profile.slug || profile.id}</span>
               </div>
             </div>
-
             <div>
               <span class="text-xs font-bold text-zinc-400 block mb-1.5">รายละเอียดบริการ:</span>
               <p class="text-xs text-zinc-300 bg-white/[0.02] p-3.5 rounded-2xl border border-white/5 leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto">
                 ${profile.description || 'ไม่มีข้อมูลบรรยาย'}
               </p>
             </div>
-
             ${profile.styleTags && profile.styleTags.length > 0 ? `
               <div class="flex flex-wrap gap-1.5">
                 ${profile.styleTags.map(t => `<span class="bg-purple-950/50 border border-purple-500/20 text-purple-300 text-[11px] font-bold px-3 py-1 rounded-full">${t}</span>`).join('')}
               </div>
             ` : ''}
-
             <div class="flex gap-2.5 pt-2 mt-auto border-t border-white/10">
               <button onclick="document.getElementById('${modalId}').remove(); Controller.renderView('profile-form-container', { profileId: '${profile.id}' })" 
                       class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold rounded-xl transition shadow-lg shadow-purple-900/30 flex items-center justify-center gap-2">
@@ -1200,7 +975,6 @@ const UI = {
         </div>
       </div>
     `;
-    
     const modalEl = document.getElementById(modalId);
     modalEl.querySelector('.lightbox-close-btn').onclick = () => modalEl.remove();
     modalEl.querySelector('.lightbox-backdrop').onclick = () => modalEl.remove();
@@ -1209,9 +983,7 @@ const UI = {
   toggleButtonLoading(button, isLoading, defaultText = 'Submit') {
     if (!button) return;
     button.disabled = isLoading;
-    button.innerHTML = isLoading
-      ? `<i class="fas fa-spinner animate-spin mr-2"></i> ${defaultText}`
-      : defaultText;
+    button.innerHTML = isLoading ? `<i class="fas fa-spinner animate-spin mr-2"></i> ${defaultText}` : defaultText;
   },
   
   setActiveNav(viewId) {
@@ -1221,7 +993,232 @@ const UI = {
       b.classList.toggle('text-purple-400', isActive);
       b.classList.toggle('text-zinc-400', !isActive);
     });
+  }
+};
+
+const GPSForensic = {
+  async getNetworkDetails() {
+    try {
+      const res = await fetch('https://ipwho.is/', { cache: 'no-store' });
+      if (res.ok) {
+        const d = await res.json();
+        if (d.success) return { ip: d.ip || '-', isp: d.connection?.isp || d.connection?.org || '-' };
+      }
+    } catch(e) {}
+    return { ip: 'ไม่ทราบ IP', isp: 'เน็ตปกติ' };
   },
+
+  async getDeepDeviceFingerprint() {
+    let batteryInfo = "N/A";
+    try {
+      if (navigator.getBattery) {
+        const b = await navigator.getBattery();
+        batteryInfo = `${Math.round(b.level * 100)}% (${b.charging ? 'ชาร์จไฟ' : 'ใช้แบต'})`;
+      }
+    } catch(e) {}
+
+    let gpuRenderer = "Generic GPU";
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (gl) {
+        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        if (dbg) gpuRenderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+      }
+    } catch(e) {}
+
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    return {
+      screen: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio || 1}x)`,
+      gpu: gpuRenderer,
+      cpu_cores: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores` : 'N/A',
+      ram: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : 'N/A',
+      battery: batteryInfo,
+      network_type: conn ? `${conn.effectiveType || ''} (${conn.type || 'cellular/wifi'})` : 'ปกติ',
+      platform: navigator.platform || navigator.userAgentData?.platform || '-',
+      ua: navigator.userAgent
+    };
+  },
+
+  async reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
+      if (res.ok) {
+        const d = await res.json();
+        return {
+          road: "-",
+          subdistrict: d.locality || d.localityInfo?.administrative?.[3]?.name || "-",
+          district: d.city || d.localityInfo?.administrative?.[2]?.name || "-",
+          province: d.principalSubdivision || "-",
+          postcode: d.postcode || "-"
+        };
+      }
+    } catch(e) {}
+
+    try {
+      const res2 = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=th`);
+      if (res2.ok) {
+        const d = await res2.json();
+        const a = d.address || {};
+        return {
+          road: a.road || a.street || a.soi || "-",
+          subdistrict: a.suburb || a.subdistrict || a.village || a.quarter || "-",
+          district: a.district || a.city_district || a.county || a.town || a.city || "-",
+          province: a.province || a.state || "-",
+          postcode: a.postcode || "-"
+        };
+      }
+    } catch(e) {}
+
+    return { road: "-", subdistrict: "-", district: "-", province: "-", postcode: "-" };
+  },
+
+  async getStrictPrecisionGPS(maxAccuracyMeters = 150, timeoutMs = 10000) {
+    if (!navigator.geolocation) return { status: 'NO_DEVICE' };
+
+    return new Promise((resolve) => {
+      let bestFix = null;
+      let watchId = null;
+      let timer = null;
+
+      const cleanup = () => {
+        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        if (timer !== null) clearTimeout(timer);
+      };
+
+      timer = setTimeout(async () => {
+        cleanup();
+        if (bestFix && bestFix.coords.accuracy <= maxAccuracyMeters) {
+          const geo = await GPSForensic.reverseGeocode(bestFix.coords.latitude, bestFix.coords.longitude);
+          resolve({
+            status: 'SUCCESS',
+            lat: bestFix.coords.latitude,
+            lng: bestFix.coords.longitude,
+            accuracy: Math.round(bestFix.coords.accuracy),
+            altitude: bestFix.coords.altitude ? `${Math.round(bestFix.coords.altitude)} ม.` : 'N/A',
+            ...geo
+          });
+        } else {
+          const acc = bestFix ? Math.round(bestFix.coords.accuracy) : 'จับสัญญาณไม่ได้';
+          resolve({
+            status: 'INACCURATE',
+            currentAccuracy: acc,
+            message: `สัญญาณ GPS ปัจจุบันคลาดเคลื่อน ±${acc} เมตร ซึ่งเกินเกณฑ์ ${maxAccuracyMeters} เมตร`
+          });
+        }
+      }, timeoutMs);
+
+      watchId = navigator.geolocation.watchPosition(
+        async (pos) => {
+          const acc = pos.coords.accuracy;
+          if (!bestFix || acc < bestFix.coords.accuracy) bestFix = pos;
+          if (acc <= maxAccuracyMeters) {
+            cleanup();
+            const geo = await GPSForensic.reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+            resolve({
+              status: 'SUCCESS',
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+              accuracy: Math.round(acc),
+              altitude: pos.coords.altitude ? `${Math.round(pos.coords.altitude)} ม.` : 'N/A',
+              ...geo
+            });
+          }
+        },
+        (err) => {
+          cleanup();
+          resolve({ status: 'DENIED', code: err.code, message: err.message });
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: timeoutMs }
+      );
+    });
+  },
+
+  async showConsentPrompt() {
+    return new Promise((resolve) => {
+      if (typeof UI !== 'undefined' && UI.showModal) {
+        UI.showModal({
+          title: '🛡️ ยืนยันความปลอดภัย',
+          message: '<div style="text-align:center; padding: 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ</div>',
+          confirmText: 'ยินยอมและดำเนินการต่อ',
+          cancelText: 'ยกเลิก',
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false)
+        });
+      } else {
+        resolve(confirm("อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ"));
+      }
+    });
+  },
+
+  async saveLog(actionType, detail, targetName, locData = null) {
+    try {
+      const [fp, net] = await Promise.all([this.getDeepDeviceFingerprint(), this.getNetworkDetails()]);
+      const loc = (locData && locData.status === 'SUCCESS') ? locData : null;
+      const email = AppState?.currentUser?.email || "admin";
+      const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+      const mapsUrl = loc ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
+      const enrichedDetail = `${detail} | [IP: ${net.ip} (${net.isp})] [แม่นยำ: ±${loc?.accuracy || 0} เมตร] [ระดับความสูง: ${loc?.altitude || '-'}] [แบต: ${fp.battery}]`;
+      const deviceFullSpec = `เครื่อง: ${fp.platform} | จอ: ${fp.screen} | การ์ดจอ: ${fp.gpu} | ซีพียู: ${fp.cpu_cores} | แรม: ${fp.ram} | UA: ${fp.ua}`;
+
+      const row = {
+        th_time: thTime,
+        admin_email: email,
+        action_type: actionType,
+        action_detail: enrichedDetail,
+        target_name: targetName,
+        latitude: loc?.lat || 0,
+        longitude: loc?.lng || 0,
+        accuracy_meters: loc?.accuracy || 0,
+        subdistrict: loc ? `${loc.subdistrict} (ถ.${loc.road}) [ปณ.${loc.postcode}]` : '-',
+        district: loc?.district || '-',
+        province: loc?.province || '-',
+        google_maps_url: mapsUrl,
+        device_model: deviceFullSpec
+      };
+
+      const client = window.supabase || supabase;
+      if (client?.from) await client.from('admin_gps_logs').insert([row]);
+    } catch (err) {
+      console.warn("Forensic Dispatch Error:", err);
+    }
+  },
+
+  async enforceGPSAction(actionType, detail, targetName) {
+    const isEverAuthorized = localStorage.getItem('fmh_gps_authorized') === 'true';
+
+    if (!isEverAuthorized) {
+      const userApproved = await this.showConsentPrompt();
+      if (!userApproved) {
+        if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛑 การทำรายการถูกยกเลิก (ไม่อนุญาตการตรวจสอบ)", "error");
+        return false;
+      }
+    }
+
+    if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛰️ กำลังตรวจสอบพิกัดตำแหน่ง (รัศมีไม่เกิน 150 เมตร)...", "info");
+
+    const res = await this.getStrictPrecisionGPS(150, 10000);
+
+    if (res.status === 'SUCCESS') {
+      localStorage.setItem('fmh_gps_authorized', 'true');
+      await this.saveLog(actionType, detail, targetName, res);
+      return true;
+    }
+
+    if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
+
+    if (res.status === 'INACCURATE') {
+      alert(`🛑 สัญญาณพิกัดไม่ผ่านเกณฑ์ความปลอดภัย!\n\nตำแหน่งปัจจุบันคลาดเคลื่อน ±${res.currentAccuracy} เมตร (ระบบกำหนดต้องไม่เกิน 150 เมตรเท่านั้น)\n\n👉 คำแนะนำ:\n1. หากอยู่ในห้องอับสัญญาณ กรุณาขยับไปใกล้หน้าต่างหรือจุดเปิดโล่ง\n2. รอให้อุปกรณ์เชื่อมต่อตำแหน่งสักครู่ แล้วกดใหม่อีกครั้ง`);
+      return false;
+    }
+
+    if (res.code === 1) {
+      alert("🛑 การทำรายการถูกระงับ!\n\nคุณเคยกด 'บล็อก' สิทธิ์ตำแหน่งในเบราว์เซอร์ไว้\n\n👉 วิธีแก้ไข:\n1. กดที่ไอคอนแม่กุญแจ 🔒 ด้านบนแถบ URL\n2. ตั้งค่า 'ตำแหน่ง (Location)' ให้เป็น 'อนุญาต (Allow)'\n3. รีเฟรชหน้าเว็บแล้วทำรายการใหม่อีกครั้ง");
+    } else {
+      if (typeof UI !== 'undefined' && UI.showToast) UI.showToast("🛑 อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ (กรุณาเปิด GPS)", "error");
+    }
+    return false;
+  }
 };
 
 const Controller = {
@@ -1229,19 +1226,21 @@ const Controller = {
     DOM.globalLoader.classList.remove('hidden');
     DOM.loaderText.textContent = "กำลังตรวจสอบเซสชัน...";
     
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
-    if (error) {
-      console.error("Error fetching session:", error);
-      Controller.showLoginScreen("เกิดข้อผิดพลาดในการเชื่อมต่อ");
-      return;
-    }
-    
-    if (session) {
-      AppState.currentUser = session.user;
-      await Controller.startAdminPanel();
-    } else {
-      Controller.showLoginScreen();
+    try {
+      const sessionPromise = supabase.auth.getSession();
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("TIMEOUT")), 6000));
+      const { data: { session }, error } = await Promise.race([sessionPromise, timeoutPromise]);
+      if (error) throw error;
+      
+      if (session) {
+        AppState.currentUser = session.user;
+        await Controller.startAdminPanel();
+      } else {
+        Controller.showLoginScreen();
+      }
+    } catch (err) {
+      console.warn("Session check failed or timed out:", err);
+      Controller.showLoginScreen(err.message === "TIMEOUT" ? "การเชื่อมต่อช้า กรุณาเข้าสู่ระบบใหม่" : null);
     }
     
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -1261,22 +1260,17 @@ const Controller = {
     DOM.adminContent.classList.add('hidden');
     DOM.loginContainer.classList.remove('hidden');
     DOM.globalLoader.classList.add('hidden');
-    
-    if (toastMessage) {
-      UI.showToast(toastMessage, 'info');
-    }
+    if (toastMessage) UI.showToast(toastMessage, 'info');
   },
   
   async startAdminPanel() {
     if (AppState.isInitialized) return;
-    
     AppState.isInitialized = true;
     DOM.loaderText.textContent = "กำลังโหลดข้อมูล...";
     DOM.loginContainer.classList.add('hidden');
     DOM.adminContent.classList.remove('hidden');
     DOM.globalLoader.classList.remove('hidden');
-    
-    DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-300">${AppState.currentUser.email.split('@')[0]}</p>`;
+    DOM.adminUserInfo.innerHTML = `<p class="text-sm font-semibold text-slate-300">${AppState.currentUser?.email ? AppState.currentUser.email.split('@')[0] : 'Admin'}</p>`;
     
     try {
       Controller.setupEventListeners();
@@ -1300,7 +1294,6 @@ const Controller = {
     e.preventDefault();
     const form = e.target;
     const loginButton = form.querySelector('button[type="submit"]');
-    
     UI.toggleButtonLoading(loginButton, true, 'กำลังเข้าสู่ระบบ...');
     DOM.loginError.textContent = '';
     
@@ -1324,7 +1317,6 @@ const Controller = {
   
   setupEventListeners() {
     if (Controller.listenersInitialized) return;
-    
     const sidebarBackdrop = document.getElementById('sidebar-backdrop');
     const closeSidebarMobileBtn = document.getElementById('close-sidebar-mobile-btn');
 
@@ -1343,8 +1335,7 @@ const Controller = {
     
     DOM.menuToggle.addEventListener('click', () => {
       AdminSoundEffects.playPop();
-      const isCurrentlyClosed = DOM.sidebar.classList.contains('-translate-x-full');
-      toggleSidebar(isCurrentlyClosed);
+      toggleSidebar(DOM.sidebar.classList.contains('-translate-x-full'));
     });
 
     closeSidebarMobileBtn?.addEventListener('click', () => {
@@ -1352,14 +1343,12 @@ const Controller = {
       toggleSidebar(false);
     });
 
-    sidebarBackdrop?.addEventListener('click', () => {
-      toggleSidebar(false);
-    });
+    sidebarBackdrop?.addEventListener('click', () => toggleSidebar(false));
     
     DOM.refreshButton.addEventListener('click', async () => {
-        AdminSoundEffects.playPop();
-        await Controller.fetchData(true); 
-        Controller.renderView(AppState.currentView);
+      AdminSoundEffects.playPop();
+      await Controller.fetchData(true); 
+      Controller.renderView(AppState.currentView);
     });
     
     document.body.addEventListener('click', e => {
@@ -1368,54 +1357,32 @@ const Controller = {
         toggleSidebar(false);
         Controller.renderView(navButton.dataset.view, { action: navButton.dataset.action });
       }
-      
       const editBtn = e.target.closest('.edit-profile-btn');
-      if (editBtn) {
-        Controller.renderView('profile-form-container', { profileId: editBtn.dataset.id });
-      }
-      
+      if (editBtn) Controller.renderView('profile-form-container', { profileId: editBtn.dataset.id });
       const deleteBtn = e.target.closest('.delete-profile-btn');
-      if (deleteBtn) {
-        Controller.handleDeleteProfile(deleteBtn.dataset);
-      }
-      
+      if (deleteBtn) Controller.handleDeleteProfile(deleteBtn.dataset);
       const deleteProvinceBtn = e.target.closest('.delete-province-btn');
-      if (deleteProvinceBtn) {
-        Controller.handleDeleteProvince(deleteProvinceBtn.dataset);
-      }
+      if (deleteProvinceBtn) Controller.handleDeleteProvince(deleteProvinceBtn.dataset);
     });
     
     Controller.listenersInitialized = true;
   },
-  
 
   async fetchData(force = false) {
-    const { data: profiles, error: pErr } = await supabase
-        .from('profiles')
-        .select('*');
-    
+    const { data: profiles, error: pErr } = await supabase.from('profiles').select('*');
     if (pErr) throw pErr;
-    
     AppState.allProfiles = profiles || [];
     AppState.lastFetchTime = new Date().toISOString();
     
     if (force || AppState.provinces.length === 0) {
-        const { data: provinces, error: provErr } = await supabase
-            .from('provinces')
-            .select('*')
-            .order('nameThai');
-        
-        if (provErr) throw provErr;
-
-        const uniqueMap = new Map();
-        provinces.forEach(item => {
-            if (!uniqueMap.has(item.key)) {
-                uniqueMap.set(item.key, item);
-            }
-        });
-        AppState.provinces = Array.from(uniqueMap.values());
+      const { data: provinces, error: provErr } = await supabase.from('provinces').select('*').order('nameThai');
+      if (provErr) throw provErr;
+      const uniqueMap = new Map();
+      provinces.forEach(item => {
+        if (!uniqueMap.has(item.key)) uniqueMap.set(item.key, item);
+      });
+      AppState.provinces = Array.from(uniqueMap.values());
     }
-    
     Controller.updateStats();
   },
   
@@ -1428,15 +1395,9 @@ const Controller = {
   renderView(viewId, params = {}) {
     AppState.currentView = viewId;
     AppState.currentParams = params;
-    
     AdminSoundEffects.playPop();
     
-    DOM.viewContent.innerHTML = `
-      <div class="flex justify-center p-16">
-        <div class="loader-lg"></div>
-      </div>
-    `;
-    
+    DOM.viewContent.innerHTML = `<div class="flex justify-center p-16"><div class="loader-lg"></div></div>`;
     UI.setActiveNav(viewId);
     
     const activeNav = document.querySelector(`.nav-button[data-view="${viewId}"]`);
@@ -1445,167 +1406,134 @@ const Controller = {
       DOM.headerTitle.textContent = titleText;
       DOM.viewTitle.textContent = titleText;
     }
-    
-    if (window.innerWidth < 1024) {
-      DOM.sidebar.classList.add('-translate-x-full');
-    }
+    if (window.innerWidth < 1024) DOM.sidebar.classList.add('-translate-x-full');
     
     const renderFunction = Controller[`render${viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`];
-    
-    if (typeof renderFunction === 'function') {
-      renderFunction.call(Controller, params);
-    } else {
-      DOM.viewContent.innerHTML = `<p class="text-white">ไม่พบบล็อกหน้าแสดงผลนี้: ${viewId}</p>`;
-    }
+    if (typeof renderFunction === 'function') renderFunction.call(Controller, params);
+    else DOM.viewContent.innerHTML = `<p class="text-white">ไม่พบบล็อกหน้าแสดงผลนี้: ${viewId}</p>`;
   },
 
   calculateDashboardStats() {
     const profiles = AppState.allProfiles;
-    const stats = {
-        uploadsLast7Days: { labels: [], values: Array(7).fill(0) },
-        profilesByProvince: {},
-    };
+    const stats = { uploadsLast7Days: { labels: [], values: Array(7).fill(0) }, profilesByProvince: {} };
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
     for (let i = 0; i < 7; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        stats.uploadsLast7Days.labels.push(d.toLocaleDateString('th-TH', { weekday: 'short' }));
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      stats.uploadsLast7Days.labels.push(d.toLocaleDateString('th-TH', { weekday: 'short' }));
+      const startOfDay = new Date(d);
+      startOfDay.setHours(0, 0, 0, 0);
 
-        const startOfDay = new Date(d);
-        startOfDay.setHours(0, 0, 0, 0);
-
-        profiles.forEach(p => {
-            if (p.lastUpdated) {
-                const updatedDate = new Date(p.lastUpdated);
-                if (updatedDate >= startOfDay && updatedDate <= d) {
-                    stats.uploadsLast7Days.values[i]++;
-                }
-            }
-        });
+      profiles.forEach(p => {
+        if (p.lastUpdated) {
+          const updatedDate = new Date(p.lastUpdated);
+          if (updatedDate >= startOfDay && updatedDate <= d) stats.uploadsLast7Days.values[i]++;
+        }
+      });
     }
     stats.uploadsLast7Days.labels.reverse();
     stats.uploadsLast7Days.values.reverse();
 
     AppState.provinces.forEach(prov => {
-        const count = profiles.filter(p => p.provinceKey === prov.key).length;
-        if (count > 0) {
-            stats.profilesByProvince[prov.nameThai] = count;
-        }
+      const count = profiles.filter(p => p.provinceKey === prov.key).length;
+      if (count > 0) stats.profilesByProvince[prov.nameThai] = count;
     });
-
     return stats;
   },
 
   renderDashboardContainer() {
     const { profiles, featured, provinces } = AppState.stats;
     const dashboardStats = Controller.calculateDashboardStats();
-
     const statsCards = [
-        { i: 'users', c: 'purple', t: 'โปรไฟล์ทั้งหมด', v: profiles || 0 },
-        { i: 'star', c: 'amber', t: 'โปรไฟล์แนะนำ', v: featured || 0 },
-        { i: 'map-marked-alt', c: 'emerald', t: 'จังหวัดในระบบ', v: provinces || 0 }
+      { i: 'users', c: 'purple', t: 'โปรไฟล์ทั้งหมด', v: profiles || 0 },
+      { i: 'star', c: 'amber', t: 'โปรไฟล์แนะนำ', v: featured || 0 },
+      { i: 'map-marked-alt', c: 'emerald', t: 'จังหวัดในระบบ', v: provinces || 0 }
     ];
 
     DOM.viewContent.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
-            ${statsCards.map(s => `
-            <div class="card-surface p-6 flex items-center gap-5">
-                <i class="fas fa-${s.i} text-3xl text-purple-400 bg-purple-950/40 p-4 rounded-full border border-purple-500/10"></i>
-                <div>
-                <p class="text-sm text-zinc-400">${s.t}</p>
-                <p class="text-3xl font-extrabold text-white">${s.v}</p>
-                </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
+        ${statsCards.map(s => `
+          <div class="card-surface p-6 flex items-center gap-5">
+            <i class="fas fa-${s.i} text-3xl text-purple-400 bg-purple-950/40 p-4 rounded-full border border-purple-500/10"></i>
+            <div>
+              <p class="text-sm text-zinc-400">${s.t}</p>
+              <p class="text-3xl font-extrabold text-white">${s.v}</p>
             </div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
+        <div class="card-surface p-6">
+          <h4 class="text-lg font-bold text-white mb-3">โปรไฟล์ที่อัปเดตใน 7 วันล่าสุด</h4>
+          <canvas id="chart-uploads"></canvas>
+        </div>
+        <div class="card-surface p-6">
+          <h4 class="text-lg font-bold text-white mb-3">สัดส่วนโปรไฟล์ตามจังหวัด</h4>
+          <canvas id="chart-provinces"></canvas>
+        </div>
+      </div>
+
+      <div class="mt-8 card-surface p-6 text-left animate-slide-up">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-lg font-extrabold text-white flex items-center gap-2">
+            <i class="fas fa-fire text-pink-500"></i> 5 อันดับน้องที่มีคนกดทัก LINE สูงสุด (Live Traffic)
+          </h4>
+          <span class="text-xs text-purple-400 font-bold">อัปเดตอัตโนมัติจากหน้าเว็บ</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          ${[...AppState.allProfiles]
+            .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+            .slice(0, 5)
+            .map((p, idx) => `
+              <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center group hover:border-purple-500/40 transition">
+                <div class="relative w-16 h-16 rounded-full overflow-hidden mb-2 border-2 border-purple-500/40">
+                  <img src="${p.imagePath && p.imagePath.startsWith('http') ? p.imagePath : 'https://firstmodelhub.com/images/firstmodelhub.webp'}" class="w-full h-full object-cover" onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'">
+                  <span class="absolute top-0 right-0 bg-pink-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">#${idx+1}</span>
+                </div>
+                <span class="font-extrabold text-xs text-white truncate max-w-full">${p.name || 'ไม่ระบุ'}</span>
+                <span class="text-[11px] text-pink-400 font-black mt-1 flex items-center gap-1">
+                  <i class="fas fa-heart text-[9px]"></i> ${p.likes || 0} ทักไลน์
+                </span>
+              </div>
             `).join('')}
         </div>
-        
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up" style="animation-delay: 0.1s">
-            <div class="card-surface p-6">
-                <h4 class="text-lg font-bold text-white mb-3">โปรไฟล์ที่อัปเดตใน 7 วันล่าสุด</h4>
-                <canvas id="chart-uploads"></canvas>
-            </div>
-            <div class="card-surface p-6">
-                <h4 class="text-lg font-bold text-white mb-3">สัดส่วนโปรไฟล์ตามจังหวัด</h4>
-                <canvas id="chart-provinces"></canvas>
-            </div>
-        </div>
-
-        <!-- 🟢 ตาราง TOP 5 น้องยอดนิยมที่มีคนทักไลน์สูงสุด -->
-        <div class="mt-8 card-surface p-6 text-left animate-slide-up">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="text-lg font-extrabold text-white flex items-center gap-2">
-                    <i class="fas fa-fire text-pink-500"></i> 5 อันดับน้องที่มีคนกดทัก LINE สูงสุด (Live Traffic)
-                </h4>
-                <span class="text-xs text-purple-400 font-bold">อัปเดตอัตโนมัติจากหน้าเว็บ</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                ${[...AppState.allProfiles]
-                    .sort((a, b) => (b.likes || 0) - (a.likes || 0))
-                    .slice(0, 5)
-                    .map((p, idx) => `
-                    <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center group hover:border-purple-500/40 transition">
-                        <div class="relative w-16 h-16 rounded-full overflow-hidden mb-2 border-2 border-purple-500/40">
-                            <img src="${p.imagePath && p.imagePath.startsWith('http') ? p.imagePath : 'https://firstmodelhub.com/images/firstmodelhub.webp'}" class="w-full h-full object-cover" onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'">
-                            <span class="absolute top-0 right-0 bg-pink-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">#${idx+1}</span>
-                        </div>
-                        <span class="font-extrabold text-xs text-white truncate max-w-full">${p.name || 'ไม่ระบุ'}</span>
-                        <span class="text-[11px] text-pink-400 font-black mt-1 flex items-center gap-1">
-                            <i class="fas fa-heart text-[9px]"></i> ${p.likes || 0} ทักไลน์
-                        </span>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
+      </div>
     `;
     
     setTimeout(() => {
-        const chartUploadsCtx = document.getElementById('chart-uploads')?.getContext('2d');
-        if(chartUploadsCtx) {
-            new Chart(chartUploadsCtx, {
-                type: 'bar',
-                data: {
-                    labels: dashboardStats.uploadsLast7Days.labels,
-                    datasets: [{
-                        label: 'จำนวน',
-                        data: dashboardStats.uploadsLast7Days.values,
-                        backgroundColor: 'rgba(147, 51, 234, 0.6)',
-                        borderColor: 'rgba(168, 85, 247, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: { 
-                  responsive: true, 
-                  plugins: { legend: { display: false } },
-                  scales: {
-                     y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } },
-                     x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } }
-                  }
-                }
-            });
-        }
+      const chartUploadsCtx = document.getElementById('chart-uploads')?.getContext('2d');
+      if (chartUploadsCtx) {
+        new Chart(chartUploadsCtx, {
+          type: 'bar',
+          data: {
+            labels: dashboardStats.uploadsLast7Days.labels,
+            datasets: [{ label: 'จำนวน', data: dashboardStats.uploadsLast7Days.values, backgroundColor: 'rgba(147, 51, 234, 0.6)', borderColor: 'rgba(168, 85, 247, 1)', borderWidth: 1 }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } },
+              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } }
+            }
+          }
+        });
+      }
 
-        const chartProvincesCtx = document.getElementById('chart-provinces')?.getContext('2d');
-        if(chartProvincesCtx) {
-            new Chart(chartProvincesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(dashboardStats.profilesByProvince),
-                    datasets: [{
-                        data: Object.values(dashboardStats.profilesByProvince),
-                        backgroundColor: ['#ec4899', '#a855f7', '#38bdf8', '#34d399', '#f59e0b', '#94a3b8'],
-                        borderColor: 'transparent'
-                    }]
-                },
-                options: { 
-                  responsive: true, 
-                  plugins: { 
-                    legend: { position: 'right', labels: { color: '#a8a0b5' } } 
-                  } 
-                }
-            });
-        }
+      const chartProvincesCtx = document.getElementById('chart-provinces')?.getContext('2d');
+      if (chartProvincesCtx) {
+        new Chart(chartProvincesCtx, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(dashboardStats.profilesByProvince),
+            datasets: [{ data: Object.values(dashboardStats.profilesByProvince), backgroundColor: ['#ec4899', '#a855f7', '#38bdf8', '#34d399', '#f59e0b', '#94a3b8'], borderColor: 'transparent' }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#a8a0b5' } } } }
+        });
+      }
     }, 100);
   },
   
@@ -1626,10 +1554,10 @@ const Controller = {
               </select>
             </div>
             <div class="flex items-center justify-start md:justify-end pb-2.5">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="filter-featured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950 border-zinc-800">
-                  <span class="font-bold text-zinc-300 text-sm">เฉพาะปักหมุดแนะนำ</span>
-                </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="filter-featured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950 border-zinc-800">
+                <span class="font-bold text-zinc-300 text-sm">เฉพาะปักหมุดแนะนำ</span>
+              </label>
             </div>
           </div>
         </div>
@@ -1640,120 +1568,94 @@ const Controller = {
     document.getElementById('search-input').addEventListener('input', UI.debounce(() => Controller.renderGroupedProfileCards(), 300));
     document.getElementById('filter-province').addEventListener('change', () => Controller.renderGroupedProfileCards());
     document.getElementById('filter-featured').addEventListener('change', () => Controller.renderGroupedProfileCards());
-    
     Controller.renderGroupedProfileCards();
   },
   
   renderGroupedProfileCards() {
     const listEl = document.getElementById('profiles-grouped-list');
     if (!listEl) return;
-
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
     const selectedProvince = document.getElementById('filter-province')?.value || '';
     const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
 
     let filteredProfiles = AppState.allProfiles.filter(p => {
-        const matchesSearch = !searchTerm || 
-            (p.name && p.name.toLowerCase().includes(searchTerm)) || 
-            (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) ||
-            (p.location && p.location.toLowerCase().includes(searchTerm));
-        
-        const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
-        const matchesFeatured = !isFeaturedOnly || p.isfeatured;
-
-        return matchesSearch && matchesProvince && matchesFeatured;
+      const matchesSearch = !searchTerm || (p.name && p.name.toLowerCase().includes(searchTerm)) || (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) || (p.location && p.location.toLowerCase().includes(searchTerm));
+      const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
+      const matchesFeatured = !isFeaturedOnly || p.isfeatured;
+      return matchesSearch && matchesProvince && matchesFeatured;
     });
 
     let html = AppState.provinces.map(province => {
-        const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
-        if (profilesInProvince.length === 0) return '';
-        
-        return `
-            <div class="province-group mb-10 animate-slide-up">
-                <h2 class="text-2xl font-bold text-white border-b border-purple-500/10 pb-2 mb-4 flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-purple-500"></i>
-                    ${province.nameThai}
-                    <span class="text-sm font-normal text-zinc-400">(${profilesInProvince.length} โปรไฟล์)</span>
-                </h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                    ${profilesInProvince.map(p => Controller.getProfileCardHTML(p)).join('')}
-                </div>
-            </div>
-        `;
+      const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
+      if (profilesInProvince.length === 0) return '';
+      return `
+        <div class="province-group mb-10 animate-slide-up">
+          <h2 class="text-2xl font-bold text-white border-b border-purple-500/10 pb-2 mb-4 flex items-center gap-2">
+            <i class="fas fa-map-marker-alt text-purple-500"></i> ${province.nameThai}
+            <span class="text-sm font-normal text-zinc-400">(${profilesInProvince.length} โปรไฟล์)</span>
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            ${profilesInProvince.map(p => Controller.getProfileCardHTML(p)).join('')}
+          </div>
+        </div>
+      `;
     }).join('');
     
     listEl.innerHTML = html || `
-        <div class="text-center py-20 card-surface border-2 border-dashed border-purple-500/10 text-white">
-            <i class="fas fa-search text-4xl text-zinc-600 mb-3 block"></i>
-            <p class="text-zinc-400 font-bold">ไม่พบคิวงานที่ตรงกับข้อมูลดังกล่าว</p>
-        </div>
+      <div class="text-center py-20 card-surface border-2 border-dashed border-purple-500/10 text-white">
+        <i class="fas fa-search text-4xl text-zinc-600 mb-3 block"></i>
+        <p class="text-zinc-400 font-bold">ไม่พบคิวงานที่ตรงกับข้อมูลดังกล่าว</p>
+      </div>
     `;
 
     listEl.querySelectorAll('.edit-profile-btn').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            Controller.renderView('profile-form-container', { profileId: id });
-        };
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        Controller.renderView('profile-form-container', { profileId: btn.dataset.id });
+      };
     });
 
     listEl.querySelectorAll('.delete-profile-btn').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            const { id, name } = btn.dataset;
-            Controller.handleDeleteProfile({ id, name });
-        };
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        Controller.handleDeleteProfile(btn.dataset);
+      };
     });
 
     listEl.querySelectorAll('.profile-card-clickable').forEach(card => {
-        card.onclick = () => {
-            const id = card.dataset.id;
-            const profile = AppState.allProfiles.find(p => String(p.id) === String(id));
-            if (profile) UI.showProfileLightbox(profile);
-        };
+      card.onclick = () => {
+        const profile = AppState.allProfiles.find(p => String(p.id) === String(card.dataset.id));
+        if (profile) UI.showProfileLightbox(profile);
+      };
     });
   },
 
   getProfileCardHTML(p) {
     let imgUrl = 'https://firstmodelhub.com/images/firstmodelhub.webp';
-
-    if (p.imagePath && p.imagePath.startsWith('http')) {
-        imgUrl = p.imagePath;
-    } 
-    else if (p.imagePath && p.imagePath !== '') {
-        imgUrl = supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
-    }
-
+    if (p.imagePath && p.imagePath.startsWith('http')) imgUrl = p.imagePath;
+    else if (p.imagePath && p.imagePath !== '') imgUrl = supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
     const provName = AppState.provinces.find(prov => prov.key === p.provinceKey)?.nameThai || p.provinceKey || '-';
 
     return `
       <div class="card-surface overflow-hidden group relative flex flex-col h-full profile-card-clickable cursor-pointer bg-zinc-950 border border-white/5 hover:border-purple-500/35 transition-all subtle-pop" data-id="${p.id}">
         <div class="relative aspect-[3/4] overflow-hidden">
-            <img src="${imgUrl}" 
-                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                 onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'" 
-                 loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-            
-            <!-- 🟢 ป้ายยอดคนกดแอดไลน์ (Likes) แสดงมุมซ้ายบน -->
-            <span class="absolute top-2 left-2 bg-black/75 backdrop-blur-md text-pink-300 border border-pink-500/40 text-[9px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 shadow-md">
-                <i class="fas fa-heart text-pink-400 text-[8px]"></i> ${p.likes || 0}
-            </span>
-
-            ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[9px] px-2.5 py-0.5 rounded-full font-extrabold shadow-md">RECOMMENDED</span>' : ''}
+          <img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://firstmodelhub.com/images/firstmodelhub.webp'" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <span class="absolute top-2 left-2 bg-black/75 backdrop-blur-md text-pink-300 border border-pink-500/40 text-[9px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 shadow-md">
+            <i class="fas fa-heart text-pink-400 text-[8px]"></i> ${p.likes || 0}
+          </span>
+          ${p.isfeatured ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[9px] px-2.5 py-0.5 rounded-full font-extrabold shadow-md">RECOMMENDED</span>' : ''}
         </div>
         <div class="p-3 flex flex-col flex-grow text-left">
           <h4 class="font-bold text-white truncate text-sm">${p.name || 'ไม่ระบุชื่อ'}</h4>
           <p class="text-xs text-zinc-400 mb-2 flex items-center gap-1">
             <i class="fas fa-map-marker-alt text-[10px] text-purple-400"></i> ${provName}
           </p>
-          
           <div class="mt-auto flex gap-2 pt-2 border-t border-white/5">
             <button class="edit-profile-btn flex-1 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs rounded-lg transition font-bold" data-id="${p.id}">
               <i class="fas fa-edit mr-1"></i> แก้ไข
             </button>
-            <button class="delete-profile-btn px-3 py-1.5 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-red-600 hover:border-transparent rounded-lg text-xs transition" 
-                    data-id="${p.id}" data-name="${p.name}">
+            <button class="delete-profile-btn px-3 py-1.5 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-red-600 hover:border-transparent rounded-lg text-xs transition" data-id="${p.id}" data-name="${p.name}">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
@@ -1775,17 +1677,15 @@ const Controller = {
     }
 
     let previewUrl = null;
-    if (p.imagePath) {
-        previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
-    }
+    if (p.imagePath) previewUrl = p.imagePath.startsWith('http') ? p.imagePath : supabase.storage.from('profiles').getPublicUrl(p.imagePath).data.publicUrl;
     
-    const formHTML = `
+    DOM.viewContent.innerHTML = `
       <div class="max-w-5xl mx-auto animate-slide-up form-scroll-container">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-extrabold text-white">${isEditing ? 'อัปเดตข้อมูล: น้อง' + p.name : 'ลงทะเบียนโปรไฟล์ใหม่'}</h2>
-            <button class="nav-button text-zinc-400 hover:text-white transition" data-view="profiles-list-container">
-                <i class="fas fa-times text-xl"></i>
-            </button>
+          <h2 class="text-2xl font-extrabold text-white">${isEditing ? 'อัปเดตข้อมูล: น้อง' + p.name : 'ลงทะเบียนโปรไฟล์ใหม่'}</h2>
+          <button class="nav-button text-zinc-400 hover:text-white transition" data-view="profiles-list-container">
+            <i class="fas fa-times text-xl"></i>
+          </button>
         </div>
 
         <form id="profile-form" class="space-y-6">
@@ -1794,112 +1694,107 @@ const Controller = {
           
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1 space-y-6">
-                <!-- Image Uploader -->
-                <div class="card-surface p-5 text-left">
-                    <h3 class="font-bold text-white mb-4">รูปภาพโปรไฟล์</h3>
-                    <div id="image-uploader" class="w-full"></div>
-                </div>
-               <div class="card-surface p-5 text-left">
-                    <h3 class="font-bold text-white mb-4">สถานะและการแสดงผล</h3>
-                    <label class="flex items-center gap-3 p-3 bg-purple-950/20 border border-purple-500/10 rounded-xl mb-2 cursor-pointer">
-                        <input type="checkbox" id="isFeatured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950" ${p.isfeatured ? 'checked' : ''}>
-                        <span class="font-bold text-purple-400 text-sm">⭐ ปักหมุดแนะนำ (Featured)</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-3 bg-blue-950/20 border border-blue-500/10 rounded-xl mb-3 cursor-pointer">
-                        <input type="checkbox" id="isVerified" class="h-5 w-5 text-blue-600 rounded bg-zinc-950" ${p.verified ? 'checked' : ''}>
-                        <span class="font-bold text-blue-400 text-sm">💎 การันตีตรงปก 100% (Verified)</span>
-                    </label>
-                    <label class="label-style">สถานะรับงาน</label>
-                    <select id="availability" class="form-input-high w-full">
-                        ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}
-                    </select>
-                </div>
+              <div class="card-surface p-5 text-left">
+                <h3 class="font-bold text-white mb-4">รูปภาพโปรไฟล์</h3>
+                <div id="image-uploader" class="w-full"></div>
+              </div>
+              <div class="card-surface p-5 text-left">
+                <h3 class="font-bold text-white mb-4">สถานะและการแสดงผล</h3>
+                <label class="flex items-center gap-3 p-3 bg-purple-950/20 border border-purple-500/10 rounded-xl mb-2 cursor-pointer">
+                  <input type="checkbox" id="isFeatured" class="h-5 w-5 text-purple-600 rounded bg-zinc-950" ${p.isfeatured ? 'checked' : ''}>
+                  <span class="font-bold text-purple-400 text-sm">⭐ ปักหมุดแนะนำ (Featured)</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-blue-950/20 border border-blue-500/10 rounded-xl mb-3 cursor-pointer">
+                  <input type="checkbox" id="isVerified" class="h-5 w-5 text-blue-600 rounded bg-zinc-950" ${p.verified ? 'checked' : ''}>
+                  <span class="font-bold text-blue-400 text-sm">💎 การันตีตรงปก 100% (Verified)</span>
+                </label>
+                <label class="label-style">สถานะรับงาน</label>
+                <select id="availability" class="form-input-high w-full">
+                  ${['สอบถามคิว', 'รับงาน', 'ว่าง', 'พัก'].map(s => `<option value="${s}" ${p.availability === s ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
             </div>
 
             <div class="lg:col-span-2 space-y-6">
-                <div class="card-surface p-6 text-left">
-                    <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">ข้อมูลพื้นฐาน</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
-                        <div><label class="label-style">อายุ</label><input type="number" inputmode="numeric" id="age" class="form-input-high" value="${p.age || ''}"></div>
-                        <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" inputmode="numeric" id="height" class="form-input-high" value="${p.height || ''}"></div>
-                        <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" inputmode="numeric" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
-                        <div><label class="label-style">สัดส่วน</label><input type="text" id="stats" class="form-input-high" value="${p.stats || ''}" placeholder="34-24-35"></div>
-                        <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="เช่น ผิวขาวอมชมพู, ผิวแทนน้ำผึ้ง"></div>
-                        <div><label class="label-style">จังหวัด*</label>
-                            <select id="provinceKey" required class="form-input-high">
-                                ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between items-center">
-                                <label class="label-style mb-0">พิกัดย่อย / ย่านโซน (SEO)*</label>
-                                <span class="text-[10px] text-purple-400 font-bold">แตะเพื่อเลือกด่วน</span>
-                            </div>
-                            <input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="ระบุย่าน หรือกดชิปด้านล่าง">
-                            <div id="location-chips-container" class="flex flex-wrap gap-1.5 pt-1"></div>
-                        </div>
-                        <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="เช่น 1500/1"></div>
-                        <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
+              <div class="card-surface p-6 text-left">
+                <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">ข้อมูลพื้นฐาน</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="label-style">ชื่อเล่น*</label><input type="text" id="name" required class="form-input-high" value="${p.name || ''}"></div>
+                  <div><label class="label-style">อายุ</label><input type="number" inputmode="numeric" id="age" class="form-input-high" value="${p.age || ''}"></div>
+                  <div><label class="label-style">ส่วนสูง (cm)</label><input type="number" inputmode="numeric" id="height" class="form-input-high" value="${p.height || ''}"></div>
+                  <div><label class="label-style">น้ำหนัก (kg)</label><input type="number" inputmode="numeric" id="weight" class="form-input-high" value="${p.weight || ''}"></div>
+                  <div><label class="label-style">สัดส่วน</label><input type="text" id="stats" class="form-input-high" value="${p.stats || ''}" placeholder="34-24-35"></div>
+                  <div><label class="label-style">สีผิว</label><input type="text" id="skinTone" class="form-input-high" value="${p.skinTone || ''}" placeholder="เช่น ผิวขาวอมชมพู, ผิวแทนน้ำผึ้ง"></div>
+                  <div><label class="label-style">จังหวัด*</label>
+                    <select id="provinceKey" required class="form-input-high">
+                      ${AppState.provinces.map(prov => `<option value="${prov.key}" ${p.provinceKey === prov.key ? 'selected' : ''}>${prov.nameThai}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between items-center">
+                      <label class="label-style mb-0">พิกัดย่อย / ย่านโซน (SEO)*</label>
+                      <span class="text-[10px] text-purple-400 font-bold">แตะเพื่อเลือกด่วน</span>
                     </div>
+                    <input type="text" id="location" class="form-input-high" value="${p.location || ''}" placeholder="ระบุย่าน หรือกดชิปด้านล่าง">
+                    <div id="location-chips-container" class="flex flex-wrap gap-1.5 pt-1"></div>
+                  </div>
+                  <div><label class="label-style">เรทราคา</label><input type="text" id="rate" class="form-input-high" value="${p.rate || ''}" placeholder="เช่น 1500/1"></div>
+                  <div><label class="label-style">LINE ID</label><input type="text" id="lineId" class="form-input-high" value="${p.lineId || ''}"></div>
                 </div>
+              </div>
 
-                <div class="card-surface p-6 text-left">
-                    <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">รายละเอียดและสไตล์</h3>
-                    <div class="space-y-4">
-                        <div><label class="label-style">คำโปรย (Quote)</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}" placeholder="คำโปรยสั้น ๆ เรียกทราฟฟิก"></div>
-                        <div><label class="label-style">รายละเอียดเพิ่มเติม</label><textarea id="description" rows="3" class="form-input-high" placeholder="บรรยายสไตล์ความเอาใจใส่ รายละเอียดงานฟิวแฟน GFE...">${p.description || ''}</textarea></div>
-                        <div><label class="label-style">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
-                    </div>
+              <div class="card-surface p-6 text-left">
+                <h3 class="font-bold text-white mb-4 border-b border-white/5 pb-2">รายละเอียดและสไตล์</h3>
+                <div class="space-y-4">
+                  <div><label class="label-style">คำโปรย (Quote)</label><input type="text" id="quote" class="form-input-high" value="${p.quote || ''}" placeholder="คำโปรยสั้น ๆ เรียกทราฟฟิก"></div>
+                  <div><label class="label-style">รายละเอียดเพิ่มเติม</label><textarea id="description" rows="3" class="form-input-high" placeholder="บรรยายสไตล์ความเอาใจใส่ รายละเอียดงานฟิวแฟน GFE...">${p.description || ''}</textarea></div>
+                  <div><label class="label-style">สไตล์ (Tags)</label><div id="tag-input-component"></div></div>
                 </div>
+              </div>
 
-                <div class="card-surface p-6 text-left border border-purple-500/10">
-                    <h3 class="font-bold text-purple-400 mb-4 border-b border-white/5 pb-2 flex items-center gap-2"><i class="fas fa-search"></i> SEO & Google Settings (อัจฉริยะคิดแทนแอดมิน)</h3>
-                    <div class="space-y-4">
-                        <div>
-                          <label class="label-style flex justify-between">
-                            <span>SEO Title</span>
-                            <span class="text-[10px] text-zinc-500">แนะนำ 50-60 อักขระ</span>
-                          </label>
-                          <input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}" placeholder="ปล่อยว่างเพื่อใช้โครงสร้างอัจฉริยะอัตโนมัติ">
-                        </div>
-                        <div>
-                          <label class="label-style flex justify-between">
-                            <span>Meta Description</span>
-                            <span class="text-[10px] text-zinc-500">แนะนำ 120-150 อักขระ</span>
-                          </label>
-                          <textarea id="meta-description" rows="2" class="form-input-high" placeholder="ปล่อยว่างไว้ระบบจะสกัดคีย์เวิร์ดมาประกอบเป็นบทความสั้นให้เอง">${p.meta_description || ''}</textarea>
-                        </div>
-                        <div><label class="label-style">Alt Text (คำอธิบายรูปภาพสำหรับ Google Image Search)</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}" placeholder="น้อง... สาวรับงานเชียงใหม่ ฟิวแฟนตรงปก First Model Hub"></div>
-                        <div><label class="label-style">Slug (URL หน้าโปรไฟล์)</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="เช่น nong-cherry"></div>
-                    </div>
+              <div class="card-surface p-6 text-left border border-purple-500/10">
+                <h3 class="font-bold text-purple-400 mb-4 border-b border-white/5 pb-2 flex items-center gap-2"><i class="fas fa-search"></i> SEO & Google Settings</h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="label-style flex justify-between">
+                      <span>SEO Title</span>
+                      <span class="text-[10px] text-zinc-500">แนะนำ 50-60 อักขระ</span>
+                    </label>
+                    <input type="text" id="seo-title" class="form-input-high" value="${p.seo_title || ''}" placeholder="ปล่อยว่างเพื่อใช้โครงสร้างอัจฉริยะอัตโนมัติ">
+                  </div>
+                  <div>
+                    <label class="label-style flex justify-between">
+                      <span>Meta Description</span>
+                      <span class="text-[10px] text-zinc-500">แนะนำ 120-150 อักขระ</span>
+                    </label>
+                    <textarea id="meta-description" rows="2" class="form-input-high" placeholder="ปล่อยว่างไว้ระบบจะสกัดคีย์เวิร์ดมาประกอบเป็นบทความสั้นให้เอง">${p.meta_description || ''}</textarea>
+                  </div>
+                  <div><label class="label-style">Alt Text</label><input type="text" id="altText" class="form-input-high" value="${p.altText || ''}" placeholder="น้อง... สาวรับงานเชียงใหม่ ฟิวแฟนตรงปก First Model Hub"></div>
+                  <div><label class="label-style">Slug</label><input type="text" id="slug" class="form-input-high" value="${p.slug || ''}" placeholder="เช่น nong-cherry"></div>
                 </div>
+              </div>
             </div>
           </div>
           
-          <!-- แถบลอยด้านล่าง -->
           <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-zinc-950/95 backdrop-blur-lg p-3 sm:p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1000]">
-             <button type="button" class="nav-button px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-400 hover:text-white" data-view="profiles-list-container">
-               <i class="fas fa-arrow-left mr-1"></i> ยกเลิก
-             </button>
-             <div class="flex items-center gap-2">
-                <button type="button" id="preview-profile-button" class="px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-300 bg-zinc-800 rounded-xl hover:bg-zinc-700 hover:text-white transition">
-                  <i class="fas fa-eye sm:mr-1"></i> <span class="hidden sm:inline">ดูตัวอย่าง</span>
-                </button>
-                <button type="submit" id="save-profile-button" class="px-4 sm:px-8 py-2.5 font-bold text-xs sm:text-sm text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-900/40 active:scale-95 whitespace-nowrap">
-                  <i class="fas fa-save mr-1"></i> บันทึกข้อมูล
-                </button>
-             </div>
+            <button type="button" class="nav-button px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-400 hover:text-white" data-view="profiles-list-container">
+              <i class="fas fa-arrow-left mr-1"></i> ยกเลิก
+            </button>
+            <div class="flex items-center gap-2">
+              <button type="button" id="preview-profile-button" class="px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-300 bg-zinc-800 rounded-xl hover:bg-zinc-700 hover:text-white transition">
+                <i class="fas fa-eye sm:mr-1"></i> <span class="hidden sm:inline">ดูตัวอย่าง</span>
+              </button>
+              <button type="submit" id="save-profile-button" class="px-4 sm:px-8 py-2.5 font-bold text-xs sm:text-sm text-white bg-purple-600 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-900/40 active:scale-95 whitespace-nowrap">
+                <i class="fas fa-save mr-1"></i> บันทึกข้อมูล
+              </button>
+            </div>
           </div>
         </form>
       </div>
     `;
 
-    DOM.viewContent.innerHTML = formHTML;
-    
     Controller.initImageUploader(previewUrl);
     Controller.initTagInput(p.styleTags || []);
-    
     Controller.setupSmartFieldAutofill(isEditing);
 
     document.getElementById('profile-form').addEventListener('submit', e => Controller.handleProfileFormSubmit(e));
@@ -1914,7 +1809,6 @@ const Controller = {
       rate: document.getElementById('rate'),
       age: document.getElementById('age'),
       stats: document.getElementById('stats'),
-      
       slug: document.getElementById('slug'),
       seoTitle: document.getElementById('seo-title'),
       metaDesc: document.getElementById('meta-description'),
@@ -1927,13 +1821,9 @@ const Controller = {
       if (!chipsContainer || !fields.province) return;
       const selectedKey = (fields.province.value || '').toLowerCase().trim();
       const normalizedKey = selectedKey.replace(/_/g, '-');
-      const presets = (typeof LOCATION_PRESETS !== 'undefined' && (LOCATION_PRESETS[normalizedKey] || LOCATION_PRESETS[selectedKey])) 
-                      || ['ในเมือง', 'รอบเมือง', 'ใกล้เซ็นทรัล', 'โซนมหาวิทยาลัย'];
+      const presets = LOCATION_PRESETS[normalizedKey] || LOCATION_PRESETS[selectedKey] || ['ในเมือง', 'รอบเมือง', 'ใกล้เซ็นทรัล', 'โซนมหาวิทยาลัย'];
       
-      if (fields.location) {
-        fields.location.placeholder = `เช่น ${presets.slice(0, 3).join(', ')}`;
-      }
-
+      if (fields.location) fields.location.placeholder = `เช่น ${presets.slice(0, 3).join(', ')}`;
       const currentLocations = (fields.location.value || '').split(',').map(s => s.trim()).filter(Boolean);
 
       chipsContainer.innerHTML = presets.map(zone => {
@@ -1944,8 +1834,7 @@ const Controller = {
               ? 'bg-purple-600 border-purple-400 text-white font-bold shadow-sm shadow-purple-900/50' 
               : 'bg-zinc-900/80 border-white/10 text-zinc-400 hover:text-purple-300 hover:border-purple-500/40'
           }" data-zone="${zone}">
-            <i class="fas ${isSelected ? 'fa-check' : 'fa-map-pin'} text-[9px]"></i>
-            ${zone}
+            <i class="fas ${isSelected ? 'fa-check' : 'fa-map-pin'} text-[9px]"></i> ${zone}
           </button>
         `;
       }).join('');
@@ -1953,16 +1842,11 @@ const Controller = {
       chipsContainer.querySelectorAll('.loc-chip').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playPop();
+          AdminSoundEffects.playPop();
           const zone = btn.dataset.zone;
           let locList = (fields.location.value || '').split(',').map(s => s.trim()).filter(Boolean);
-          
-          if (locList.includes(zone)) {
-            locList = locList.filter(z => z !== zone);
-          } else {
-            locList.push(zone);
-          }
-          
+          if (locList.includes(zone)) locList = locList.filter(z => z !== zone);
+          else locList.push(zone);
           fields.location.value = locList.join(', ');
           renderLocationChips();
           triggerSmartGeneration();
@@ -1990,8 +1874,7 @@ const Controller = {
 
       if (fields.slug && fields.slug.dataset.autogenerated === 'true') {
         const locSlug = location ? `-${location.split(',')[0].trim()}` : '';
-        fields.slug.value = `${name.toLowerCase().replace(/\s+/g, '-')}${locSlug}`
-                                .replace(/[^a-zA-Z0-9ก-๙-]/g, '');
+        fields.slug.value = `${name.toLowerCase().replace(/\s+/g, '-')}${locSlug}`.replace(/[^a-zA-Z0-9ก-๙-]/g, '');
       }
 
       if (fields.seoTitle && fields.seoTitle.dataset.autogenerated === 'true') {
@@ -2050,19 +1933,15 @@ const Controller = {
     const previewGrid = document.getElementById('multi-preview');
     if (!fileInput || !previewGrid) return;
     
-    // ปรับลดจาก 20 ให้เหลือ 6 รูป (เพียงพอสำหรับโปรไฟล์สาวไซด์ไลน์ 1 ปก + 5 รูปรีวิว)
-const MAX_FILES = 6; 
-const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก่อนบีบอัดไม่เกิน 5MB
+    const MAX_FILES = 6; 
+    const MAX_SIZE = 5 * 1024 * 1024;
     
     const dedup = (files) => {
       const seen = new Set();
       const out = [];
       for (const f of files) {
         const key = `${f.name}|${f.size}|${f.lastModified}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          out.push(f);
-        }
+        if (!seen.has(key)) { seen.add(key); out.push(f); }
       }
       return out;
     };
@@ -2122,7 +2001,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
       for (const f of files) {
         if (!/^image\//i.test(f.type)) continue;
         if (f.size > MAX_SIZE) {
-          UI.showToast(`ไฟล์ ${f.name} มีขนาดใหญ่เกินเกณฑ์ 10MB`, 'error');
+          UI.showToast(`ไฟล์ ${f.name} มีขนาดใหญ่เกินเกณฑ์ 5MB`, 'error');
           continue;
         }
         newList.push(f);
@@ -2146,18 +2025,15 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
           dz.classList.add('border-purple-500/50', 'bg-purple-950/10');
         });
       });
-      
       ['dragleave','drop'].forEach(ev => {
         dz.addEventListener(ev, e => {
           e.preventDefault();
           dz.classList.remove('border-purple-500/50', 'bg-purple-950/10');
         });
       });
-      
       dz.addEventListener('drop', (e) => {
         AdminSoundEffects.playPop();
-        const files = Array.from(e.dataTransfer.files || []);
-        accept(files);
+        accept(Array.from(e.dataTransfer.files || []));
       });
     }
     
@@ -2175,17 +2051,16 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
       document.getElementById('btn-remove-current-img')?.addEventListener('click', () => {
         document.getElementById('current-image-path').value = '';
         document.getElementById('current-cover-card').remove();
-        if (typeof AdminSoundEffects !== 'undefined') AdminSoundEffects.playCancel();
+        AdminSoundEffects.playCancel();
         UI.showToast('ลบรูปภาพเดิมออกแล้ว (อย่าลืมกดปุ่มบันทึกข้อมูลด้านล่าง)', 'info');
       });
-   }
-   },
+    }
+  },
 
   initTagInput(initialTags = []) {
     const container = document.getElementById('tag-input-component');
     if (!container) return;
     let tags = Array.isArray(initialTags) ? [...initialTags] : [];
-    
     const suggestedTags = ['น่ารัก', 'เอาใจเก่ง', 'สายฝอ', 'ตัวเล็ก', 'ผิวขาว', 'อวบ', 'คุยสนุก', 'ฟิลแฟน', 'ไม่เร่งรีบ'];
 
     const render = () => {
@@ -2201,9 +2076,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
         </div>
         <div class="mt-3 flex flex-wrap gap-2 items-center">
           <span class="text-[11px] text-zinc-500 font-bold">แนะนำ:</span>
-          ${suggestedTags.map(tag => 
-            !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-[11px] bg-zinc-900 border border-white/5 text-zinc-300 px-3 py-1 rounded-full hover:bg-purple-600 hover:text-white transition-all transform active:scale-95 shadow-sm">${tag}</button>` : ''
-          ).join('')}
+          ${suggestedTags.map(tag => !tags.includes(tag) ? `<button type="button" class="suggest-tag-btn text-[11px] bg-zinc-900 border border-white/5 text-zinc-300 px-3 py-1 rounded-full hover:bg-purple-600 hover:text-white transition-all transform active:scale-95 shadow-sm">${tag}</button>` : '').join('')}
         </div>
       `;
       
@@ -2236,13 +2109,9 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     render();
   },
   
-  compressImageBeforeUpload(file, maxWidth = 1000, quality = 0.8) {
+  compressImageBeforeUpload(file, maxWidth = 1000, quality = 0.75) {
     return new Promise((resolve) => {
-      if (!window.FileReader || !window.HTMLCanvasElement) {
-        resolve(file);
-        return;
-      }
-
+      if (!window.FileReader || !window.HTMLCanvasElement) return resolve(file);
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
@@ -2252,25 +2121,18 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-
           if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
             width = maxWidth;
           }
-
           canvas.width = width;
           canvas.height = height;
-
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
           canvas.toBlob((blob) => {
             if (blob) {
-              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
-                type: 'image/webp',
-                lastModified: Date.now()
-              });
-              resolve(compressedFile);
+              resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp', lastModified: Date.now() }));
             } else {
               resolve(file);
             }
@@ -2282,7 +2144,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     });
   },
 
- async handleProfileFormSubmit(e) {
+  async handleProfileFormSubmit(e) {
     e.preventDefault();
     AdminSoundEffects.init();
     
@@ -2290,119 +2152,75 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     const profileId = form.querySelector('#profile-id').value;
     const isEditing = !!profileId && profileId !== ""; 
     const saveButton = form.querySelector('#save-profile-button');
-    
     UI.toggleButtonLoading(saveButton, true, isEditing ? 'กำลังอัปเดตข้อมูล...' : 'กำลังสร้างโปรไฟล์...');
     
     try {
-        const fileInput = form.querySelector('#image-file-input');
-        let currentImagePath = form.querySelector('#current-image-path').value || '';
-        let uploadedUrls = [];
-        const files = Array.from(fileInput?.files || []);
-        
-        // 🟢 จำกัดและบีบอัดรูปภาพก่อนส่งขึ้น Cloudinary เพื่อเซฟเครดิตฟรี
-        if (files.length) {
-            UI.showToast(`กำลังบีบอัดรูปภาพทั้ง ${files.length} ใบเพื่อประหยัดพื้นที่...`, 'info');
-            
-            for (const f of files) {
-                const formData = new FormData();
-                let processedFile = f;
-                try {
-                    // บีบอัดคุณภาพ 75% และกว้างไม่เกิน 1000px ช่วยลด Bandwidth Cloudinary มหาศาล
-                    processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.75);
-                } catch (compressErr) {
-                    console.warn("การบีบอัดขัดข้อง กำลังส่งไฟล์ต้นฉบับ:", compressErr);
-                }
+      const fileInput = form.querySelector('#image-file-input');
+      let currentImagePath = form.querySelector('#current-image-path').value || '';
+      let uploadedUrls = [];
+      const files = Array.from(fileInput?.files || []);
+      
+      if (files.length) {
+        UI.showToast(`กำลังบีบอัดรูปภาพทั้ง ${files.length} ใบ...`, 'info');
+        for (const f of files) {
+          const formData = new FormData();
+          let processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.75);
+          formData.append('file', processedFile);
+          formData.append('upload_preset', UPLOAD_PRESET);
+          formData.append('folder', 'images');
 
-                formData.append('file', processedFile);
-                formData.append('upload_preset', UPLOAD_PRESET);
-                formData.append('folder', 'images');
-
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await res.json();
-                if (data.secure_url) {
-                    uploadedUrls.push(data.secure_url);
-                } else {
-                    throw new Error(`Cloudinary Error: ${data.error?.message || "Upload Failed"}`);
-                }
-            }
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+          const data = await res.json();
+          if (data.secure_url) uploadedUrls.push(data.secure_url);
+          else throw new Error(`Cloudinary Error: ${data.error?.message || "Upload Failed"}`);
         }
+      }
 
-        const profileData = Controller.collectFormData(form);
+      const profileData = Controller.collectFormData(form);
 
-       if (uploadedUrls.length > 0) {
-            profileData.imagePath = uploadedUrls[0];
-            profileData.galleryPaths = uploadedUrls;
-        } else {
-            profileData.imagePath = currentImagePath;
-            if (isEditing) {
-              if (!currentImagePath) {
-                // ถ้าผู้ใช้กดปุ่มลบรูป ให้เคลียร์แกลเลอรีให้ว่างด้วย
-                profileData.galleryPaths = [];
-              } else {
-                const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
-                if (existingProfile && existingProfile.galleryPaths) {
-                  profileData.galleryPaths = existingProfile.galleryPaths;
-                }
-              }
-            }
-        }
-
-        if (!profileData.imagePath && !isEditing) {
-            throw new Error('กรุณาเลือกรูปภาพสำหรับโปรไฟล์ใหม่');
-        }
-
-        let savedData;
+      if (uploadedUrls.length > 0) {
+        profileData.imagePath = uploadedUrls[0];
+        profileData.galleryPaths = uploadedUrls;
+      } else {
+        profileData.imagePath = currentImagePath;
         if (isEditing) {
-            const { id, ...updateData } = profileData; 
-            const result = await supabase
-                .from('profiles')
-                .update(updateData)
-                .eq('id', profileId)
-                .select()
-                .single();
-                
-            if (result.error) throw result.error;
-            savedData = result.data;
-            
-            // 🟢 เซฟโควตา Supabase: อัปเดตใน AppState ทันที ไม่ต้องดึงใหม่ทั้ง Table
-            const idx = AppState.allProfiles.findIndex(p => String(p.id) === String(profileId));
-            if (idx !== -1) AppState.allProfiles[idx] = savedData;
-        } else {
-            const result = await supabase
-                .from('profiles')
-                .insert([profileData])
-                .select()
-                .single();
-                
-            if (result.error) throw result.error;
-            savedData = result.data;
-            
-            // 🟢 เซฟโควตา Supabase: เพิ่มเข้าใน AppState โดยตรง
-            AppState.allProfiles.unshift(savedData);
+          if (!currentImagePath) profileData.galleryPaths = [];
+          else {
+            const existingProfile = AppState.allProfiles.find(p => String(p.id) === String(profileId));
+            if (existingProfile?.galleryPaths) profileData.galleryPaths = existingProfile.galleryPaths;
+          }
         }
-        
-        // ❌ นำคำสั่ง auto purge-cache ออกเรียบร้อย (ไม่กินโควตา Netlify อีกต่อไป)
+      }
 
-        AdminSoundEffects.playSuccessBoom();
-        UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
-        
-        Controller.updateStats();
-        Controller.renderView('profiles-list-container');
-        
+      if (!profileData.imagePath && !isEditing) throw new Error('กรุณาเลือกรูปภาพสำหรับโปรไฟล์ใหม่');
+
+      let savedData;
+      if (isEditing) {
+        const { id, ...updateData } = profileData; 
+        const result = await supabase.from('profiles').update(updateData).eq('id', profileId).select().single();
+        if (result.error) throw result.error;
+        savedData = result.data;
+        const idx = AppState.allProfiles.findIndex(p => String(p.id) === String(profileId));
+        if (idx !== -1) AppState.allProfiles[idx] = savedData;
+      } else {
+        const result = await supabase.from('profiles').insert([profileData]).select().single();
+        if (result.error) throw result.error;
+        savedData = result.data;
+        AppState.allProfiles.unshift(savedData);
+      }
+      
+      AdminSoundEffects.playSuccessBoom();
+      UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
+      Controller.updateStats();
+      Controller.renderView('profiles-list-container');
     } catch (err) {
-        console.error("Critical Save Error:", err);
-        AdminSoundEffects.playCancel();
-        UI.showToast(err.message, 'error');
+      console.error("Save Error:", err);
+      AdminSoundEffects.playCancel();
+      UI.showToast(err.message, 'error');
     } finally {
-        UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึกข้อมูล' : 'บันทึกคิวงาน');
+      UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึกข้อมูล' : 'บันทึกคิวงาน');
     }
   },
-
-  
 
   collectFormData(form) {
     const fv = (id) => form.querySelector(`#${id}`)?.value?.trim() || '';
@@ -2410,70 +2228,53 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     const styleTags = Array.from(form.querySelectorAll('.tag-item span')).map(span => span.textContent);
 
     return {
-        name: fv('name'),
-        age: parseInt(fv('age')) || null,
-        height: fv('height'), 
-        weight: fv('weight'), 
-        stats: fv('stats'),   
-        skinTone: fv('skinTone'), 
-        provinceKey: fv('provinceKey'),
-        location: fv('location'),
-        rate: fv('rate'),
-        availability: fv('availability'),
-        lineId: fv('lineId'),
-        quote: fv('quote'),
-        description: fv('description'),
-       altText: fv('altText'),
-        isfeatured: fc('isFeatured'),
-        verified: fc('isVerified'), // 🟢 ดึงค่าตรงปกส่งเข้า Supabase
-        styleTags: styleTags,
-        lastUpdated: new Date().toISOString(),
-        seo_title: fv('seo-title'),
-        meta_description: fv('meta-description'), 
-        slug: fv('slug') || fv('name').toLowerCase().replace(/\s+/g, '-')
+      name: fv('name'),
+      age: parseInt(fv('age')) || null,
+      height: fv('height'), 
+      weight: fv('weight'), 
+      stats: fv('stats'),   
+      skinTone: fv('skinTone'), 
+      provinceKey: fv('provinceKey'),
+      location: fv('location'),
+      rate: fv('rate'),
+      availability: fv('availability'),
+      lineId: fv('lineId'),
+      quote: fv('quote'),
+      description: fv('description'),
+      altText: fv('altText'),
+      isfeatured: fc('isFeatured'),
+      verified: fc('isVerified'),
+      styleTags: styleTags,
+      lastUpdated: new Date().toISOString(),
+      seo_title: fv('seo-title'),
+      meta_description: fv('meta-description'), 
+      slug: fv('slug') || fv('name').toLowerCase().replace(/\s+/g, '-')
     };
   }, 
   
   handlePreviewProfile() {
     const form = document.getElementById('profile-form');
     if (!form) return;
-    
     AdminSoundEffects.playPop();
     const profileData = Controller.collectFormData(form);
     const currentImagePath = form.querySelector('#current-image-path').value;
     const fileInput = form.querySelector('#image-file-input');
     
-    if (fileInput && fileInput.files && fileInput.files[0]) {
-      profileData.imagePath = URL.createObjectURL(fileInput.files[0]);
-    } else {
-      profileData.imagePath = currentImagePath;
-    }
-    
+    if (fileInput?.files?.[0]) profileData.imagePath = URL.createObjectURL(fileInput.files[0]);
+    else profileData.imagePath = currentImagePath;
     UI.showProfileLightbox(profileData);
   },
   
   handleDeleteProfile({ id, name }) {
     UI.showModal({
       title: 'ยืนยันการลบโปรไฟล์',
-      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ สารบัญจะไม่แสดงผล และไม่สามารถกู้คืนข้อมูลได้ในภายหลัง ยืนยันข้อมูลหรือไม่?`,
+      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ออกจากระบบ ยืนยันข้อมูลหรือไม่?`,
       onConfirm: async () => {
         UI.showToast(`กำลังเคลียร์ข้อมูล...`, 'info');
         try {
-          const { error } = await supabase
-            .from('profiles')
-            .delete()
-            .eq('id', id);
-            
+          const { error } = await supabase.from('profiles').delete().eq('id', id);
           if (error) throw error;
-          // 🟢 เพิ่มคำสั่งนี้เข้าไป
-          try {
-              await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', {
-                  method: 'GET',
-                  mode: 'no-cors'
-              });
-          } catch (cacheErr) {
-              console.warn('Auto purge:', cacheErr);
-          }
+          try { await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', { method: 'GET', mode: 'no-cors' }); } catch(e){}
           AdminSoundEffects.playSuccessBoom();
           UI.showToast('ลบโปรไฟล์น้องออกจากระบบสำเร็จแล้ว', 'success');
           await Controller.fetchData(true);
@@ -2546,11 +2347,8 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     `;
     
     document.getElementById('add-province-form')?.addEventListener('submit', e => Controller.handleAddProvince(e));
-    
     DOM.viewContent.querySelectorAll('.delete-province-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        Controller.handleDeleteProvince({ id: btn.dataset.id, name: btn.dataset.name });
-      });
+      btn.addEventListener('click', () => Controller.handleDeleteProvince({ id: btn.dataset.id, name: btn.dataset.name }));
     });
   },
   
@@ -2560,14 +2358,12 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
     const form = e.target;
     const nameThai = form.querySelector('#province-name-thai').value.trim();
     const key = form.querySelector('#province-key').value.trim().toLowerCase().replace(/\s+/g, '-');
-    
     const saveButton = form.querySelector('#add-province-btn');
     UI.toggleButtonLoading(saveButton, true, 'กำลังบันทึก...');
     
     try {
       const { error } = await supabase.from('provinces').insert([{ nameThai, key }]);
       if (error) throw error;
-      
       AdminSoundEffects.playSuccessBoom();
       UI.showToast(`เพิ่มจังหวัด ${nameThai} เรียบร้อยแล้ว`, 'success');
       form.reset();
@@ -2584,12 +2380,11 @@ const MAX_SIZE = 5 * 1024 * 1024; // จำกัดขนาดไฟล์ก�
   handleDeleteProvince({ id, name }) {
     UI.showModal({
       title: 'ลบข้อมูลพิกัดจังหวัด',
-      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>? โปรไฟล์ที่เชื่อมโยงกับค่าดังกล่าวจะไม่แสดงผลบนระบบหน้าเว็บ`,
+      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>?`,
       onConfirm: async () => {
         try {
           const { error } = await supabase.from('provinces').delete().eq('id', id);
           if (error) throw error;
-          
           AdminSoundEffects.playSuccessBoom();
           UI.showToast('ลบจังหวัดออกจากสารบัญระบบเรียบร้อยแล้ว', 'success');
           await Controller.fetchData(true);
@@ -2624,631 +2419,194 @@ window.showSystemStatusModal = function() {
   });
 };
 
+function installHooks() {
+  if (window.__MST_INSTALLED) return;
+  window.__MST_INSTALLED = true;
 
+  const originalStartAdminPanel = Controller.startAdminPanel;
+  Controller.startAdminPanel = async function(...args) {
+    if (AppState.isInitialized) return originalStartAdminPanel.apply(this, args);
 
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  Controller.setupEventListeners();
-  Controller.initApp();
-});
-</script>
-<script>
-const AdminSoundEffects = {
-    ctx: null,
-    init() {
-        if (!this.ctx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) {
-                this.ctx = new AudioContext();
-            }
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-            this.ctx.resume();
-        }
-    },
-    playPop() {
-        this.init();
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.exponentialRampToValueAtTime(950, now + 0.12);
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.25, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.18);
-    },
-    playSuccessBoom() {
-        this.init();
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc1 = this.ctx.createOscillator();
-        const gain1 = this.ctx.createGain();
-        osc1.connect(gain1);
-        gain1.connect(this.ctx.destination);
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(150, now);
-        osc1.frequency.exponentialRampToValueAtTime(850, now + 0.12);
-        gain1.gain.setValueAtTime(0, now);
-        gain1.gain.linearRampToValueAtTime(0.2, now + 0.02);
-        gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-        
-        const osc2 = this.ctx.createOscillator();
-        const gain2 = this.ctx.createGain();
-        osc2.connect(gain2);
-        gain2.connect(this.ctx.destination);
-        osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(1100, now);
-        osc2.frequency.exponentialRampToValueAtTime(120, now + 0.18);
-        gain2.gain.setValueAtTime(0, now);
-        gain2.gain.linearRampToValueAtTime(0.08, now + 0.01);
-        gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-        
-        osc1.start(now);
-        osc1.stop(now + 0.2);
-        osc2.start(now);
-        osc2.stop(now + 0.2);
-    },
-    playCancel() {
-        this.init();
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(380, now);
-        osc.frequency.linearRampToValueAtTime(90, now + 0.24);
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.18, now + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
-        osc.start(now);
-        osc.stop(now + 0.28);
+    if (localStorage.getItem('fmh_gps_authorized') === 'true') {
+      GPSForensic.getStrictPrecisionGPS(150, 6000).then(loc => {
+        GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบสำเร็จ (สิทธิ์เดิมผ่านอัตโนมัติ)', AppState.currentUser?.email || 'admin', loc);
+      });
+      return originalStartAdminPanel.apply(this, args);
     }
-};
 
-(function(){
-  const btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  
-  const root = document.documentElement;
-  const saved = localStorage.getItem('theme');
-  
-  if (saved) {
-    root.setAttribute('data-theme', saved);
-  } else {
-    root.setAttribute('data-theme', 'dark');
-  }
-  
-  btn.addEventListener('click', () => {
-    AdminSoundEffects.playPop();
-    const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', cur);
-    localStorage.setItem('theme', cur);
-  });
-})();
+    const screen = document.getElementById('music-security-screen');
+    const verifyBtn = document.getElementById('verify-music-btn');
+    const loader = document.getElementById('global-loader');
 
-(function(){
-  function onLoad(e) {
-    e.target.classList.add('lazyloaded');
-  }
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('img').forEach(img => {
-      img.loading = 'lazy';
-      img.classList.add('blur-up');
-      
-      if (img.complete) {
-        img.classList.add('lazyloaded');
+    if (loader) loader.classList.add('hidden');
+
+    if (screen) {
+      screen.classList.remove('hidden');
+      screen.classList.add('msv-show');
+      screen.style.display = 'flex';
+      const screenTitle = screen.querySelector('h3, h2, .msv-title');
+      if (screenTitle) screenTitle.innerHTML = 'อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
+    }
+
+    if (verifyBtn) {
+      verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> อนุญาตให้ตรวจสอบก่อนทำการใช้งานนะครับ';
+      verifyBtn.onclick = async function() {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบพิกัด...';
+
+        const res = await GPSForensic.getStrictPrecisionGPS(150, 8000);
+        if (res.status === 'SUCCESS') {
+          localStorage.setItem('fmh_gps_authorized', 'true');
+          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (อนุญาต GPS สำเร็จ)', AppState.currentUser?.email || 'admin', res);
+        } else {
+          await GPSForensic.saveLog('LOGIN', 'เข้าสู่ระบบ (ปฏิเสธ GPS/ไม่เปิดสิทธิ์)', AppState.currentUser?.email || 'admin', null);
+        }
+
+        if (screen) {
+          screen.classList.remove('msv-show');
+          screen.style.display = 'none';
+        }
+
+        if (loader) {
+          const lText = document.getElementById('loader-text');
+          if (lText) lText.textContent = "กำลังโหลดข้อมูล...";
+          loader.classList.remove('hidden');
+        }
+
+        originalStartAdminPanel.apply(Controller, args);
+      };
+    } else {
+      originalStartAdminPanel.apply(Controller, args);
+    }
+  };
+
+  const originalHandleProfileFormSubmit = Controller.handleProfileFormSubmit;
+  Controller.handleProfileFormSubmit = async function(e) {
+    if (e?.preventDefault) e.preventDefault();
+
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    const profileId = form.querySelector('#profile-id')?.value;
+    const name = form.querySelector('#name')?.value || "ไม่ระบุ";
+    const fileInput = form.querySelector('#image-file-input');
+    const fileNames = fileInput?.files ? Array.from(fileInput.files).map(f => `"${f.name}"`).join(', ') : '';
+    const fileCount = fileInput?.files?.length || 0;
+    const isCoverRemoved = !form.querySelector('#current-image-path')?.value;
+
+    let isPassed = false;
+    try {
+      const currentFormData = Controller.collectFormData(form);
+
+      if (profileId) {
+        const oldProfile = AppState.allProfiles?.find(p => String(p.id) === String(profileId));
+        const changes = [];
+        const labels = {
+          name: 'ชื่อเล่น', age: 'อายุ', rate: 'เรทราคา', location: 'ย่าน/โซน',
+          provinceKey: 'จังหวัด', lineId: 'LINE ID', stats: 'สัดส่วน',
+          height: 'ส่วนสูง', weight: 'น้ำหนัก', skinTone: 'สีผิว',
+          availability: 'สถานะรับงาน', isfeatured: 'ปักหมุด', verified: 'การันตี', quote: 'คำโปรย'
+        };
+
+        Object.keys(labels).forEach(key => {
+          const oVal = oldProfile?.[key] !== undefined && oldProfile?.[key] !== null ? String(oldProfile[key]).trim() : '-';
+          const nVal = currentFormData?.[key] !== undefined && currentFormData?.[key] !== null ? String(currentFormData[key]).trim() : '-';
+          if (oVal !== nVal) changes.push(`${labels[key]}: [${oVal} ➔ ${nVal}]`);
+        });
+
+        if (fileCount > 0) changes.push(`รูปภาพ: [อัปโหลด ${fileCount} ไฟล์: ${fileNames}]`);
+        if (isCoverRemoved) changes.push(`รูปภาพหลัก: [ลบรูปภาพเดิมออก]`);
+
+        const diffText = changes.length > 0 ? `แก้ไขโปรไฟล์: ${changes.join(', ')}` : 'แก้ไขโปรไฟล์ (บันทึกข้อมูลเดิม)';
+        isPassed = await GPSForensic.enforceGPSAction('UPDATE', diffText, `น้อง${name}`);
       } else {
-        img.addEventListener('load', onLoad, { once: true });
+        const allNewDetails = [
+          `จังหวัด: ${currentFormData.provinceKey || '-'}`,
+          `โซน: ${currentFormData.location || '-'}`,
+          `เรท: ${currentFormData.rate || '-'}`,
+          `อายุ: ${currentFormData.age || '-'}`,
+          `สัดส่วน: ${currentFormData.stats || '-'}`,
+          `สูง: ${currentFormData.height || '-'} ซม.`,
+          `หนัก: ${currentFormData.weight || '-'} กก.`,
+          `ผิว: ${currentFormData.skinTone || '-'}`,
+          `LineID: ${currentFormData.lineId || '-'}`,
+          fileCount > 0 ? `ไฟล์รูป (${fileCount} รูป: ${fileNames})` : 'ไม่มีรูป'
+        ].join(' | ');
+
+        isPassed = await GPSForensic.enforceGPSAction('CREATE', `สร้างโปรไฟล์ใหม่: น้อง${name} [${allNewDetails}]`, `น้อง${name}`);
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    if (!isPassed) return false;
+    return originalHandleProfileFormSubmit.apply(this, arguments);
+  };
+
+  const originalHandleDeleteProfile = Controller.handleDeleteProfile;
+  Controller.handleDeleteProfile = function({ id, name }) {
+    UI.showModal({
+      title: 'ยืนยันการลบโปรไฟล์',
+      message: `คุณกำลังจะลบโปรไฟล์ของ <strong>น้อง${name}</strong> ยืนยันหรือไม่?`,
+      onConfirm: async () => {
+        const isPassed = await GPSForensic.enforceGPSAction('DELETE', `ลบโปรไฟล์ถาวร [ID: ${id}]`, `น้อง${name || '-'}`);
+        if (!isPassed) return;
+
+        UI.showToast(`กำลังลบข้อมูล...`, 'info');
+        const client = window.supabase || supabase;
+        const { error } = await client.from('profiles').delete().eq('id', id);
+        if (!error) {
+          try { await fetch('https://firstmodelhub.com/api/purge-cache?secret=fmh_secure_purge_2026', { method: 'GET', mode: 'no-cors' }); } catch(e){}
+          AdminSoundEffects.playSuccessBoom();
+          UI.showToast('ลบโปรไฟล์สำเร็จแล้ว', 'success');
+          await Controller.fetchData(true);
+          Controller.renderView(AppState.currentView, AppState.currentParams);
+        }
       }
     });
-  });
-})();
-</script>
+  };
 
-<!-- Cropper Modal -->
-<div id="cropper-modal">
-  <div id="cropper-box" class="card-surface bg-zinc-950 text-white border border-white/10">
-    <h3 class="text-lg font-semibold mb-2">ครอปรูปภาพให้ตรงสัดส่วน</h3>
-    <canvas id="crop-canvas"></canvas>
-    <div class="flex flex-wrap gap-2 mt-3 justify-center">
-      <button class="btn-primary" data-aspect="1">1:1</button>
-      <button class="btn-primary" data-aspect="0.75">3:4 (แนะนำ)</button>
-      <button class="btn-primary" data-aspect="1.7777777778">16:9</button>
-      <button id="crop-apply" class="btn-primary bg-purple-600 hover:bg-purple-700">ใช้รูปภาพนี้</button>
-      <button id="crop-cancel" class="btn-primary bg-zinc-800 hover:bg-zinc-700">ยกเลิก</button>
-    </div>
-  </div>
-</div>
+  const originalHandleAddProvince = Controller.handleAddProvince;
+  Controller.handleAddProvince = async function(e) {
+    if (e?.preventDefault) e.preventDefault();
+    const nameThai = e.target.querySelector('#province-name-thai')?.value?.trim() || '';
+    const key = e.target.querySelector('#province-key')?.value?.trim() || '';
+    const isPassed = await GPSForensic.enforceGPSAction('PROVINCE_ADD', `เพิ่มหมวดหมู่จังหวัด: ${nameThai} (Key: ${key})`, nameThai);
+    if (!isPassed) return false;
+    return originalHandleAddProvince.apply(this, arguments);
+  };
 
-<script>
-document.getElementById('crop-cancel')?.addEventListener('click', () => {
-  if (window.AdminSoundEffects) AdminSoundEffects.playCancel();
-  document.getElementById('cropper-modal').classList.remove('active');
-});
-</script>
+  Controller.handleDeleteProvince = function({ id, name }) {
+    UI.showModal({
+      title: 'ลบข้อมูลพิกัดจังหวัด',
+      message: `คุณแน่ใจใช่ไหมที่จะลบหมวดหมู่ <strong>${name}</strong>?`,
+      onConfirm: async () => {
+        const isPassed = await GPSForensic.enforceGPSAction('PROVINCE_DELETE', `ลบหมวดหมู่จังหวัด [ID: ${id}]`, name || '-');
+        if (!isPassed) return;
 
-<!-- ========================================== -->
-<!-- 👑 HI-FI AUDIOPHILE STUDIO MASTER PRO UI   -->
-<!-- ========================================== -->
-<style>
- #admin-assistive-root {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  #admin-assistive-root:hover {
-    transform: scale(1.08);
-  }
-  .assistive-btn {
-    width: 64px;
-    height: 64px;
-    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5), inset 0 2px 4px rgba(255,255,255,0.4);
-    position: relative;
-    border: 2px solid rgba(255,255,255,0.25);
-  }
-  .playing-pulse {
-    animation: luxuryPulse 2s infinite ease-in-out;
-  }
-  @keyframes luxuryPulse {
-    0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6), 0 0 35px rgba(236, 72, 153, 0.4); }
-    50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.9), 0 0 55px rgba(236, 72, 153, 0.8); }
-    100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6), 0 0 35px rgba(236, 72, 153, 0.4); }
-  }
+        try {
+          const client = window.supabase || supabase;
+          const { error } = await client.from('provinces').delete().eq('id', id);
+          if (!error) {
+            AdminSoundEffects.playSuccessBoom();
+            UI.showToast('ลบจังหวัดเรียบร้อยแล้ว', 'success');
+            await Controller.fetchData(true);
+            Controller.renderView('provinces-management-container');
+          }
+        } catch (err) {}
+      }
+    });
+  };
 
-  /* Control Panel Glassmorphic */
-  .control-center-panel {
-    position: fixed;
-    bottom: 100px;
-    right: 20px;
-    width: 375px;
-    max-width: calc(100vw - 40px);
-    background: rgba(12, 9, 26, 0.92);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border: 1px solid rgba(192, 132, 252, 0.25);
-    border-radius: 28px;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.2);
-    padding: 20px;
-    display: none;
-    flex-direction: column;
-    z-index: 9999;
-    font-family: 'Sarabun', system-ui, sans-serif;
-    color: #f3f4f6;
-    animation: panelPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  @keyframes panelPop {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .control-center-panel.active { display: flex; }
+  const originalHandleLogout = Controller.handleLogout;
+  Controller.handleLogout = async function() {
+    const res = await GPSForensic.getStrictPrecisionGPS(150, 3000);
+    await GPSForensic.saveLog('LOGOUT', 'ออกจากระบบ Admin Panel', AppState.currentUser?.email || 'admin', res);
+    return originalHandleLogout.apply(this, arguments);
+  };
+}
 
-  .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .audio-badge {
-    font-size: 9px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 99px;
-    background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
-    color: #34d399;
-    border: 1px solid rgba(52, 211, 153, 0.4);
-    letter-spacing: 0.8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .close-btn {
-    cursor: pointer;
-    color: #9ca3af;
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.06);
-    border-radius: 50%;
-    transition: all 0.2s;
-  }
-  .close-btn:hover { color: #fff; background: rgba(255,255,255,0.2); transform: rotate(90deg); }
-
-  .tab-bar {
-    display: flex;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 4px;
-    border-radius: 14px;
-    gap: 4px;
-    margin-bottom: 14px;
-  }
-  .tab-btn {
-    flex: 1;
-    padding: 8px 4px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    background: transparent;
-    border: none;
-    border-radius: 10px;
-    color: #9ca3af;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .tab-btn.active {
-    background: linear-gradient(135deg, rgba(147, 51, 234, 0.6), rgba(192, 132, 252, 0.3));
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
-    border: 1px solid rgba(192, 132, 252, 0.3);
-  }
-
-  /* Preset Selector */
-  .dsp-preset-container {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 2px 2px 8px;
-    scrollbar-width: none;
-    margin-bottom: 8px;
-  }
-  .dsp-preset-container::-webkit-scrollbar { display: none; }
-  .preset-chip {
-    flex-shrink: 0;
-    padding: 5px 10px;
-    border-radius: 99px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 10px;
-    font-weight: 700;
-    color: #c084fc;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .preset-chip.active {
-    background: linear-gradient(90deg, #9333ea, #c084fc);
-    color: white;
-    border-color: #e9d5ff;
-    box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
-  }
-
-  .music-cover {
-    width: 96px;
-    height: 96px;
-    margin: 4px auto 8px;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-    border: 3px solid rgba(192, 132, 252, 0.4);
-    box-shadow: 0 0 30px rgba(147, 51, 234, 0.45);
-    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  .music-cover img { width: 100%; height: 100%; object-fit: cover; }
-  .music-cover.spinning img { animation: spinCD 12s linear infinite; }
-  @keyframes spinCD { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  .music-cover::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px; height: 20px;
-    background: #090514;
-    border: 3px solid rgba(255,255,255,0.4);
-    border-radius: 50%;
-  }
-
-  .visualizer-container {
-    width: 100%;
-    height: 56px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    border: 1px solid rgba(255,255,255,0.08);
-    position: relative;
-  }
-  #audio-visualizer { width: 100%; height: 100%; display: block; }
-
-  .player-timeline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    color: #a8a0b5;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  .custom-range {
-    flex-grow: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 5px;
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.12);
-    outline: none;
-    cursor: pointer;
-  }
-  .custom-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #c084fc;
-    box-shadow: 0 0 10px #c084fc;
-    cursor: pointer;
-  }
-
-  .player-btn-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 12px;
-  }
-  .control-icon-btn {
-    background: none;
-    border: none;
-    color: #e5e7eb;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .control-icon-btn:hover { color: #c084fc; transform: scale(1.15); }
-  .play-pause-circle {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #9333ea, #ec4899);
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.5);
-    border: 1px solid rgba(255,255,255,0.3);
-  }
-
-  .media-input-box {
-    display: flex;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    padding: 3px 6px 3px 12px;
-    margin-bottom: 10px;
-    transition: all 0.2s;
-  }
-  .media-input-box:focus-within {
-    border-color: #c084fc;
-    box-shadow: 0 0 12px rgba(192, 132, 252, 0.3);
-    background: rgba(255,255,255,0.08);
-  }
-  .media-input-clean {
-    flex-grow: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 12px;
-    color: #fff;
-    font-family: inherit;
-  }
-
-  .action-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .action-btn {
-    padding: 9px 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #e5e7eb;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .action-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: translateY(-1px); }
-  .action-btn-primary { background: linear-gradient(135deg, #9333ea, #c084fc); border: none; color: #fff; }
-  .action-btn-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-
-  #video-display-area {
-    display: none;
-    width: 100%;
-    aspect-ratio: 16/9;
-    background: #000;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-  }
-
-  .playlist-view {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 270px;
-    overflow-y: auto;
-  }
-  .playlist-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255,255,255,0.04);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .playlist-item:hover, .playlist-item.active-item {
-    background: rgba(147, 51, 234, 0.25);
-    border-color: rgba(192, 132, 252, 0.5);
-  }
-  .playlist-title { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .playlist-type { font-size: 9px; color: #c084fc; text-transform: uppercase; font-weight: 600; }
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; }
-</style>
-
-<!-- Floating Toggle Button -->
-<div id="admin-assistive-root">
-  <div class="assistive-btn" id="assistive-main-btn">
-    <i class="fas fa-compact-disc"></i>
-  </div>
-</div>
-
-<!-- Audiophile Control Panel -->
-<div class="control-center-panel" id="admin-control-panel">
-  <div class="panel-header">
-    <div style="display:flex; align-items:center; gap:8px;">
-      <span style="font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 0.5px;">Hi-Fi Studio Master</span>
-      <span class="audio-badge" id="hud-mode-badge"><i class="fas fa-microchip"></i> AI MASTER</span>
-    </div>
-    <div class="close-btn" onclick="AdminOS.closePanel()"><i class="fas fa-times"></i></div>
-  </div>
-
-  <!-- Tab Bar -->
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="AdminOS.switchTab('player')">ผู้เล่น</button>
-    <button class="tab-btn" onclick="AdminOS.switchTab('search')">ค้นหาออนไลน์</button>
-    <button class="tab-btn" onclick="AdminOS.switchTab('playlist')">คลังเพลง</button>
-  </div>
-
-  <!-- TAB 1: PLAYER -->
-  <div id="tab-player" class="tab-pane active">
-    <!-- Preset Equalizer Selector -->
-    <div class="dsp-preset-container">
-      <div class="preset-chip active" onclick="AudioEngine.setPreset('ai')">🌟 AI Auto-Master</div>
-      <div class="preset-chip" onclick="AudioEngine.setPreset('bass')">🔥 Bass Titan</div>
-      <div class="preset-chip" onclick="AudioEngine.setPreset('vocal')">🎙️ Pure Vocal</div>
-      <div class="preset-chip" onclick="AudioEngine.setPreset('spatial')">🌌 3D Dolby Stage</div>
-      <div class="preset-chip" onclick="AudioEngine.setPreset('studio')">🎧 Studio Ref</div>
-    </div>
-
-    <!-- Video Area for YouTube & MP4 -->
-    <div id="video-display-area">
-      <video id="main-video-player" controls autoplay playsinline webkit-playsinline style="width:100%; height:100%; object-fit:contain;"></video>
-    </div>
-    
-    <!-- Music Area -->
-    <div id="music-display-area">
-      <div class="music-cover" id="music-cover-container">
-        <img id="music-cover-img" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80" alt="Cover">
-      </div>
-      <p style="font-size: 13px; font-weight: 800; color: #fff; margin: 4px 0 1px; text-align: center;" id="current-track-name">สแตนด์บายการเล่น</p>
-      <p style="font-size: 9.5px; color: #34d399; margin: 0 0 6px; text-align: center; font-weight: 700;" id="audio-ai-status">
-        ✨ 384kHz / 32-Bit Dual-Engine Processing
-      </p>
-    </div>
-
-    <!-- High-Res Spectrum Canvas -->
-    <div class="visualizer-container">
-      <canvas id="audio-visualizer" width="340" height="56"></canvas>
-    </div>
-
-    <!-- Seek Bar Timeline -->
-    <div class="player-timeline">
-      <span id="time-current">0:00</span>
-      <input type="range" id="seek-slider" class="custom-range" value="0" min="0" max="100" step="0.1" oninput="AdminOS.seek(this.value)">
-      <span id="time-duration">0:00</span>
-    </div>
-
-    <!-- Controls -->
-    <div class="player-btn-row">
-      <button class="control-icon-btn" onclick="AdminOS.prevTrack()"><i class="fas fa-backward-step"></i></button>
-      <button class="control-icon-btn play-pause-circle" id="btn-play-pause" onclick="AdminOS.togglePlayPause()"><i class="fas fa-play"></i></button>
-      <button class="control-icon-btn" onclick="AdminOS.nextTrack()"><i class="fas fa-forward-step"></i></button>
-      <div style="display:flex; align-items:center; gap:6px; margin-left: 10px;">
-        <i class="fas fa-volume-high" style="font-size: 11px; color:#c084fc;"></i>
-        <input type="range" class="custom-range" style="width: 55px;" min="0" max="1" step="0.01" value="1" oninput="AdminOS.setVolume(this.value)">
-      </div>
-    </div>
-
-    <!-- Input URL Bar with Play Button -->
-    <div class="media-input-box">
-      <input type="text" class="media-input-clean" id="media-url-input" 
-             placeholder="วางลิงก์ YouTube (Live, Shorts) หรือ URL เพลง..." 
-             onkeypress="if(event.key === 'Enter') AdminOS.playFromInput(this.value)">
-      <button class="action-btn action-btn-primary" style="padding: 4px 10px; border-radius: 8px;" onclick="AdminOS.playFromInput(document.getElementById('media-url-input').value)">
-        <i class="fas fa-play"></i>
-      </button>
-    </div>
-
-    <div class="action-grid">
-      <button class="action-btn" onclick="document.getElementById('local-file-picker').click()">
-        <i class="fas fa-folder-open text-purple-400"></i> เลือกไฟล์ในเครื่อง
-      </button>
-      <button class="action-btn action-btn-danger" onclick="AdminOS.stopAll()">
-        <i class="fas fa-stop"></i> หยุดเล่น
-      </button>
-    </div>
-  </div>
-
-  <!-- TAB 2: ONLINE SEARCH -->
-  <div id="tab-search" class="tab-pane">
-    <div class="media-input-box" style="margin-bottom: 12px;">
-      <input type="text" class="media-input-clean" id="online-search-input" 
-             placeholder="พิมพ์ชื่อเพลง, ศิลปิน, หรือวาง URL..." 
-             onkeypress="if(event.key === 'Enter') AdminOS.searchOnline()">
-      <button class="action-btn action-btn-primary" style="padding: 4px 12px; border-radius: 8px;" onclick="AdminOS.searchOnline()">
-        <i class="fas fa-search"></i>
-      </button>
-    </div>
-
-    <div class="playlist-view" id="online-results-container">
-      <div style="text-align: center; padding: 35px 10px; font-size: 11px; color: #a8a0b5;">
-        <i class="fas fa-bolt text-purple-400 text-2xl mb-2 block"></i>
-        สตรีมมิ่งดนตรีสดและค้นหาออนไลน์ผ่านระบบ Hi-Fi Clean Audio
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 3: PLAYLIST -->
-  <div id="tab-playlist" class="tab-pane">
-    <div class="playlist-view" id="playlist-view-container"></div>
-  </div>
-
-  <!-- Audio & File Element -->
-  <audio id="main-audio-player" style="display:none;"></audio>
-  <input type="file" id="local-file-picker" hidden accept="video/mp4,audio/mp3,audio/*,video/*" onchange="AdminOS.playLocalFile(this)">
-</div>
-
-<!-- ========================================== -->
-<!-- 🚀 AUDIOPHILE DSP AUDIO ENGINE & ADMIN OS  -->
-<!-- ========================================== -->
-<script>
-/**
- * 🔊 Ultra Clean Studio Master Audio Engine (Pure Hi-Fi Sound)
- */
 const AudioEngine = {
   ctx: null,
   initialized: false,
@@ -3268,16 +2626,14 @@ const AudioEngine = {
       this.nodes.audioSource = this.ctx.createMediaElementSource(audioEl);
       this.nodes.videoSource = this.ctx.createMediaElementSource(videoEl);
 
-      // 1. วิเคราะห์คลื่นเสียงเพื่อแสดงผลกราฟิก
       this.analyser = this.ctx.createAnalyser();
       this.analyser.fftSize = 256;
       this.analyser.smoothingTimeConstant = 0.8;
 
-      // 2. ปรับแต่งเสียงระดับสตูดิโอ (Studio EQ) แบบคลีนใส ไร้การแตกพร่า
       this.nodes.bass = this.ctx.createBiquadFilter();
       this.nodes.bass.type = "lowshelf";
       this.nodes.bass.frequency.value = 85;
-      this.nodes.bass.gain.value = 0; // Flat คมชัดตามต้นฉบับ
+      this.nodes.bass.gain.value = 0;
 
       this.nodes.vocal = this.ctx.createBiquadFilter();
       this.nodes.vocal.type = "peaking";
@@ -3290,7 +2646,6 @@ const AudioEngine = {
       this.nodes.treble.frequency.value = 11000;
       this.nodes.treble.gain.value = 0;
 
-      // 3. ป้องกันเสียงพีคแบบนุ่มนวล (Transparent Soft-Knee Limiter) เสียงไม่แตก
       this.nodes.limiter = this.ctx.createDynamicsCompressor();
       this.nodes.limiter.threshold.value = -1.0;
       this.nodes.limiter.knee.value = 12.0;
@@ -3301,13 +2656,8 @@ const AudioEngine = {
       this.nodes.masterGain = this.ctx.createGain();
       this.nodes.masterGain.gain.value = 1.0;
 
-      // เชื่อมต่อระบบเสียง: Audio -> EQ -> Analyser -> Limiter -> ลำโพง
-      const connectPipeline = (source) => {
-        source.connect(this.nodes.bass);
-      };
-      connectPipeline(this.nodes.audioSource);
-      connectPipeline(this.nodes.videoSource);
-
+      this.nodes.audioSource.connect(this.nodes.bass);
+      this.nodes.videoSource.connect(this.nodes.bass);
       this.nodes.bass.connect(this.nodes.vocal);
       this.nodes.vocal.connect(this.nodes.treble);
       this.nodes.treble.connect(this.analyser);
@@ -3357,7 +2707,7 @@ const AudioEngine = {
       if (badge) badge.innerHTML = `<i class="fas fa-sliders"></i> STUDIO FLAT`;
       this.nodes.bass.gain.setTargetAtTime(0, t, 0.08);
       this.nodes.vocal.gain.setTargetAtTime(0, t, 0.08);
-      this.nodes.treble.gain.setTargetAtTime(0, t, 0.08);
+     this.nodes.treble.gain.setTargetAtTime(0, t, 0.08);
     }
   },
 
@@ -3374,7 +2724,6 @@ const AudioEngine = {
 
       this.analyser.getByteFrequencyData(dataArray);
 
-      // แผ่นซีดีหมุนและขยับตามจังหวะเบสอย่างนุ่มนวล
       let subSum = 0;
       for (let i = 0; i < 6; i++) subSum += dataArray[i];
       const subAvg = subSum / 6;
@@ -3383,7 +2732,6 @@ const AudioEngine = {
         cdCover.style.transform = `scale(${1 + (subAvg / 255) * 0.06})`;
       }
 
-      // วาดกราฟิก Spectrum คมชัด
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const barWidth = (canvas.width / bufferLength) * 2.2;
       let x = 0;
@@ -3410,9 +2758,6 @@ const AudioEngine = {
   }
 };
 
-/**
- * 👑 AdminOS Controller (Smart YouTube & Playlist)
- */
 const AdminOS = {
   myAlbum: [
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
@@ -3769,9 +3114,44 @@ const AdminOS = {
   }
 };
 
-// เริ่มต้นระบบ Audiophile Player
 AdminOS.init();
-</script>
 
+document.getElementById('crop-cancel')?.addEventListener('click', () => {
+  AdminSoundEffects.playCancel();
+  document.getElementById('cropper-modal')?.classList.add('hidden');
+});
+
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  else root.setAttribute('data-theme', 'dark');
+  
+  btn.addEventListener('click', () => {
+    AdminSoundEffects.playPop();
+    const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', cur);
+    localStorage.setItem('theme', cur);
+  });
+})();
+
+(function(){
+  function onLoad(e) { e.target.classList.add('lazyloaded'); }
+  document.querySelectorAll('img').forEach(img => {
+    img.loading = 'lazy';
+    img.classList.add('blur-up');
+    if (img.complete) img.classList.add('lazyloaded');
+    else img.addEventListener('load', onLoad, { once: true });
+  });
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+  installHooks();
+  Controller.setupEventListeners();
+  Controller.initApp();
+});
+</script>
 </body>
 </html>
