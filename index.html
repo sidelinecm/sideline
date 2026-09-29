@@ -2133,69 +2133,104 @@ const Controller = {
   
   compressImageBeforeUpload(file, maxWidth = 1000, quality = 0.75) {
     return new Promise((resolve) => {
-      if (!window.FileReader || !window.HTMLCanvasElement) return resolve(file);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+      if (!file || !file.type.startsWith('image/')) return resolve(file);
 
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp', lastModified: Date.now() }));
-            } else {
-              resolve(file);
-            }
-          }, 'image/webp', quality);
-        };
-        img.onerror = () => resolve(file);
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file); // ใช้ ObjectURL แทน Base64 กินแรมน้อย ไม่ค้าง
+      
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl); // เคลียร์ RAM ทันที
+        let width = img.naturalWidth || img.width;
+        let height = img.naturalHeight || img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          canvas.width = 0; // คืน memory
+          canvas.height = 0;
+
+          if (blob) {
+            const cleanName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+            resolve(new File([blob], cleanName, { type: 'image/webp', lastModified: Date.now() }));
+          } else {
+            resolve(file);
+          }
+        }, 'image/webp', quality);
       };
-      reader.onerror = () => resolve(file);
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file);
+      };
+
+      img.src = objectUrl;
     });
   },
 
   async handleProfileFormSubmit(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+    
+    // 🛡️ เพิ่มระบบล็อก: ถ้ากำลังบันทึกอยู่ ห้ามทำงานซ้ำเด็ดขาด
+    if (Controller.isSubmitting) return false;
+    Controller.isSubmitting = true;
+
     AdminSoundEffects.init();
     
-    const form = e.target;
-    const profileId = form.querySelector('#profile-id').value;
+    const form = e.target || document.getElementById('profile-form');
+    const profileId = form.querySelector('#profile-id')?.value;
     const isEditing = !!profileId && profileId !== ""; 
     const saveButton = form.querySelector('#save-profile-button');
+    
     UI.toggleButtonLoading(saveButton, true, isEditing ? 'กำลังอัปเดตข้อมูล...' : 'กำลังสร้างโปรไฟล์...');
+    if (saveButton) saveButton.disabled = true;
     
     try {
       const fileInput = form.querySelector('#image-file-input');
-      let currentImagePath = form.querySelector('#current-image-path').value || '';
+      let currentImagePath = form.querySelector('#current-image-path')?.value || '';
       let uploadedUrls = [];
       const files = Array.from(fileInput?.files || []);
       
       if (files.length) {
-        UI.showToast(`กำลังบีบอัดรูปภาพทั้ง ${files.length} ใบ...`, 'info');
-        for (const f of files) {
+        UI.showToast(`กำลังบีบอัดและอัปโหลดรูปทั้ง ${files.length} ใบพร้อมกัน...`, 'info', 2000);
+        
+        // 🚀 อัปโหลดพร้อมกัน + บีบอัดประหยัดแบนด์วิดท์ Cloudinary ขั้นสูงสุด
+        const uploadTasks = files.map(async (f) => {
+          const processedFile = await Controller.compressImageBeforeUpload(f, 850, 0.70);
           const formData = new FormData();
-          let processedFile = await Controller.compressImageBeforeUpload(f, 1000, 0.75);
           formData.append('file', processedFile);
           formData.append('upload_preset', UPLOAD_PRESET);
           formData.append('folder', 'images');
+          
+          // ใส่ tag ชื่อเพื่อจัดการรูปใน Cloudinary ได้ง่าย
+          formData.append('tags', `profile_${profileId || 'new'}`);
 
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { 
+            method: 'POST', 
+            body: formData 
+          });
           const data = await res.json();
-          if (data.secure_url) uploadedUrls.push(data.secure_url);
-          else throw new Error(`Cloudinary Error: ${data.error?.message || "Upload Failed"}`);
-        }
+          
+          if (data.secure_url) {
+            // 💡 เทคนิคไม้ตาย: แทรก f_auto,q_auto เข้าไปใน URL ช่วยลด Bandwidth 50-70%
+            const optimizedUrl = data.secure_url.replace('/upload/', '/upload/f_auto,q_auto/');
+            return optimizedUrl;
+          }
+          throw new Error(`Cloudinary Error: ${data.error?.message || "Upload Failed"}`);
+        });
+
+        uploadedUrls = await Promise.all(uploadTasks);
       }
 
       const profileData = Controller.collectFormData(form);
@@ -2235,12 +2270,16 @@ const Controller = {
       UI.showToast(isEditing ? 'อัปเดตข้อมูลสำเร็จ' : 'สร้างข้อมูลโปรไฟล์ใหม่แล้ว', 'success');
       Controller.updateStats();
       Controller.renderView('profiles-list-container');
+
     } catch (err) {
       console.error("Save Error:", err);
       AdminSoundEffects.playCancel();
       UI.showToast(err.message, 'error');
     } finally {
+      // 🔓 ปลดล็อกระบบเมื่อเสร็จสิ้นกระบวนการทั้งหมดจริงเท่านั้น
+      Controller.isSubmitting = false;
       UI.toggleButtonLoading(saveButton, false, isEditing ? 'บันทึกข้อมูล' : 'บันทึกคิวงาน');
+      if (saveButton) saveButton.disabled = false;
     }
   },
 
@@ -2501,6 +2540,9 @@ function installHooks() {
   Controller.handleProfileFormSubmit = async function(e) {
     if (e?.preventDefault) e.preventDefault();
 
+    // ป้องกันการกดย้ำตั้งแต่แรก
+    if (Controller.isSubmitting) return false;
+
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
@@ -2553,11 +2595,17 @@ function installHooks() {
 
         isPassed = await GPSForensic.enforceGPSAction('CREATE', `สร้างโปรไฟล์ใหม่: น้อง${name} [${allNewDetails}]`, `น้อง${name}`);
       }
-    } finally {
+    } catch(err) {
       if (submitBtn) submitBtn.disabled = false;
+      return false;
     }
 
-    if (!isPassed) return false;
+    // ✅ เอา finally ออก! ถ้าไม่ผ่านให้คืนค่าปุ่ม แต่ถ้าผ่าน ปล่อยให้ปุ่มล็อกไว้จนกว่าจะบันทึกเสร็จจริง
+    if (!isPassed) {
+      if (submitBtn) submitBtn.disabled = false;
+      return false;
+    }
+
     return originalHandleProfileFormSubmit.apply(this, arguments);
   };
 
