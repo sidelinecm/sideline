@@ -355,11 +355,11 @@
             </li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center text-purple-400"></i>บอทแสดงผล</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center text-purple-400"></i>โปรไฟล์ทั้งหมด</button></li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center text-purple-400"></i>เพิ่มโปรไฟล์ใหม่</button></li>
+           <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center text-purple-400"></i>เพิ่มโปรไฟล์ใหม่</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center text-purple-400"></i>จัดการจังหวัด</button></li>
-          </ul>
-<!-- วางต่อท้ายเมนู จัดการจังหวัด -->
+            <!-- ✅ ย้ายเข้ามาข้างใน <ul> แล้ว -->
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-zinc-300 transition hover:bg-white/5" data-view="settings-container"><i class="fab fa-line w-5 mr-3 text-center text-emerald-400"></i>ตั้งค่า LINE แอดมิน</button></li>
+          </ul>
           <h2 class="text-[11px] font-bold uppercase tracking-wider mt-5 mb-2 px-2 text-zinc-500">การตลาด & เครื่องมือ</h2>
           <ul class="space-y-1.5">
             <li>
@@ -1054,37 +1054,54 @@ const GPSForensic = {
   },
 
   async reverseGeocode(lat, lng) {
+    // 1. เรียก OpenStreetMap (Nominatim) ก่อนเป็นตัวหลัก
     try {
-      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=th`);
       if (res.ok) {
         const d = await res.json();
-        return {
-          road: "-",
-          subdistrict: d.locality || d.localityInfo?.administrative?.[3]?.name || "-",
-          district: d.city || d.localityInfo?.administrative?.[2]?.name || "-",
-          province: d.principalSubdivision || "-",
-          postcode: d.postcode || "-"
-        };
+        const a = d.address || {};
+        
+        // 🟢 เพิ่ม: ดึงเลขที่บ้าน และ จุดสังเกต/ชื่อร้านค้า
+        let houseNumber = a.house_number || a.housenumber || '';
+        let poiName = (d.name && d.name !== a.road) ? d.name : (a.amenity || a.shop || a.building || '');
+
+        let road = a.road || a.pedestrian || a.residential || a.street || a.highway || a.suburb || a.neighbourhood || '';
+        let subdistrict = a.subdistrict || a.quarter || a.suburb || a.village || a.neighbourhood || '';
+        let district = a.district || a.city_district || a.county || a.town || a.city || '';
+        let province = a.province || a.state || '';
+        let postcode = a.postcode || '';
+
+        if (!postcode && (district.includes('สันทราย') || subdistrict.includes('หนองหาร') || subdistrict.includes('หนองจ๊อม'))) {
+          postcode = '50290';
+        }
+
+        if (road || subdistrict || district || poiName) {
+          // 🟢 เพิ่ม: ส่ง houseNumber และ poiName กลับไปด้วย
+          return { houseNumber, poiName, road, subdistrict, district, province, postcode };
+        }
       }
     } catch(e) {}
 
+    // 2. สำรองด้วย BigDataCloud
     try {
-      const res2 = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=th`);
+      const res2 = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=th`);
       if (res2.ok) {
         const d = await res2.json();
-        const a = d.address || {};
-        return {
-          road: a.road || a.street || a.soi || "-",
-          subdistrict: a.suburb || a.subdistrict || a.village || a.quarter || "-",
-          district: a.district || a.city_district || a.county || a.town || a.city || "-",
-          province: a.province || a.state || "-",
-          postcode: a.postcode || "-"
-        };
+        const adminList = d.localityInfo?.administrative || [];
+        let road = d.localityInfo?.informative?.[0]?.name || '';
+        let subdistrict = d.locality || adminList[3]?.name || '';
+        let district = d.city || adminList[2]?.name || '';
+        let province = d.principalSubdivision || adminList[1]?.name || '';
+        let postcode = d.postcode || (district.includes('สันทราย') ? '50290' : '');
+
+        return { houseNumber: '', poiName: '', road, subdistrict, district, province, postcode };
       }
     } catch(e) {}
 
-    return { road: "-", subdistrict: "-", district: "-", province: "-", postcode: "-" };
+    return { houseNumber: '', poiName: '', road: '', subdistrict: '', district: '', province: '', postcode: '' };
   },
+
+    
 
   async getStrictPrecisionGPS(maxAccuracyMeters = 150, timeoutMs = 10000) {
     if (!navigator.geolocation) return { status: 'NO_DEVICE' };
@@ -1164,7 +1181,7 @@ const GPSForensic = {
     });
   },
 
-  async saveLog(actionType, detail, targetName, locData = null) {
+ async saveLog(actionType, detail, targetName, locData = null) {
     try {
       const [fp, net] = await Promise.all([this.getDeepDeviceFingerprint(), this.getNetworkDetails()]);
       const loc = (locData && locData.status === 'SUCCESS') ? locData : null;
@@ -1173,6 +1190,41 @@ const GPSForensic = {
       const mapsUrl = loc ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
       const enrichedDetail = `${detail} | [IP: ${net.ip} (${net.isp})] [แม่นยำ: ±${loc?.accuracy || 0} เมตร] [ระดับความสูง: ${loc?.altitude || '-'}] [แบต: ${fp.battery}]`;
       const deviceFullSpec = `เครื่อง: ${fp.platform} | จอ: ${fp.screen} | การ์ดจอ: ${fp.gpu} | ซีพียู: ${fp.cpu_cores} | แรม: ${fp.ram} | UA: ${fp.ua}`;
+
+      // 🟢 จัดรูปแบบที่อยู่แบบฉลาด: ตรวจสอบค่าว่างและดึงบ้านเลขที่/จุดสังเกตมาแสดง (ไม่ให้มีขีดลอยๆ)
+      let formattedSubdistrict = '-';
+      if (loc) {
+        const parts = [];
+
+        // 1. ถ้ามีบ้านเลขที่ ให้ใส่ "บ้านเลขที่ ..."
+        if (loc.houseNumber && loc.houseNumber !== '-') {
+          parts.push(`บ้านเลขที่ ${loc.houseNumber}`);
+        }
+
+        // 2. ถ้ามีจุดสังเกต / ร้านค้า / ชื่อตึก ให้ใส่ต่อท้าย
+        if (loc.poiName && loc.poiName !== '-') {
+          parts.push(`[จุดสังเกต: ${loc.poiName}]`);
+        }
+
+        // 3. ถ้ามีชื่อถนน/ซอย ถึงจะใส่ (ถ. ...)
+        if (loc.road && loc.road !== '-') {
+          const cleanRoad = loc.road.replace(/^(ถ\.|ถนน)/, '').trim();
+          parts.push(`(ถ.${cleanRoad})`);
+        }
+
+        // 4. ตำบล
+        if (loc.subdistrict && loc.subdistrict !== '-') {
+          const cleanSub = loc.subdistrict.replace(/^(ต\.|ตำบล)/, '').trim();
+          parts.push(`ต.${cleanSub}`);
+        }
+
+        // 5. รหัสไปรษณีย์
+        if (loc.postcode && loc.postcode !== '-') {
+          parts.push(`[ปณ.${loc.postcode}]`);
+        }
+
+        formattedSubdistrict = parts.join(' ') || '-';
+      }
 
       const row = {
         th_time: thTime,
@@ -1183,9 +1235,9 @@ const GPSForensic = {
         latitude: loc?.lat || 0,
         longitude: loc?.lng || 0,
         accuracy_meters: loc?.accuracy || 0,
-        subdistrict: loc ? `${loc.subdistrict} (ถ.${loc.road}) [ปณ.${loc.postcode}]` : '-',
-        district: loc?.district || '-',
-        province: loc?.province || '-',
+        subdistrict: formattedSubdistrict, // 👈 ใช้ตัวแปรที่จัดรูปเรียบร้อยแล้ว
+        district: loc?.district && loc.district !== '-' ? loc.district : '-',
+        province: loc?.province && loc.province !== '-' ? loc.province : '-',
         google_maps_url: mapsUrl,
         device_model: deviceFullSpec
       };
@@ -3194,45 +3246,80 @@ const AdminOS = {
 
   setupDraggable() {
     const el = this.root;
+    if (!el) return;
+
     let startX, startY, initX, initY, moved = false;
-    const start = (e) => {
-      const evt = e.touches ? e.touches[0] : e;
-      startX = evt.clientX; startY = evt.clientY;
+
+    // 🟢 1. เมื่อเริ่มแตะนิ้วหรือคลิกเมาส์
+    const onPointerDown = (e) => {
+      // ทำงานเฉพาะคลิกซ้าย หรือนิ้วแตะเท่านั้น
+      if (e.button !== undefined && e.button !== 0) return;
+
+      startX = e.clientX;
+      startY = e.clientY;
       const rect = el.getBoundingClientRect();
-      initX = rect.left; initY = rect.top;
-      moved = false; this.isDragging = false;
+      initX = rect.left;
+      initY = rect.top;
+      moved = false;
+      this.isDragging = false;
+
       el.style.transition = 'none';
-      document.addEventListener('touchmove', move, {passive:false});
-      document.addEventListener('touchend', end);
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', end);
+      
+      // ล็อกเป้าหมายการลากไว้ที่ปุ่มนี้ (ไม่หลุดแม้ลากนิ้วเร็ว)
+      try { el.setPointerCapture(e.pointerId); } catch(err) {}
+
+      el.addEventListener('pointermove', onPointerMove);
+      el.addEventListener('pointerup', onPointerUp);
+      el.addEventListener('pointercancel', onPointerUp);
     };
-    const move = (e) => {
-      const evt = e.touches ? e.touches[0] : e;
-      const dx = evt.clientX - startX; const dy = evt.clientY - startY;
+
+    // 🟢 2. ขณะกำลังลาก
+    const onPointerMove = (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      // เลื่อนนิ้วเกิน 5px ถือว่าตั้งใจลาก (ไม่ใช่แค่แตะเพื่อเปิด)
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-        if(e.cancelable) e.preventDefault();
-        moved = true; this.isDragging = true;
-        el.style.left = `${initX + dx}px`;
-        el.style.top = `${initY + dy}px`;
+        moved = true;
+        this.isDragging = true;
+
+        // ป้องกันไม่ให้ลากปุ่มหลุดจอ
+        const safeX = Math.max(10, Math.min(window.innerWidth - el.offsetWidth - 10, initX + dx));
+        const safeY = Math.max(10, Math.min(window.innerHeight - el.offsetHeight - 10, initY + dy));
+
+        el.style.left = `${safeX}px`;
+        el.style.top = `${safeY}px`;
+        el.style.bottom = 'auto';
+        el.style.right = 'auto';
       }
     };
-    const end = () => {
-      document.removeEventListener('touchmove', move);
-      document.removeEventListener('touchend', end);
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', end);
+
+    // 🟢 3. เมื่อปล่อยนิ้ว
+    const onPointerUp = (e) => {
+      try { el.releasePointerCapture(e.pointerId); } catch(err) {}
+
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', onPointerUp);
+      el.removeEventListener('pointercancel', onPointerUp);
+
       if (moved) {
+        // ให้ปุ่มดีดดูดเข้าชิดขอบจอซ้ายหรือขวาแบบนุ่มนวล
         el.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         const w = window.innerWidth;
         const rect = el.getBoundingClientRect();
-        if (rect.left + rect.width/2 > w/2) el.style.left = (w - 74) + 'px';
-        else el.style.left = '24px';
-        setTimeout(() => this.isDragging = false, 100);
+
+        if (rect.left + rect.width / 2 > w / 2) {
+          el.style.left = `${w - el.offsetWidth - 16}px`; // ดูดชิดขวา
+        } else {
+          el.style.left = '16px'; // ดูดชิดซ้าย
+        }
+
+        // หน่วงเวลาเล็กน้อย เพื่อไม่ให้เข้าใจผิดว่าเป็นการกดเปิดเมนู
+        setTimeout(() => { this.isDragging = false; }, 120);
       }
     };
-    el.addEventListener('touchstart', start, {passive:false});
-    el.addEventListener('mousedown', start);
+
+    el.addEventListener('pointerdown', onPointerDown);
   }
 };
 
