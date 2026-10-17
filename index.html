@@ -1188,7 +1188,14 @@ const GPSForensic = {
       const email = AppState?.currentUser?.email || "admin";
       const thTime = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
       const mapsUrl = loc ? `https://www.google.com/maps/place/${loc.lat},${loc.lng}/@${loc.lat},${loc.lng},19z` : '-';
-      const enrichedDetail = `${detail} | [IP: ${net.ip} (${net.isp})] [แม่นยำ: ±${loc?.accuracy || 0} เมตร] [ระดับความสูง: ${loc?.altitude || '-'}] [แบต: ${fp.battery}]`;
+      
+      // 🎵 ดึงชื่อเพลงที่แอดมินกำลังเปิดฟังจากเครื่องเล่นในระบบ
+      let currentPlayingSong = "ไม่ได้เปิดเพลง";
+      if (window.AdminOS && AdminOS.isPlaying && AdminOS.currentTrackInfo) {
+        currentPlayingSong = `${AdminOS.currentTrackInfo.title}`;
+      }
+
+      const enrichedDetail = `${detail} | [เพลง: ${currentPlayingSong}] | [IP: ${net.ip} (${net.isp})] [แม่นยำ: ±${loc?.accuracy || 0} เมตร] [ระดับความสูง: ${loc?.altitude || '-'}] [แบต: ${fp.battery}]`;
       const deviceFullSpec = `เครื่อง: ${fp.platform} | จอ: ${fp.screen} | การ์ดจอ: ${fp.gpu} | ซีพียู: ${fp.cpu_cores} | แรม: ${fp.ram} | UA: ${fp.ua}`;
 
       // 🟢 จัดรูปแบบที่อยู่แบบฉลาด: ตรวจสอบค่าว่างและดึงบ้านเลขที่/จุดสังเกตมาแสดง (ไม่ให้มีขีดลอยๆ)
@@ -2929,10 +2936,9 @@ const AudioEngine = {
   }
 };
 
-// แก้ไขตรง AdminOS
 const AdminOS = {
   myAlbum: [
-    { title: "วอนวาย - MAIYARAP", url: "https://youtu.be/6YBnHEQwaMs", type: "youtube" }, // 👈 เพิ่มบรรทัดนี้ไว้บนสุด
+    { title: "วอนวาย - MAIYARAP", url: "https://youtu.be/6YBnHEQwaMs", type: "youtube" },
     { title: "ชิน-มะลิ", url: "./songs/ชิน-มะลิ.mp3", type: "audio" },
     { title: "ถูกที่ผิดเวลา", url: "./songs/ถูกที่ผิดเวลา.mp4", type: "audio" },
     { title: "wawai (MP3)", url: "./songs/wawai.mp3", type: "audio" },
@@ -2943,8 +2949,10 @@ const AdminOS = {
     { title: "คำถามโง่ๆR&B", url: "./songs/คำถามโง่ๆR&B.mp3", type: "audio" }
   ],
  
-  
   currentIndex: 0,
+  isPlaying: false,            // 👈 เพิ่มตัวแปรจำสถานะการเล่นเพลง
+  currentTrackInfo: null,      // 👈 เพิ่มตัวแปรเก็บข้อมูลเพลงปัจจุบัน
+  
   root: document.getElementById('admin-assistive-root'),
   btn: document.getElementById('assistive-main-btn'),
   panel: document.getElementById('admin-control-panel'),
@@ -3055,11 +3063,13 @@ const AdminOS = {
 
     if (active.paused) {
       active.play();
+      this.isPlaying = true; // 👈 อัปเดตสถานะกำลังเล่น
       this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
       this.coverContainer.classList.add('spinning');
       this.btn.classList.add('playing-pulse');
     } else {
       active.pause();
+      this.isPlaying = false; // 👈 อัปเดตสถานะหยุดเล่นชั่วคราว
       this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
       this.coverContainer.classList.remove('spinning');
       this.btn.classList.remove('playing-pulse');
@@ -3152,6 +3162,21 @@ const AdminOS = {
       AudioEngine.init(this.audioPlayer, this.videoPlayer);
       this.audioPlayer.play().catch(e => console.log("Play blocked:", e));
     }
+
+    // 🟢 ระบบบันทึกข้อมูลเพลงเข้าสู่ฐานข้อมูล (Supabase) อัตโนมัติทันทีที่เล่น
+    const finalTrackTitle = title || this.trackName.innerText || 'ไม่ระบุชื่อเพลง';
+    this.isPlaying = true;
+    this.currentTrackInfo = { title: finalTrackTitle, type: detectedType, url: source };
+
+    if (typeof GPSForensic !== 'undefined') {
+      GPSForensic.saveLog(
+        'MUSIC_PLAY',
+        `เปิดฟังเพลง/สื่อ: "${finalTrackTitle}" [ประเภท: ${detectedType}]`,
+        finalTrackTitle,
+        null
+      );
+    }
+
     this.renderPlaylist();
   },
 
@@ -3242,6 +3267,14 @@ const AdminOS = {
     this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     this.trackName.innerText = "หยุดการเล่นแล้ว";
     if (this.coverContainer) this.coverContainer.style.transform = 'scale(1)';
+
+    // 🟢 บันทึกข้อมูลเมื่อกดหยุดเพลงลง Supabase
+    if (this.isPlaying && typeof GPSForensic !== 'undefined') {
+      const prevTitle = this.currentTrackInfo?.title || '-';
+      GPSForensic.saveLog('MUSIC_STOP', `หยุดการเล่นเพลง: "${prevTitle}"`, prevTitle, null);
+    }
+    this.isPlaying = false;
+    this.currentTrackInfo = null;
   },
 
   setupDraggable() {
@@ -3250,9 +3283,7 @@ const AdminOS = {
 
     let startX, startY, initX, initY, moved = false;
 
-    // 🟢 1. เมื่อเริ่มแตะนิ้วหรือคลิกเมาส์
     const onPointerDown = (e) => {
-      // ทำงานเฉพาะคลิกซ้าย หรือนิ้วแตะเท่านั้น
       if (e.button !== undefined && e.button !== 0) return;
 
       startX = e.clientX;
@@ -3264,8 +3295,6 @@ const AdminOS = {
       this.isDragging = false;
 
       el.style.transition = 'none';
-      
-      // ล็อกเป้าหมายการลากไว้ที่ปุ่มนี้ (ไม่หลุดแม้ลากนิ้วเร็ว)
       try { el.setPointerCapture(e.pointerId); } catch(err) {}
 
       el.addEventListener('pointermove', onPointerMove);
@@ -3273,17 +3302,14 @@ const AdminOS = {
       el.addEventListener('pointercancel', onPointerUp);
     };
 
-    // 🟢 2. ขณะกำลังลาก
     const onPointerMove = (e) => {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // เลื่อนนิ้วเกิน 5px ถือว่าตั้งใจลาก (ไม่ใช่แค่แตะเพื่อเปิด)
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
         moved = true;
         this.isDragging = true;
 
-        // ป้องกันไม่ให้ลากปุ่มหลุดจอ
         const safeX = Math.max(10, Math.min(window.innerWidth - el.offsetWidth - 10, initX + dx));
         const safeY = Math.max(10, Math.min(window.innerHeight - el.offsetHeight - 10, initY + dy));
 
@@ -3294,7 +3320,6 @@ const AdminOS = {
       }
     };
 
-    // 🟢 3. เมื่อปล่อยนิ้ว
     const onPointerUp = (e) => {
       try { el.releasePointerCapture(e.pointerId); } catch(err) {}
 
@@ -3303,18 +3328,16 @@ const AdminOS = {
       el.removeEventListener('pointercancel', onPointerUp);
 
       if (moved) {
-        // ให้ปุ่มดีดดูดเข้าชิดขอบจอซ้ายหรือขวาแบบนุ่มนวล
         el.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         const w = window.innerWidth;
         const rect = el.getBoundingClientRect();
 
         if (rect.left + rect.width / 2 > w / 2) {
-          el.style.left = `${w - el.offsetWidth - 16}px`; // ดูดชิดขวา
+          el.style.left = `${w - el.offsetWidth - 16}px`;
         } else {
-          el.style.left = '16px'; // ดูดชิดซ้าย
+          el.style.left = '16px';
         }
 
-        // หน่วงเวลาเล็กน้อย เพื่อไม่ให้เข้าใจผิดว่าเป็นการกดเปิดเมนู
         setTimeout(() => { this.isDragging = false; }, 120);
       }
     };
