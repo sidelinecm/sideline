@@ -22,49 +22,27 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  html, body {
-    height: 100%; margin: 0; padding: 0;
-    font-family: 'Sarabun', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-  
-  :root {
-    --color-primary: 90 44 190;
-    --color-text-main: #2E2E2E;
-    --color-text-muted: #5a5a6a;
-    --color-card: rgba(255, 255, 255, 0.85);
-    --color-border: #E6E0FF;
-    --grad-1: #5A2CBE;
-    --grad-2: #C084FC;
-    --color-highlight: #FFEB3B;
-  }
-  :root[data-theme="dark"] {
-    --color-text-main: #F7F5FF;
-    --color-text-muted: #a8a0b5;
-    --color-card: rgba(13, 8, 30, 0.85);
-    --color-border: #2D1B4E;
-    --grad-1: #9333EA;
-    --grad-2: #C084FC;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  @keyframes animated-aurora {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  /* ===== 🌸 1. PALETTE โทนสีแท้จาก SoMatch 🌸 ===== */
+  :root, :root[data-theme="dark"] {
+    --bg: #F8F5FF;
+    --main: #9D6BFF;
+    --deep: #6A3DFF;
+    --pink: #FF7EC8;
+    --text: #1F1733;
+    --accent: #7B2FD6;
+    --accent-pink: #D6247E;
+
+    --color-primary: 106 61 255;
+    --color-text-main: #1F1733;
+    --color-text-muted: #6B6280;
+    --color-card: rgba(255, 255, 255, 0.94);
+    --color-border: #E8DDFF;
+    --grad-1: #E8479F;
+    --grad-2: #6A3DFF;
   }
-  body {
-    color: var(--color-text-main);
-    -webkit-font-smoothing: antialiased;
-    background: linear-gradient(-45deg, #090514, #120924, #1A0D36, #000000);
-    background-size: 400% 400%;
-    animation: animated-aurora 20s ease infinite;
-  }
-  :root[data-theme="dark"] body {
-    background: linear-gradient(-45deg, #05030A, #0F091F, #1F0E3D, #000000);
-    background-size: 400% 400%;
-    animation: animated-aurora 20s ease infinite;
-  }
-  
-  .kissmodel-logo {
+.kissmodel-logo {
     font-size: 1.5rem; font-weight: 800; display: inline-block; color: #fff;
     text-shadow: 0 0 5px var(--grad-1), 0 0 10px var(--grad-1), 0 0 20px var(--grad-2);
   }
@@ -305,6 +283,321 @@
   .playlist-type { font-size: 9px; color: #c084fc; text-transform: uppercase; font-weight: 600; }
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
+  /* ===== 🌸 2. แบ็กกราวด์ แสงเงา RADIANT BLOBS & ฟอนต์ SoMatch 🌸 ===== */
+  html, body, :root[data-theme="dark"] body {
+    min-height: 100vh;
+    font-family: "Sarabun", "Noto Sans Thai", "Noto Sans Thai Looped", system-ui, -apple-system, sans-serif !important;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(255, 126, 200, 0.22), transparent 38%),
+      radial-gradient(circle at 88% 30%, rgba(106, 61, 255, 0.16), transparent 42%),
+      radial-gradient(circle at 50% 85%, rgba(157, 107, 255, 0.12), transparent 48%),
+      var(--bg) !important;
+    background-attachment: fixed !important;
+    color: var(--text) !important;
+    animation: none !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ===== 🌸 3. อัตลักษณ์หัวข้อ & โลโก้ (Arial Black ตัวเอียงหนาพิเศษ) 🌸 ===== */
+  .logo, .kissmodel-logo {
+    font-family: "Arial Black", "Trebuchet MS", sans-serif !important;
+    font-size: 1.5rem !important;
+    font-style: italic !important;
+    font-weight: 900 !important;
+    background: linear-gradient(90deg, #E8479F, #7B2FD6) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    text-shadow: none !important;
+    filter: drop-shadow(0 2px 3px rgba(106, 61, 255, .25)) !important;
+  }
+  .kissmodel-logo .star {
+    font-size: 1.1em; display: inline-block;
+    filter: drop-shadow(0 0 8px rgba(255, 126, 200, 0.8));
+    animation: star-glow 2s infinite ease-in-out;
+  }
+  @keyframes star-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25) rotate(15deg); } }
+
+  h1, .dashboard-title {
+    font-family: "Arial Black", "Trebuchet MS", sans-serif !important;
+    font-style: italic !important;
+    font-weight: 900 !important;
+    font-size: clamp(1.8rem, 4vw, 2.8rem) !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1px !important;
+    background: linear-gradient(90deg, #E8479F 0%, #9D4DFF 55%, #6A3DFF 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    filter: drop-shadow(0 4px 6px rgba(106, 61, 255, .25)) !important;
+  }
+
+  /* ===== 🌸 4. ปุ่มกด CTA & ACTION BUTTONS 🌸 ===== */
+  .btn-pro, .btn-primary, .cta {
+    position: relative;
+    border-radius: 999px !important;
+    padding: 12px 28px !important;
+    background: linear-gradient(90deg, var(--deep), var(--accent)) !important;
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+    text-decoration: none !important;
+    box-shadow: 0 8px 18px rgba(106, 61, 255, .35) !important;
+    transition: transform .25s ease, box-shadow .25s ease, filter .2s ease !important;
+    border: none !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-pro:hover, .btn-primary:hover, .cta:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 24px rgba(106, 61, 255, .45) !important;
+    filter: brightness(1.05);
+  }
+
+  /* ===== 🌸 5. การ์ดพื้นผิว GLASSMORPHISM ขาวละมุนขอบม่วง 🌸 ===== */
+  .card-surface {
+    background-color: var(--color-card) !important;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-radius: 1.5rem !important;
+    box-shadow: 0 10px 30px rgba(106, 61, 255, 0.08), 0 2px 8px rgba(0,0,0,0.02) !important;
+    border: 1.5px solid rgba(157, 107, 255, 0.22) !important;
+    color: var(--text) !important;
+  }
+
+  /* ===== 🌸 6. กล่องข้อความ และฟอร์มกรอกข้อมูล 🌸 ===== */
+  .form-input-high, :root[data-theme="dark"] .form-input-high {
+    width: 100%;
+    padding: 0.75rem 1.2rem !important;
+    border: 1.5px solid var(--color-border) !important;
+    border-radius: 0.9rem !important;
+    background-color: #FFFFFF !important;
+    color: var(--text) !important;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    outline: none;
+  }
+  .form-input-high:focus {
+    border-color: var(--deep) !important;
+    box-shadow: 0 0 0 3px rgba(157, 107, 255, 0.25) !important;
+  }
+  .label-style {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text) !important;
+    margin-bottom: 6px;
+  }
+  .form-scroll-container { padding-bottom: 120px; }
+
+  /* ===== 🌸 7. แท็กสไตล์ & ชิปเลือกโซนพิกัด (.loc-chip) 🌸 ===== */
+  .tag-item {
+    background: linear-gradient(135deg, rgba(255, 126, 200, 0.15) 0%, rgba(106, 61, 255, 0.15) 100%) !important;
+    border: 1px solid rgba(157, 107, 255, 0.35) !important;
+    color: var(--accent) !important;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag-input-container {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid var(--color-border) !important;
+  }
+  .tag-input-container input {
+    color: var(--text) !important;
+  }
+  .tag-input-container input::placeholder {
+    color: #9E96AF !important;
+  }
+  .suggest-tag-btn {
+    background-color: #F3EDFF !important;
+    color: var(--deep) !important;
+    border: 1px solid rgba(157, 107, 255, 0.25) !important;
+    font-weight: 700 !important;
+  }
+  .suggest-tag-btn:hover {
+    background: var(--deep) !important;
+    color: #FFFFFF !important;
+  }
+
+  /* ปุ่มเลือกพิกัดย่อย (Location Chips) */
+  .loc-chip {
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+  }
+  .loc-chip:not(.bg-purple-600) {
+    background-color: #F3EDFF !important;
+    border: 1px solid rgba(157, 107, 255, 0.25) !important;
+    color: var(--deep) !important;
+  }
+  .loc-chip.bg-purple-600 {
+    background: linear-gradient(90deg, var(--deep), var(--accent-pink)) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+  }
+
+  /* ===== 🌸 8. SIDEBAR & HEADER โทนขาวสว่างขอบม่วง 🌸 ===== */
+  #sidebar {
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(20px);
+    border-right: 1.5px solid rgba(157, 107, 255, 0.2) !important;
+  }
+  #header {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(14px);
+    border-bottom: 1.5px solid rgba(157, 107, 255, 0.2) !important;
+  }
+  #header-title, #header span { color: var(--text) !important; font-weight: 900; }
+  #sidebar h2 { color: var(--deep) !important; font-weight: 900; }
+  #sidebar .nav-button {
+    color: #4C4360 !important;
+    font-weight: 700;
+  }
+  #sidebar .nav-button:hover {
+    background-color: rgba(157, 107, 255, 0.12) !important;
+    color: var(--deep) !important;
+  }
+  #sidebar .nav-button.active {
+    background: linear-gradient(90deg, rgba(232, 71, 159, 0.15), rgba(106, 61, 255, 0.15)) !important;
+    color: var(--deep) !important;
+    font-weight: 900;
+    border-left: 4px solid var(--accent-pink) !important;
+  }
+  #sidebar a { color: var(--text) !important; }
+
+  /* ===== 🌸 9. OVERRIDE คลาสสีดำเดิมของ TAILWIND ให้เป็น SoMatch 🌸 ===== */
+  .bg-zinc-950, .bg-zinc-900, .bg-\[\#0c081d\], .bg-\[\#070410\], .bg-black, .bg-black\/40 {
+    background-color: #FFFFFF !important;
+    color: var(--text) !important;
+  }
+  .text-white { color: var(--text) !important; }
+  .text-zinc-200, .text-zinc-300, .text-zinc-400, .text-zinc-500, .text-slate-300 {
+    color: var(--color-text-muted) !important;
+  }
+  .border-white\/5, .border-white\/10, .border-zinc-800, .border-purple-500\/10, .border-purple-500\/20 {
+    border-color: rgba(157, 107, 255, 0.2) !important;
+  }
+  .bg-white\/\[0\.02\], .bg-white\/\[0\.03\], .bg-white\/5 {
+    background-color: rgba(157, 107, 255, 0.05) !important;
+  }
+  .bg-purple-950\/20, .bg-purple-950\/30, .bg-purple-950\/40, .bg-purple-950\/50 {
+    background-color: rgba(157, 107, 255, 0.08) !important;
+  }
+
+  /* คืนค่าตัวหนังสือสีขาวให้ปุ่มและ Badge สำคัญ */
+  .btn-pro, .btn-primary, .modal-confirm-btn, #verify-music-btn, .action-btn-primary,
+  .play-pause-circle, .bg-purple-600, .bg-pink-600, .bg-emerald-600, .bg-red-600 {
+    color: #FFFFFF !important;
+  }
+  .btn-pro *, .btn-primary *, .modal-confirm-btn *, #verify-music-btn * {
+    color: #FFFFFF !important;
+  }
+  .hl, .text-pink-400, .text-pink-500 {
+    color: var(--accent-pink) !important;
+    font-weight: 900;
+  }
+
+  /* ตารางรายการจังหวัด */
+  table thead, thead.bg-zinc-950 {
+    background: #F4EEFF !important;
+  }
+  table th {
+    color: var(--deep) !important;
+    font-weight: 800 !important;
+  }
+  table tbody tr {
+    border-bottom: 1px solid rgba(157, 107, 255, 0.15) !important;
+  }
+  table tbody tr:hover {
+    background: rgba(157, 107, 255, 0.06) !important;
+  }
+
+  /* ===== 🌸 10. MODAL, LIGHTBOX & แถบลอยด้านล่าง 🌸 ===== */
+  .modal-box, #cropper-box, #msv-card {
+    background: #FFFFFF !important;
+    color: var(--text) !important;
+    border: 2px solid rgba(157, 107, 255, 0.3) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 25px 60px rgba(106, 61, 255, 0.22) !important;
+  }
+  .modal-backdrop, .lightbox-backdrop {
+    background: rgba(31, 23, 51, 0.6) !important;
+    backdrop-filter: blur(8px);
+  }
+  .modal-cancel-btn {
+    background: #EFEAFC !important;
+    color: var(--text) !important;
+    font-weight: 800;
+  }
+
+  /* กล่อง Dropzone อัปโหลดรูป */
+  #dz {
+    background-color: #FAF7FF !important;
+    border-color: rgba(157, 107, 255, 0.35) !important;
+  }
+
+  /* แถบลอยเซฟข้อมูลด้านล่าง */
+  .fixed.bottom-4 {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1.5px solid rgba(157, 107, 255, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(106, 61, 255, 0.2) !important;
+  }
+
+  /* ===== 🌸 11. เครื่องเล่นเพลง HI-FI & FLOATING BUTTON 🌸 ===== */
+  .assistive-btn {
+    background: linear-gradient(135deg, var(--pink), var(--deep)) !important;
+    box-shadow: 0 10px 25px rgba(106, 61, 255, 0.45) !important;
+    border: 2px solid #FFFFFF !important;
+    color: #FFFFFF !important;
+  }
+  .control-center-panel {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border: 1.5px solid rgba(157, 107, 255, 0.3) !important;
+    box-shadow: 0 25px 60px rgba(106, 61, 255, 0.25) !important;
+    color: var(--text) !important;
+  }
+  .control-center-panel .playlist-title { color: var(--text) !important; font-weight: 800; }
+  .control-center-panel .tab-bar { background: rgba(106, 61, 255, 0.08) !important; }
+  .control-center-panel .tab-btn.active {
+    background: linear-gradient(135deg, var(--deep), var(--accent-pink)) !important;
+    color: #FFFFFF !important;
+  }
+  .preset-chip {
+    background: rgba(106, 61, 255, 0.08) !important;
+    color: var(--deep) !important;
+  }
+  .preset-chip.active {
+    background: linear-gradient(90deg, var(--deep), var(--accent-pink)) !important;
+    color: #FFFFFF !important;
+  }
+  .custom-range::-webkit-slider-thumb {
+    background: var(--accent-pink) !important;
+    box-shadow: 0 0 10px rgba(214, 36, 126, 0.7) !important;
+  }
+
+  /* หน้าโหลดระบบ */
+  .loader-lg {
+    border: 4px solid rgba(157, 107, 255, 0.2) !important;
+    border-top-color: var(--accent-pink) !important;
+  }
+  #global-loader { background-color: var(--bg) !important; }
+  #loader-text {
+    color: var(--deep) !important;
+    font-weight: 900 !important;
+    font-style: italic;
+  }
 </style>
 </head>
 <body>
@@ -1685,15 +1978,38 @@ const Controller = {
     const selectedProvince = document.getElementById('filter-province')?.value || '';
     const isFeaturedOnly = document.getElementById('filter-featured')?.checked || false;
 
+    // สร้าง Map จับคู่ key จังหวัด -> ชื่อภาษาไทย เพื่อใช้ในการค้นหา
+    const provNameMap = {};
+    AppState.provinces.forEach(pr => {
+      provNameMap[pr.key] = pr.nameThai.toLowerCase();
+    });
+
     let filteredProfiles = AppState.allProfiles.filter(p => {
-      const matchesSearch = !searchTerm || (p.name && p.name.toLowerCase().includes(searchTerm)) || (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) || (p.location && p.location.toLowerCase().includes(searchTerm));
-      const matchesProvince = !selectedProvince || p.provinceKey === selectedProvince;
+      const pKey = (p.provinceKey || '').toLowerCase();
+      const pProvThai = provNameMap[pKey] || '';
+
+      // ✅ แก้ไข: ให้ค้นหาทั้งชื่อน้อง, LINE ID, ย่าน/โซน, ชื่อภาษาไทยของจังหวัด และ key ภาษาอังกฤษ
+      const matchesSearch = !searchTerm || 
+        (p.name && p.name.toLowerCase().includes(searchTerm)) || 
+        (p.lineId && p.lineId.toLowerCase().includes(searchTerm)) || 
+        (p.location && p.location.toLowerCase().includes(searchTerm)) ||
+        pProvThai.includes(searchTerm) ||
+        pKey.includes(searchTerm);
+
+      // ✅ แก้ไข: Normalize ให้รองรับทั้งแบบมีขีด (chiang-mai) และไม่มีขีด (chiangmai)
+      const cleanPKey = pKey.replace(/-/g, '');
+      const cleanSelectedProv = selectedProvince.toLowerCase().replace(/-/g, '');
+      const matchesProvince = !selectedProvince || cleanPKey === cleanSelectedProv;
+      
       const matchesFeatured = !isFeaturedOnly || p.isfeatured;
       return matchesSearch && matchesProvince && matchesFeatured;
     });
 
     let html = AppState.provinces.map(province => {
-      const profilesInProvince = filteredProfiles.filter(p => p.provinceKey === province.key);
+      const targetCleanKey = province.key.toLowerCase().replace(/-/g, '');
+      // ดึงโปรไฟล์ที่ตรงกับจังหวัดโดยเทียบแบบ Normalize
+      const profilesInProvince = filteredProfiles.filter(p => (p.provinceKey || '').toLowerCase().replace(/-/g, '') === targetCleanKey);
+      
       if (profilesInProvince.length === 0) return '';
       return `
         <div class="province-group mb-10 animate-slide-up">
