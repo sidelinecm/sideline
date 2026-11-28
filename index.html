@@ -82,10 +82,11 @@
     line-height: 1.3 !important;
     display: inline-block;
     padding: 2px 6px 2px 2px;
-    background: linear-gradient(90deg, #E8479F, #7B2FD6) !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    color: #7B2FD6 !important;
+background: none !important;
+-webkit-background-clip: border-box !important;
+background-clip: border-box !important;
+-webkit-text-fill-color: #7B2FD6 !important;
     text-shadow: none !important;
     filter: drop-shadow(0 2px 6px rgba(106, 61, 255, 0.16));
   }
@@ -921,7 +922,7 @@
                 <span class="ml-auto text-[9px] bg-rose-100 text-rose-600 border border-rose-200 px-1.5 py-0.5 rounded-full font-black">CRITICAL</span>
               </a>
             </li>
-            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-[#4B4263] transition hover:bg-[#F3EDFF] hover:text-[#6A3DFF]" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center text-[#6A3DFF]"></i>บอทแสดงผล</button></li>
+            <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-[#4B4263] transition hover:bg-[#F3EDFF] hover:text-[#6A3DFF]" data-view="dashboard-container"><i class="fas fa-chart-pie w-5 mr-3 text-center text-[#6A3DFF]"></i> Ai ProAuto Agent- Thinking- Mode</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-[#4B4263] transition hover:bg-[#F3EDFF] hover:text-[#6A3DFF]" data-view="profiles-list-container"><i class="fas fa-users w-5 mr-3 text-center text-[#6A3DFF]"></i>โปรไฟล์ทั้งหมด</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-[#4B4263] transition hover:bg-[#F3EDFF] hover:text-[#6A3DFF]" data-action="add" data-view="profile-form-container"><i class="fas fa-user-plus w-5 mr-3 text-center text-[#6A3DFF]"></i>เพิ่มโปรไฟล์ใหม่</button></li>
             <li><button class="nav-button w-full flex items-center text-left py-2.5 px-4 rounded-xl font-bold text-xs text-[#4B4263] transition hover:bg-[#F3EDFF] hover:text-[#6A3DFF]" data-view="provinces-management-container"><i class="fas fa-map-marked-alt w-5 mr-3 text-center text-[#6A3DFF]"></i>จัดการจังหวัด</button></li>
@@ -1014,7 +1015,7 @@
       <div class="bg-[#F8F5FF] border border-[#E8DDFF] rounded-2xl p-4 mb-8">
         <p class="text-xs text-[#3D3358] leading-relaxed">
            เพื่อประสิทธิภาพสูงสุดในการสตรีมมิ่ง <strong> first.fx Studio </strong> และป้องกันการดึงสัญญาณจากอุปกรณ์ที่ไม่ได้รับอนุญาต
-          กรุณากดยืนยันเพื่อให้  ai Agent ProThinking Auto Mode " Nako " ตรวจสอบความปลอดภัยก่อนเข้าใช้งาน
+          กรุณากดยืนยันเพื่อให้ """ nako """ตรวจสอบความปลอดภัยก่อนเข้าใช้งาน
         </p>
       </div>
 
@@ -1451,7 +1452,7 @@ const UI = {
     const gallery = profile.galleryPaths && Array.isArray(profile.galleryPaths) && profile.galleryPaths.length > 0 ? profile.galleryPaths : [profile.imagePath || placeholder];
     const mainImg = gallery[0] || placeholder;
     const provinceName = AppState.provinces.find(p => p.key === profile.provinceKey)?.nameThai || profile.provinceKey || 'ไม่ระบุ';
-    const modalId = `lightbox-${profile.id}`;
+    const modalId = `lightbox-${profile.id || 'preview'}`;
     
     let seoScore = 100;
     if (!profile.description || profile.description.length < 30) seoScore -= 25;
@@ -1477,7 +1478,7 @@ const UI = {
               <img id="admin-preview-hero-img" src="${mainImg}" alt="${profile.name}" class="w-full h-full object-cover transition-all duration-300" onerror="this.src='${placeholder}'">
               <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/55 to-transparent pointer-events-none"></div>
               <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                <span class="bg-[#6A3DFF] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow">ID: ${profile.id}</span>
+                <span class="bg-[#6A3DFF] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow">ID: ${profile.id || 'ตัวอย่าง'}</span>
                 <span class="bg-[#E8479F] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow flex items-center gap-1.5">
                   <i class="fas fa-heart text-white"></i> ${profile.likes || 0} ทักไลน์
                 </span>
@@ -1536,7 +1537,7 @@ const UI = {
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-[#685E7E]"><i class="fas fa-link text-[#7B2FD6] mr-2"></i>Slug URL:</span>
-                <span class="font-mono text-[#6A3DFF] text-xs">/sideline/${profile.slug || profile.id}</span>
+                <span class="font-mono text-[#6A3DFF] text-xs">/sideline/${profile.slug || profile.id || 'new'}</span>
               </div>
             </div>
             <div>
@@ -1551,10 +1552,15 @@ const UI = {
               </div>
             ` : ''}
             <div class="flex gap-2.5 pt-2 mt-auto border-t border-[#E8DDFF]">
-              <button onclick="document.getElementById('${modalId}').remove(); Controller.renderView('profile-form-container', { profileId: '${profile.id}' })" 
-                      class="flex-1 py-3 btn-pro text-xs font-extrabold rounded-full transition flex items-center justify-center gap-2">
-                <i class="fas fa-edit"></i> แก้ไขข้อมูลโปรไฟล์นี้
-              </button>
+             ${profile.isPreviewMode ? `
+  <button onclick="document.getElementById('${modalId}').remove()" class="flex-1 py-3 btn-pro text-xs font-extrabold rounded-full transition flex items-center justify-center gap-2">
+    <i class="fas fa-arrow-left"></i> กลับไปกรอก / บันทึกข้อมูลต่อ
+  </button>
+` : `
+  <button onclick="document.getElementById('${modalId}').remove(); Controller.renderView('profile-form-container', { profileId: '${profile.id}' })" class="flex-1 py-3 btn-pro text-xs font-extrabold rounded-full transition flex items-center justify-center gap-2">
+    <i class="fas fa-edit"></i> แก้ไขข้อมูลโปรไฟล์นี้
+  </button>
+`}
             </div>
           </div>
         </div>
@@ -2195,8 +2201,8 @@ const Controller = {
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-              y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } },
-              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a0b5' } }
+              y: { grid: { color: 'rgba(106, 61, 255, 0.08)' }, ticks: { color: '#a8a0b5' } },
+              x: { grid: { color: 'rgba(106, 61, 255, 0.08)' }, ticks: { color: '#a8a0b5' } }
             }
           }
         });
@@ -2269,9 +2275,9 @@ const Controller = {
       if (profilesInProvince.length === 0) return '';
       return `
         <div class="province-group mb-10 animate-slide-up">
-          <h2 class="text-2xl font-bold text-white border-b border-purple-500/10 pb-2 mb-4 flex items-center gap-2">
-            <i class="fas fa-map-marker-alt text-purple-500"></i> ${province.nameThai}
-            <span class="text-sm font-normal text-zinc-400">(${profilesInProvince.length} โปรไฟล์)</span>
+          <h2 class="text-2xl font-bold text-[#1F1733] border-b border-[#E8DDFF] pb-2 mb-4 flex items-center gap-2">
+            <i class="fas fa-map-marker-alt text-[#6A3DFF]"></i> ${province.nameThai}
+            <span class="text-sm font-normal text-[#685E7E]">(${profilesInProvince.length} โปรไฟล์)</span>
           </h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             ${profilesInProvince.map(p => Controller.getProfileCardHTML(p)).join('')}
@@ -2279,11 +2285,27 @@ const Controller = {
         </div>
       `;
     }).join('');
-    
+
+    const validKeys = new Set(AppState.provinces.map(pr => pr.key));
+    const unassigned = filteredProfiles.filter(p => !validKeys.has(p.provinceKey));
+    if (unassigned.length > 0) {
+      html += `
+        <div class="province-group mb-10 animate-slide-up">
+          <h2 class="text-2xl font-bold text-[#1F1733] border-b border-[#E8DDFF] pb-2 mb-4 flex items-center gap-2">
+            <i class="fas fa-folder-open text-[#E8479F]"></i> จังหวัดอื่นๆ / ยังไม่ระบุ
+            <span class="text-sm font-normal text-[#685E7E]">(${unassigned.length} โปรไฟล์)</span>
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            ${unassigned.map(p => Controller.getProfileCardHTML(p)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     listEl.innerHTML = html || `
-      <div class="text-center py-20 card-surface border-2 border-dashed border-purple-500/10 text-white">
-        <i class="fas fa-search text-4xl text-zinc-600 mb-3 block"></i>
-        <p class="text-zinc-400 font-bold">ไม่พบคิวงานที่ตรงกับข้อมูลดังกล่าว</p>
+      <div class="text-center py-20 card-surface border-2 border-dashed border-[#E8DDFF] text-[#1F1733]">
+        <i class="fas fa-search text-4xl text-[#9D6BFF] mb-3 block"></i>
+        <p class="text-[#685E7E] font-bold">ไม่พบคิวงานที่ตรงกับข้อมูลดังกล่าว</p>
       </div>
     `;
 
@@ -2468,7 +2490,7 @@ const Controller = {
             </div>
           </div>
           
-          <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-zinc-950/95 backdrop-blur-lg p-3 sm:p-4 rounded-2xl border border-white/10 shadow-2xl flex justify-between items-center z-[1000]">
+          <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-white/95 backdrop-blur-lg p-3 sm:p-4 rounded-2xl border border-[#E8DDFF] shadow-2xl flex justify-between items-center z-[1000]">
             <button type="button" class="nav-button px-3 sm:px-5 py-2.5 font-bold text-xs sm:text-sm text-zinc-400 hover:text-white" data-view="profiles-list-container">
               <i class="fas fa-arrow-left mr-1"></i> ยกเลิก
             </button>
@@ -3072,6 +3094,8 @@ const Controller = {
     const combined = [...previewGallery, ...newFiles];
     profileData.galleryPaths = combined;
     profileData.imagePath = combined[0] || currentImagePath;
+    profileData.isPreviewMode = true;
+    UI.showProfileLightbox(profileData);
   },
   
   handleDeleteProfile({ id, name }) {
@@ -3128,14 +3152,14 @@ const Controller = {
             ${AppState.provinces.length === 0 ? 
               '<div class="text-center py-12"><i class="fas fa-folder-open text-4xl text-zinc-700 mb-3 block"></i><p class="text-zinc-500">ไม่มีข้อมูลจังหวัด</p></div>' : 
               `<table class="min-w-full">
-                <thead class="bg-zinc-950 sticky top-0 z-10">
+                <thead class="bg-[#F8F5FF] sticky top-0 z-10">
                   <tr>
                     <th class="px-5 py-3 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">ชื่อจังหวัด</th>
                     <th class="px-5 py-3 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Key (URL)</th>
                     <th class="px-5 py-3 text-right"></th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-800">
+                <tbody class="divide-y divide-[#E8DDFF]">
                   ${AppState.provinces.map(p => `
                     <tr class="hover:bg-purple-950/10 transition">
                       <td class="px-5 py-4 text-sm font-bold text-white">${p.nameThai}</td>
